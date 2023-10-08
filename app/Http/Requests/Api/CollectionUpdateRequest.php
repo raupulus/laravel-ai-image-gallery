@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api;
 
+use App\Models\Image;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Cache;
 use function auth;
@@ -35,13 +36,6 @@ class CollectionUpdateRequest extends FormRequest
 
         $collection = $request->route()->parameter('collection');
 
-        // TODO: Crear thumbnail
-        // TODO: Imagen principal optimizada 1280x1024 máximo en webp
-
-
-        $thumbnailPath = '';
-        $imagePath = '';
-
         try {
             $seeds = Cache::get('collection-image-update-' . $collection->id);
             $seed = $seeds[$request->get('order')];
@@ -51,8 +45,6 @@ class CollectionUpdateRequest extends FormRequest
 
         $this->merge([
             'collection_id' => $collection->id,
-            'thumbnail' => $thumbnailPath,
-            'image' => $imagePath,
             'seed' => $seed,
             'order' => $request->get('order'),
         ]);
@@ -67,8 +59,8 @@ class CollectionUpdateRequest extends FormRequest
     {
         return [
             'collection_id' => 'required|int|exists:collections,id',
-            'thumbnail' => 'nullable|string|max:255',
-            'image' => 'required|string|max:255',
+            'image' => 'required',
+            //'image' => 'required|image|mimes:jpeg,png|max:255',
             'seed' => 'nullable|int',
             'order' => 'required|int',
         ];

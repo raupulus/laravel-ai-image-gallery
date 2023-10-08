@@ -22,9 +22,6 @@ class CollectionController extends Controller
             unset($validated['seeds']);
         }
 
-        // TODO -> Recibimos un array de "seeds[]" que debemos guardar en caché de archivos.
-        // Al añadir imágenes, vamos a recuperar el seed asociado a esta imagen
-
         $collection = Collection::create($validated);
 
         Cache::remember('collection-image-update-' . $collection->id, 3600, function () use ($seeds) {
@@ -47,7 +44,25 @@ class CollectionController extends Controller
     {
         $validated = $request->validated();
 
+        $imageBase64 = $request->get('image');
+
+        unset($validated['image']);
+
         $image = Image::create($validated);
+
+        $image->storeImageFromBase64($imageBase64);
+
+        /*
+        try {
+            $image->storeImageFromBase64($imageBase64);
+        } catch (\Exception $e) {
+            $image->delete();
+
+            return response()->json([
+                'success' => false,
+            ]);
+        }
+        */
 
         return response()->json([
             'success' => true,
@@ -56,8 +71,8 @@ class CollectionController extends Controller
             'data' => [
                 'image' => [
                     'id' => $image->id,
-                    'thumbnail' => $image->urlThumbnail,
-                    'image' => $image->urlImage
+                    'url_thumbnail' => $image->urlThumbnail,
+                    'url_image' => $image->urlImage
                 ]
             ]
             //'collection' => $collection,

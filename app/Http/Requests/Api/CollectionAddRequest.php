@@ -46,6 +46,9 @@ class CollectionAddRequest extends FormRequest
         }
 
         $this->merge([
+            'steps' => (string) $request->steps,
+            'cfg_scale' => (string) $request->cfg_scale,
+            'denoising_strength' => (string) $request->denoising_strength,
             'tags' => implode(',', $request->tags),
             'size_resized' => $size_resized,
             'restore_faces' => in_array($request->restore_faces, ['true', '1', 1])
