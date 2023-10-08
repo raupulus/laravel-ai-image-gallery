@@ -36,7 +36,7 @@ return new class extends Migration
                 ->comment('Etiquetas de partes relevantes al contenido de las imágenes');
             $table->text('prompt')
                 ->comment('Prompt utilizado en la AI para generar lote de imágenes');
-            $table->text('prompt_negative')
+            $table->text('negative_prompt')
                 ->nullable()
                 ->comment('Descripción de lo que no puede aparecer en la generación de la imagen');
             $table->string('model', 127)

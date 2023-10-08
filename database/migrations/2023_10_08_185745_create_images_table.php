@@ -27,7 +27,7 @@ return new class extends Migration
             $table->integer('order')
                 ->nullable()
                 ->comment('Orden de aparición para las imágenes');
-            $table->bigInteger('seeds')
+            $table->bigInteger('seed')
                 ->nullable()
                 ->comment('Semilla identificando patrón para generar imágenes similares');
             $table->string('image', 511)
