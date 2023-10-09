@@ -70,7 +70,7 @@ class CollectionAddRequest extends FormRequest
             "description" => "nullable|string|max:511",
             "tags" => "nullable|string|max:255",
             "prompt" => "required|string|max:1024",
-            "negative_prompt" => "required|string|max:1024",
+            "negative_prompt" => "nullable|string|max:1024",
             "model" => "nullable|string|max:127",
             "size" => "nullable|string|max:50",
             "size_resized" => "nullable|string|max:50",
