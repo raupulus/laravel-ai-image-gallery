@@ -72,26 +72,12 @@
 
                         <a href="{{route('collections.show', $collection->id)}}"
                            class="d-block bg-dark text-info"
-                           style="text-decoration: none;">
+                           style="text-decoration: none; min-height: 49px;">
                             <p class="text-center text-info">
                                 {{$collection->titleResume}}
                             </p>
                         </a>
                     </div>
-                    {{--
-                    <div class="col-md-3 text-center col-sm-4 col-6 mt-1 mb-2">
-                        <a href="{{$image->urlImage}}"
-                           data-fancybox="gallery">
-                            <img class="img-fluid"
-                            alt="{{$collection->title}}"
-                                 src="{{$image->urlThumbnail}}">
-
-                            <p>
-                                {{$collection->titleResume}}
-                            </p>
-                        </a>
-                    </div>
-                    --}}
                 @endif
 
             @endforeach
