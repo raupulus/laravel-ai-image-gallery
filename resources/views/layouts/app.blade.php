@@ -9,6 +9,7 @@ E-mail: raul@fryntiz.dev
 -->
 
 <html data-bs-theme="auto" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     @include('layouts.head')
     @yield('head_css')

@@ -5,28 +5,29 @@ namespace App\Http\Controllers;
 use App\Models\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class IndexController extends Controller
 {
 
-    public function index(Request $request)
+    /**
+     * Página principal.
+     *
+     * @param Request $request
+     *
+     * @return View
+     */
+    public function index(Request $request): View
     {
-        $collections = Collection::whereNotNull('title');
-
-
-        //TODO: Hay que filtrar por los que no tienen imágenes. Ahora se hace en el frontend al mostrarlo
-        // pero esto puede dejar elementos en blanco o páginas en blanco
-
-        /*
          $collections = Collection::select([
             'collections.*',
-            DB::raw('images.id')
+            DB::raw('images.collection_id')
         ])
             ->leftJoin('images', 'collections.id', '=', 'images.collection_id')
-            ->whereNotNull('images.id')
-            ->whereNotNull('title');
-            //->groupBy('images.collection_id');
-        /*
+            ->whereNotNull('images.collection_id')
+            ->whereNotNull('title')
+            ->groupBy('images.collection_id')
+            ->groupBy('collections.id');
 
         $search = $request->get('search');
 
@@ -37,7 +38,6 @@ class IndexController extends Controller
                     ->orWhere('tags', 'ILIKE', '%' . $search . '%');
             });
         }
-         */
 
         $search = $request->get('search');
 
@@ -50,7 +50,7 @@ class IndexController extends Controller
         }
 
         return view('home', [
-            'collections' => $collections->orderByDesc('created_at')->paginate(8),
+            'collections' => $collections->orderByDesc('created_at')->paginate(24),
             'search' => $search,
         ]);
     }

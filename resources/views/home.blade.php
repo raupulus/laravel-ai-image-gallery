@@ -13,10 +13,10 @@
         </div>
 
 
-        <div class="row"">
+        <div class="row">
             <div class="col" style="height: auto;">
                 <form method="GET" action="{{route('home')}}"
-                    style="max-width: 700px;margin: auto;margin-top: 3rem;margin-bottom: 3rem;">
+                      style="max-width: 700px;margin: auto;margin-top: 3rem;margin-bottom: 3rem;">
                     <div class="input-group">
                         <span class="input-group-text">
                             <svg xmlns="http://www.w3.org/2000/svg"
@@ -33,7 +33,7 @@
                                name="search"
                                type="search"
                                value="{{$search}}"
-                               placeholder="Search for an image">
+                               placeholder="Search for an collection">
 
                         <button class="btn btn-primary text-center"
                                 type="submit"
@@ -55,12 +55,43 @@
                     @php($image = $collection->primaryImage)
 
                     <div class="col-md-3 text-center col-sm-4 col-6 mt-1 mb-2">
+                        <a href="{{route('collections.show', $collection->id)}}"
+                           style="text-decoration: none; color: #fff;"
+                           class="text-bg-danger small p-1 rounded-3 d-block">
+                            {{$collection->images->count()}}
+
+                            Images in Collection
+                        </a>
+
                         <a href="{{$image->urlImage}}"
                            data-fancybox="gallery">
                             <img class="img-fluid"
+                                 alt="{{$collection->title}}"
                                  src="{{$image->urlThumbnail}}">
                         </a>
+
+                        <a href="{{route('collections.show', $collection->id)}}"
+                           class="d-block bg-dark text-info"
+                           style="text-decoration: none;">
+                            <p class="text-center text-info">
+                                {{$collection->titleResume}}
+                            </p>
+                        </a>
                     </div>
+                    {{--
+                    <div class="col-md-3 text-center col-sm-4 col-6 mt-1 mb-2">
+                        <a href="{{$image->urlImage}}"
+                           data-fancybox="gallery">
+                            <img class="img-fluid"
+                            alt="{{$collection->title}}"
+                                 src="{{$image->urlThumbnail}}">
+
+                            <p>
+                                {{$collection->titleResume}}
+                            </p>
+                        </a>
+                    </div>
+                    --}}
                 @endif
 
             @endforeach

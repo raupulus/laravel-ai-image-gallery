@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Collection extends Model
 {
@@ -39,6 +40,15 @@ class Collection extends Model
         return $this->hasMany(Image::class, 'collection_id', 'id');
     }
 
+    /**
+     * Devuelve el título con longitud limitada.
+     *
+     * @return string
+     */
+    public function getTitleResumeAttribute()
+    {
+        return Str::limit($this->title, 50);
+    }
 
     public function getPrimaryImageAttribute()
     {

@@ -9,15 +9,15 @@
 <meta name="csrf_token" content="{{ csrf_token() }}" />
 
 {{-- Idioma del contenido --}}
-<meta property="og:locale" content="@yield('meta-og-locale', 'es_ES')">
-<meta http-equiv="Content-Language" content="es" />
+<meta property="og:locale" content="@yield('meta-og-locale', 'en_EN')">
+<meta http-equiv="Content-Language" content="en" />
 
 {{-- Alcance para distribuir el contenido --}}
 <meta name="distribution" content="global" />
 
 @yield('meta')
 
-<meta name="language" content="@yield('meta-og-locale', 'Spanish')">
+<meta name="language" content="@yield('meta-og-locale', 'English')">
 <meta name="description" content="@yield('meta-description', config('app.description'))" /> {{-- Máximo 150-160 carácteres --}}
 <meta name="author" content="@yield('meta-author', 'Raúl Caro Pastorino')" />
 <meta name="copyright" content="@yield('meta-author', 'Raúl Caro Pastorino')" />
@@ -38,11 +38,11 @@
 <meta property="og:description"
       content="@yield('meta-og-description', config('app.description'))" />
 <meta property="og:image"
-      content="@yield('meta-og-image', asset('images/logo/logo640x640.webp'))" />
+      content="@yield('meta-og-image', asset('images/logo/logo_640x640.webp'))" />
 <meta property="og:image:url"
-      content="@yield('meta-og-image-url', asset('images/logo/logo640x640.webp'))" />
+      content="@yield('meta-og-image-url', asset('images/logo/logo_640x640.webp'))" />
 <meta property="og:image:secure_url"
-      content="@yield('meta-og-image-secure_url', asset('images/logo/logo640x640.webp'))" />
+      content="@yield('meta-og-image-secure_url', asset('images/logo/logo_640x640.webp'))" />
 <meta property="og:url"
       content="@yield('meta-og-url', request()->fullUrl())" />
 <meta property="og:image:alt"
@@ -57,20 +57,11 @@
 
 {{-- Iconos --}}
 {{-- TODO → Dinamizar para reescribirlo desde cada parte de la api --}}
-<link rel="apple-touch-icon" sizes="57x57" href="{{asset('images/favicons/apple-icon-57x57.png')}}" />
-<link rel="apple-touch-icon" sizes="60x60" href="{{asset('images/favicons/apple-icon-60x60.png')}}" />
-<link rel="apple-touch-icon" sizes="72x72" href="{{asset('images/favicons/apple-icon-72x72.png')}}" />
-<link rel="apple-touch-icon" sizes="76x76" href="{{asset('images/favicons/apple-icon-76x76.png')}}" />
-<link rel="apple-touch-icon" sizes="114x114" href="{{asset('images/favicons/apple-icon-114x114.png')}}" />
-<link rel="apple-touch-icon" sizes="120x120" href="{{asset('images/favicons/apple-icon-120x120.png')}}" />
-<link rel="apple-touch-icon" sizes="144x144" href="{{asset('images/favicons/apple-icon-144x144.png')}}" />
-<link rel="apple-touch-icon" sizes="152x152" href="{{asset('images/favicons/apple-icon-152x152.png')}}" />
-<link rel="apple-touch-icon" sizes="180x180" href="{{asset('images/favicons/apple-icon-180x180.png')}}" />
-<link rel="icon" type="image/png" sizes="192x192"  href="{{asset('images/favicons/android-icon-192x192.png')}}" />
-<link rel="icon" type="image/png" sizes="32x32" href="{{asset('images/favicons/favicon-32x32.png')}}" />
-<link rel="icon" type="image/png" sizes="96x96" href="{{asset('images/favicons/favicon-96x96.png')}}" />
-<link rel="icon" type="image/png" sizes="16x16" href="{{asset('images/favicons/favicon-16x16.png')}}" />
-<meta name="msapplication-TileImage" content="{{asset('images/favicons/ms-icon-144x144.png')}}" />
+<link rel="apple-touch-icon" sizes="32x32" href="{{asset('images/favicons/favicon_32x32.ico')}}" />
+<link rel="apple-touch-icon" sizes="256x256" href="{{asset('images/favicons/favicon_256x256.ico')}}" />
+<link rel="icon" type="image/png" sizes="256x256"  href="{{asset('images/favicons/favicon_256x256.ico')}}" />
+<link rel="icon" type="image/png" sizes="32x32" href="{{asset('images/favicons/favicon_32x32.ico')}}" />
+<link rel="icon" type="image/png" sizes="96x96" href="{{asset('images/favicons/favicon_96x96.png')}}" />
 
 
 <script>

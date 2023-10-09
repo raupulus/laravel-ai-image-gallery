@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\IndexController;
+use \App\Http\Controllers\CollectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +17,10 @@ use \App\Http\Controllers\IndexController;
 
 Route::get('/', [IndexController::class, 'index'])->name('home');
 
+Route::group(['prefix' => 'collections'], function () {
+    Route::get('/show/{collection}', [CollectionController::class, 'show'])->name('collections.show');
+    Route::get('/random', [CollectionController::class, 'random'])->name('collections.random');
+});
 
 if (config('app.debug')) {
     Route::get('/tokens/create', function (Request $request) {
