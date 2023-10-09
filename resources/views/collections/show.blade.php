@@ -23,11 +23,10 @@
                 </header>
             </div>
         </div>
-
         @if($collection->url_youtube)
             <div class="row">
                 <div class="col text-center">
-                    <iframe width="560" height="315" src="https://www.youtube.com/embed/U6glI6vFKL0?si=hd9-qcFRYLj75X0o"
+                    <iframe width="560" height="315" src="{{$collection->url_youtube}}"
                             style="max-width: 600px; width: 100%"
                             title="{{$collection->title}}"
                             frameborder="0"
