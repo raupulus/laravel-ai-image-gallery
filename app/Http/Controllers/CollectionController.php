@@ -23,9 +23,12 @@ class CollectionController extends Controller
 
         // TODO: Crear sistema de notificaciones y/o búsqueda para controlar entrar a sitios que no existan
 
+        $images = $collection->images;
+
         return view('collections.show', [
             'collection' => $collection,
-            'images' => $collection->images,
+            'images' => $images,
+            'firstImage' => $images->first()
         ]);
     }
 

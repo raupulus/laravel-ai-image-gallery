@@ -45,13 +45,28 @@ class Collection extends Model
      *
      * @return string
      */
-    public function getTitleResumeAttribute()
+    public function getTitleResumeAttribute(): string
     {
         return Str::limit($this->title, 50);
     }
 
+    /**
+     * Devuelve la primera imagen que encuentre para la colección.
+     *
+     * @return Model|HasMany|object|null
+     */
     public function getPrimaryImageAttribute()
     {
         return $this->images()->first();
+    }
+
+    /**
+     * Devuelve la url hacia la ruta de la colección instanciada.
+     *
+     * @return string
+     */
+    public function getUrlAttribute(): string
+    {
+        return route('collections.show', $this->id);
     }
 }

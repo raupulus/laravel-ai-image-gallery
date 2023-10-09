@@ -22,7 +22,7 @@
 <meta name="author" content="@yield('meta-author', 'Raúl Caro Pastorino')" />
 <meta name="copyright" content="@yield('meta-author', 'Raúl Caro Pastorino')" />
 <meta name="robots" content="@yield('meta-robots', 'index, follow')" />
-<meta name="keywords" content="@yield('meta-keywords', 'Api Raupulus, raupulus, chipiona, desarrollador web, developer, backend, backend developer, Raúl Caro Pastorino')" />
+<meta name="keywords" content="@yield('meta-keywords', 'AI, Stable Diffusion, IA, Inteligencia artificial, raupulus, Raúl Caro Pastorino')" />
 
 <meta name="url" content="{{request()->fullUrl()}}">
 <meta name="identifier-URL" content="{{request()->fullUrl()}}">

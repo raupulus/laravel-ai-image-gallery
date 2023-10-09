@@ -1,5 +1,16 @@
 @extends('layouts.app')
 
+@section('meta-description', $collection->description)
+@section('meta-keywords', 'AI, Stable Diffusion, Dall-e, Raúl Caro Pastorino, raupulus, ' . $collection->tags)
+@section('meta-og-title', $collection->title)
+@section('meta-og-description', $collection->description)
+@section('meta-og-image', $firstImage?->urlImage ?? asset('images/logo/logo_640x640.webp'))
+@section('meta-og-image-url', $firstImage?->urlImage ?? asset('images/logo/logo_640x640.webp'))
+@section('meta-og-image-secure_url', $firstImage?->urlImage ?? asset('images/logo/logo_640x640.webp'))
+@section('meta-og-url', $collection->url)
+@section('meta-og-image_alt', $collection->title)
+@section('meta-twitter-title', $collection->title)
+
 @section('content')
     <div class="container-xl" style="">
         <div class="row">
@@ -24,8 +35,6 @@
                 </div>
             </div>
         @else
-            @php($firstImage = $images->first())
-
             @if($firstImage)
                 <div class="row">
                     <div class="col text-center">
@@ -58,7 +67,6 @@
                 </p>
             </div>
         </div>
-
 
         {{-- Grid con las imágenes --}}
         @include('components._grid_images')
