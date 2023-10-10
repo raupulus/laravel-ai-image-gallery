@@ -23,7 +23,7 @@ Route::group(['prefix' => 'collections'], function () {
 });
 
 Route::group(['prefix' => 'webhooks'], function () {
-    Route::get('/twitter', function () {
+    Route::any('/twitter', function () {
         return response()->json([
             'success' => true
         ]);
