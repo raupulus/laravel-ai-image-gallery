@@ -22,6 +22,14 @@ Route::group(['prefix' => 'collections'], function () {
     Route::get('/random', [CollectionController::class, 'random'])->name('collections.random');
 });
 
+Route::group(['prefix' => 'webhooks'], function () {
+    Route::get('/twitter', function () {
+        return response()->json([
+            'success' => true
+        ]);
+    });
+});
+
 if (config('app.debug')) {
     Route::get('/tokens/create', function (Request $request) {
         //if (auth()->guest()) {
