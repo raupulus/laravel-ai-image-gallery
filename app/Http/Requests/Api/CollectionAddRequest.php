@@ -70,7 +70,7 @@ class CollectionAddRequest extends FormRequest
             "ai" => "nullable|string|max:127",
             "role" => "nullable|string|max:255",
             "title" => "required|string|max:511",
-            "description" => "nullable|string|max:511",
+            "description" => "nullable|string|max:1024",
             "tags" => "nullable|string|max:255",
             "prompt" => "required|string|max:1024",
             "negative_prompt" => "nullable|string|max:1024",
