@@ -22,7 +22,12 @@ class CollectionController extends Controller
             unset($validated['seeds']);
         }
 
-        $collection = Collection::create($validated);
+        $collection = Collection::updateOrCreate(
+            [
+                'batch_id' => $validated['batch_id']
+            ],
+            $validated
+        );
 
         Cache::remember('collection-image-update-' . $collection->id, 3600, function () use ($seeds) {
             return $seeds;
@@ -34,6 +39,7 @@ class CollectionController extends Controller
             'success' => true,
             'data' => [
                 'collection_id' => $collection->id,
+                'url' => $collection->url
             ]
             //'seeds' => $seeds,
 
