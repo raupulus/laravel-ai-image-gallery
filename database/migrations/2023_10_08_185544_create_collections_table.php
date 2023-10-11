@@ -28,7 +28,7 @@ return new class extends Migration
                 ->comment('Identifica el role usado para generar la imagen, parámetros que influyen en la descripción del prompt');
             $table->string('title', 511)
                 ->comment('Título que describe el contexto de las imágenes');
-            $table->string('description', 511)
+            $table->string('description', 1024)
                 ->nullable()
                 ->comment('Descripción sobre el contexto de las imágenes');
             $table->string('tags', 255)

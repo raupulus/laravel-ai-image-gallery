@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use function auth;
 
 /**
@@ -51,7 +52,9 @@ class CollectionAddRequest extends FormRequest
             'denoising_strength' => (string) $request->denoising_strength,
             'tags' => implode(',', $request->tags),
             'size_resized' => $size_resized,
-            'restore_faces' => in_array($request->restore_faces, ['true', '1', 1])
+            'restore_faces' => in_array($request->restore_faces, ['true', '1', 1]),
+            'title' => Str::limit($request->description, 255),
+            'description' => Str::limit($request->description, 1024),
         ]);
     }
 
