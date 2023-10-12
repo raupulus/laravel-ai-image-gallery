@@ -11,6 +11,18 @@ E-mail: raul@fryntiz.dev
 <html data-bs-theme="auto" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
+    @if(config('services.google.analytics'))
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{config('services.google.analytics')}}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', '{{config('services.google.analytics')}}');
+        </script>
+    @endif
+
     @include('layouts.head')
     @yield('head_css')
     @yield('head_js')
