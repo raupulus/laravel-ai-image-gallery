@@ -53,7 +53,7 @@ class CollectionAddRequest extends FormRequest
             'tags' => implode(',', $request->tags),
             'size_resized' => $size_resized,
             'restore_faces' => in_array($request->restore_faces, ['true', '1', 1]),
-            'title' => Str::limit($request->description, 255),
+            'title' => Str::limit($request->title, 255),
             'description' => Str::limit($request->description, 1024),
         ]);
     }
