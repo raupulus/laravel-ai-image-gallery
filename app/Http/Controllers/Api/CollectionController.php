@@ -91,7 +91,7 @@ class CollectionController extends Controller
         $validated = $request->validated();
 
         Collection::where('batch_id', $validated['batch_id'])->update([
-            'youtube_url' => $validated['url_youtube'],
+            'url_youtube' => $validated['url_youtube'],
         ]);
 
         return response()->json([
