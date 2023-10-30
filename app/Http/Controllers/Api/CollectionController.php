@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\CollectionAddRequest;
 use App\Http\Requests\Api\CollectionUpdateRequest;
+use App\Http\Requests\Api\CollectionVideoUpdateRequest;
 use App\Models\Collection;
 use App\Models\Image;
 use Illuminate\Http\Request;
@@ -83,5 +84,19 @@ class CollectionController extends Controller
             ]
             //'collection' => $collection,
         ]);
+    }
+
+    public function videoUpdate(CollectionVideoUpdateRequest $request)
+    {
+        $validated = $request->validated();
+
+        Collection::where('batch_id', $validated['batch_id'])->update([
+            'url_youtube' => $validated['url_youtube'],
+        ]);
+
+        return response()->json([
+            'success' => true
+        ]);
+
     }
 }

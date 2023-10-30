@@ -26,6 +26,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => '/collections'], funct
 
     Route::post('/add', [CollectionController::class, 'add']);
     Route::post('/update/{collection}', [CollectionController::class, 'update']);
+    Route::post('/video/update', [CollectionController::class, 'videoUpdate']);
 
 });
 

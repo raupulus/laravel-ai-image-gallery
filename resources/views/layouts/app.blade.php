@@ -12,7 +12,6 @@ E-mail: raul@fryntiz.dev
 
 <head>
     @if(config('services.google.analytics'))
-        <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id={{config('services.google.analytics')}}"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
