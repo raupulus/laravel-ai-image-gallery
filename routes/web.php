@@ -20,6 +20,14 @@ Route::get('/', [IndexController::class, 'index'])->name('home');
 Route::group(['prefix' => 'collections'], function () {
     Route::get('/show/{collection}', [CollectionController::class, 'show'])->name('collections.show');
     Route::get('/random', [CollectionController::class, 'random'])->name('collections.random');
+
+
+    // Temporal, AJAX
+
+    Route::group(['prefix' => 'ajax'], function () {
+        Route::get('/get/cards/{page?}/{search?}', [CollectionController::class, 'ajaxGetHomeCards'])
+            ->name('collection.ajax.get.cards');
+    });
 });
 
 Route::group(['prefix' => 'webhooks'], function () {

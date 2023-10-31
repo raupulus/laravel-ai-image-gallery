@@ -1,0 +1,99 @@
+
+
+
+/**
+ * Botón superpuesto a la imagen para llevar a la galería
+ */
+
+
+.collection-block-box-btn-show-collection {
+    position: absolute;
+    padding: 0.4rem;
+    text-decoration: none;
+    font-weight: bold;
+    color: rgb(240,240,240);
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 1rem;
+    translate: -50% 40px;
+    z-index: 10;
+}
+
+.collection-block-box-btn-show-collection:hover {
+    background-color: rgba(0,0,0, 1);
+}
+
+/*
+ * HEAD
+ */
+
+.collection-block-head {
+
+}
+
+.collection-block-head a {
+    text-decoration: none;
+    color: #fff;
+}
+
+
+/**
+ * Image
+ */
+
+.collection-block-image {
+
+}
+
+.collection-block-image:hover {
+    opacity: 0.9;
+}
+
+.collection-block-image:hover .img-crop, .image-crop-container:hover .img-crop {
+    width: 110%;
+    height: 110%;
+    margin-left: -5%;
+}
+
+.image-crop-container {
+    width: 100%;
+    max-width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.box-image-crop-link {
+    display: block;
+    cursor: zoom-in;
+    width: 100%;
+    height: 100%;
+}
+
+.img-crop {
+    display: block;
+    margin: auto;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/**
+ * Footer
+ */
+
+.collection-block-footer {
+    min-height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.collection-block-footer a {
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+}
+
+.collection-block-footer a p {
+    margin: 0;
+}

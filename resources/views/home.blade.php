@@ -6,7 +6,7 @@
             <div class="col">
                 <header style="margin-top: 4rem;margin-bottom: 4rem;">
                     <h1 class="text-capitalize fs-1 fw-bold text-center text-primary"
-                        style="font-family: Aclonica, sans-serif;">Disléxica</h1>
+                        style="font-family: Aclonica, sans-serif;">Dyslexic</h1>
                 </header>
 
             </div>
@@ -29,7 +29,8 @@
                             </svg>
                         </span>
 
-                        <input class="form-control"
+                        <input id="main-input-search"
+                               class="form-control"
                                name="search"
                                type="search"
                                value="{{$search}}"
@@ -47,49 +48,110 @@
 
 
         {{-- Grid con las imágenes --}}
-        <div class="row">
+        <div id="box-all-collections-blocks" class="row">
 
             @foreach($collections as $collection)
 
                 @if($collection->images->count())
-                    @php($image = $collection->primaryImage)
-
-                    <div class="col-md-3 text-center col-sm-4 col-6 mt-1 mb-2">
-                        <a href="{{route('collections.show', $collection->id)}}"
-                           style="text-decoration: none; color: #fff;"
-                           class="text-bg-danger small p-1 rounded-3 d-block">
-                            {{$collection->images->count()}}
-
-                            Images in Collection
-                        </a>
-
-                        <a href="{{$image->urlImage}}"
-                           data-fancybox="gallery">
-                            <img class="img-fluid"
-                                 alt="{{$collection->title}}"
-                                 src="{{$image->urlThumbnail}}">
-                        </a>
-
-                        <a href="{{route('collections.show', $collection->id)}}"
-                           class="d-block bg-dark text-info"
-                           style="text-decoration: none; min-height: 49px;">
-                            <p class="text-center text-info">
-                                {{$collection->titleResume}}
-                            </p>
-                        </a>
-                    </div>
+                    @include('components._collection_block')
                 @endif
 
             @endforeach
 
         </div>
 
-
         <div class="row">
             <div class="col-12">
-                {{$collections->links()}}
+                {{-- $collections->links() --}}
+            </div>
+        </div>
+
+        <div id="box-collections-end" class="row">
+            <div class="col-12 text-info p-1">
+
+                Total Collections:
+                <span id="total-images" class="font-monospace">0</span>
+
             </div>
         </div>
 
     </div>
+@endsection
+
+
+
+@section('js')
+    <script>
+        let currentPage = parseInt("{{isset($page) && $page ? $page : 1}}");
+        let hasMorePages = true;
+
+        function fetchNextCollectionBlocks(box) {
+            currentPage += 1
+
+            const search = document.getElementById('main-input-search').value;
+            let url = "{{route('collection.ajax.get.cards')}}";
+
+            url += '/' + (2 + currentPage); // Sumo 3 para compensar 24 imágenes al comenzar (8 por carga de página)
+
+            if (search) {
+                url += '/' + search;
+            }
+
+            fetch(url, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+
+                        if (data.html) {
+                            box.insertAdjacentHTML('beforeend', data.html);
+                        }
+
+                        hasMorePages = data.hasMorePages;
+
+                        let totalSpan = document.getElementById('total-images');
+
+                        if (totalSpan && data.total) {
+                            totalSpan.textContent = data.total;
+                        }
+                    }
+                })
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const boxCollections = document.getElementById('box-all-collections-blocks');
+
+            if (boxCollections) {
+                const elementInView = (el, percentageScroll = 100) => {
+                    const elementTop = el.getBoundingClientRect().top;
+
+                    return (
+                        elementTop <=
+                        ((window.innerHeight || document.documentElement.clientHeight) * (percentageScroll/100))
+                    );
+                };
+
+                const handleScrollAnimation = () => {
+                    const ele = document.getElementById('box-collections-end');
+
+                    if (elementInView(ele, 90)) {
+                        fetchNextCollectionBlocks(boxCollections);
+                    }
+                }
+
+                window.addEventListener('scroll', () => {
+                    if (hasMorePages) {
+                        handleScrollAnimation();
+                    }
+                })
+
+                handleScrollAnimation();
+            }
+        });
+    </script>
 @endsection
