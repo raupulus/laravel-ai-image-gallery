@@ -70,7 +70,7 @@ class Collection extends Model
         $width = (int)explode('x', $size)[0];
         $height = (int)explode('x', $size)[1];
 
-        return (bool) $width > $height;
+        return $width > $height;
     }
 
     /**
@@ -92,6 +92,16 @@ class Collection extends Model
     public function getTitleResumeAttribute(): string
     {
         return Str::limit($this->title, 50);
+    }
+
+    /**
+     * Prepara los tags asociados y los devuelve en un array.
+     *
+     * @return array|null
+     */
+    public function getTagsArrayAttribute(): ?array
+    {
+        return $this->tags ? explode(',', $this->tags) : null;
     }
 
     /**
