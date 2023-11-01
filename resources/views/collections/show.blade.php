@@ -13,16 +13,23 @@
 
 @section('content')
     <div class="container-xl" style="">
-        <div class="row">
-            <div class="col">
-                <header style="margin-top: 4rem;margin-bottom: 4rem;">
+        <div class="row mt-5 mb-2">
+            <div class="col-12">
+                <header>
                     <h1 class="text-capitalize fs-1 fw-bold text-center text-primary"
                         style="font-family: Aclonica, sans-serif;">
                         {{$collection->title}}
                     </h1>
                 </header>
             </div>
+
+            <div class="col-12 text-sm-center">
+                <p>
+                    {{$collection->description}}
+                </p>
+            </div>
         </div>
+
         @if($collection->url_youtube)
             <div class="row">
                 <div class="col text-center">
@@ -61,11 +68,29 @@
         @endif
 
         {{-- Metadatos --}}
-        <div class="row">
-            <div class="col">
-                <p>
-                    {{$collection->description}}
-                </p>
+        <div class="row mt-2 mb-2">
+
+
+            <div class="col-12">
+                <div class="row">
+                    <div class="col">AAAAAA lksjdghfsjkdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdf g</div>
+                    <div class="col">BBBBBBBB lksjdghfsjkdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdf g</div>
+                </div>
+
+                <div class="row">
+                    <div class="col">AAAAAA lksjdghfsjkdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdf g</div>
+                    <div class="col">BBBBBBBB lksjdghfsjkdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdf g</div>
+                </div>
+
+                <div class="row">
+                    <div class="col">AAAAAA lksjdghfsjkdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdf g</div>
+                    <div class="col">BBBBBBBB lksjdghfsjkdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdf g</div>
+                </div>
+
+                <div class="row">
+                    <div class="col">AAAAAA lksjdghfsjkdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdf g</div>
+                    <div class="col">BBBBBBBB lksjdghfsjkdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdf g</div>
+                </div>
             </div>
         </div>
 

@@ -7,13 +7,13 @@ Recibimos siempre "$collection" que es una instancia de tupla con el modelo Coll
 @php($image = $collection->primaryImage)
 
 <div class="col-md-3 text-center col-sm-4 col-6 mt-1 mb-2">
-    <a href="{{route('collections.show', $collection->id)}}"
+    <a href="{{$collection->url}}"
        class="collection-block-box-btn-show-collection">
         Show {{$collection->images->count()}} images
     </a>
 
     <div class="collection-block-head">
-        <a href="{{route('collections.show', $collection->id)}}"
+        <a href="{{$collection->url}}"
            class="text-bg-danger small p-1 rounded-3 d-block">
             {{$collection->images->count()}}
 
@@ -32,12 +32,11 @@ Recibimos siempre "$collection" que es una instancia de tupla con el modelo Coll
     </div>
 
     <div class="collection-block-footer bg-dark text-info">
-        <a href="{{route('collections.show', $collection->id)}}">
+        <a href="{{$collection->url}}">
             <p class="text-center text-info">
                 {{$collection->titleResume}}
             </p>
         </a>
     </div>
-
 
 </div>

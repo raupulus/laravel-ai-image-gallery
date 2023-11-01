@@ -14,7 +14,7 @@ class Collection extends Model
     protected $table = 'collections';
 
     protected $fillable = [
-        "role_id",
+        "collection_role_id",
         "batch_id",
         "ai",
         "role",
@@ -49,7 +49,7 @@ class Collection extends Model
      *
      * @return BelongsTo
      */
-    public function role(): BelongsTo
+    public function roleTmp(): BelongsTo
     {
         return $this->belongsTo(CollectionRole::class, 'collection_role_id', 'id');
     }
