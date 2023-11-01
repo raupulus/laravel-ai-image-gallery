@@ -26,7 +26,9 @@
         @if($collection->url_youtube)
             <div class="row">
                 <div class="col text-center">
-                    <iframe width="560" height="315" src="{{$collection->url_youtube}}"
+                    <iframe width="{{$collection->isHorizontal ? '560' : '315'}}"
+                            height="{{$collection->isHorizontal ? '315' : '560'}}"
+                            src="{{$collection->url_youtube}}"
                             style="max-width: 600px; width: 100%"
                             title="{{$collection->title}}"
                             frameborder="0"
@@ -78,4 +80,9 @@
         </div>
 
     </div>
+@endsection
+
+
+@section('css')
+    <link rel="stylesheet" href="{{asset('css/collection_show.css')}}">
 @endsection

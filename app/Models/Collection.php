@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -13,6 +14,7 @@ class Collection extends Model
     protected $table = 'collections';
 
     protected $fillable = [
+        "role_id",
         "batch_id",
         "ai",
         "role",
@@ -43,6 +45,46 @@ class Collection extends Model
     }
 
     /**
+     * Relación con él role asociado a la colección.
+     *
+     * @return BelongsTo
+     */
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(CollectionRole::class, 'collection_role_id', 'id');
+    }
+
+    /**
+     * Devuelve si las proporciones de las imágenes son horizontal.
+     *
+     * @return bool
+     */
+    public function getIsHorizontalAttribute(): bool
+    {
+        $size = $this->size;
+
+        if (!$size) {
+            return true;
+        }
+
+        $width = (int)explode('x', $size)[0];
+        $height = (int)explode('x', $size)[1];
+
+        return (bool) $width > $height;
+    }
+
+    /**
+     * Devuelve si las proporciones de las imágenes son vertical.
+     *
+     * @return bool
+     */
+    public function getIsVerticalAttribute(): bool
+    {
+        return !$this->isHorizontal;
+    }
+
+
+    /**
      * Devuelve el título con longitud limitada.
      *
      * @return string
@@ -71,7 +113,6 @@ class Collection extends Model
     {
         return route('collections.show', $this->id);
     }
-
 
 
     public static function getQueryCollection(string|null $search = null): Builder
