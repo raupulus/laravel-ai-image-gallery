@@ -18,14 +18,28 @@ return new class extends Migration
             $table->charset = 'utf8';
             $table->collation = 'utf8_unicode_ci';
             $table->id();
+            $table->unsignedBigInteger('collection_role_id')
+                ->nullable()
+                ->comment('Asocia con el role en la table de roles para colecciones generadas');
+
+            $table->foreign('collection_role_id')
+                ->references('id')->on('collection_roles')
+                ->onUpdate('CASCADE')
+                ->onDelete('SET NULL');
+
+
+            // Se mantiene temporalmente hasta terminar de utilizar la nueva tabla de roles.
+            $table->string('role', 255)
+                ->nullable()
+                ->comment('Identifica el role usado para generar la imagen, parámetros que influyen en la descripción del prompt');
+
+
             $table->string('batch_id', 255)
                 ->comment('Cadena para identificar el lote subido, esto se utiliza por que antes de subir no se conoce el ID');
             $table->string('ai')
                 ->nullable()
                 ->comment('Tipo de AI utilizada para generar imágenes. Puede usar distintos modelos (EJ: Stable Diffusion, Dall-e...');
-            $table->string('role', 255)
-                ->nullable()
-                ->comment('Identifica el role usado para generar la imagen, parámetros que influyen en la descripción del prompt');
+
             $table->string('title', 511)
                 ->comment('Título que describe el contexto de las imágenes');
             $table->string('description', 1024)

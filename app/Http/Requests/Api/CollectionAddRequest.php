@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api;
 
+use App\Models\CollectionRole;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 use function auth;
@@ -46,7 +47,22 @@ class CollectionAddRequest extends FormRequest
             }
         }
 
+        $roleId = null;
+
+        if ($request->role) {
+            $roleModel = CollectionRole::firstOrCreate([
+                'slug' => $request->role
+            ], [
+                'nombre' => ucwords(Str::replace(['-', '_'], ' ', $request->role)),
+                'description' => null,
+            ]);
+
+            $roleId = $roleModel?->id;
+        }
+
+
         $this->merge([
+            'collection_role_id' => $roleId,
             'steps' => (string) $request->steps,
             'cfg_scale' => (string) $request->cfg_scale,
             'denoising_strength' => (string) $request->denoising_strength,
@@ -66,9 +82,10 @@ class CollectionAddRequest extends FormRequest
     public function rules()
     {
         return [
+            "collection_role_id" => "nullable|integer|exists:collection_roles,id",
+            "role" => "nullable|string|max:255",
             "batch_id" => "required|string|max:255",
             "ai" => "nullable|string|max:127",
-            "role" => "nullable|string|max:255",
             "title" => "required|string|max:511",
             "description" => "nullable|string|max:1024",
             "tags" => "nullable|string|max:255",

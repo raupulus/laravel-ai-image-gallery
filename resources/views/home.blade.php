@@ -4,9 +4,12 @@
     <div class="container-xl" style="">
         <div class="row">
             <div class="col">
-                <header style="margin-top: 4rem;margin-bottom: 4rem;">
+                <header style="margin-top: 4rem;margin-bottom: 1rem;">
                     <h1 class="text-capitalize fs-1 fw-bold text-center text-primary"
-                        style="font-family: Aclonica, sans-serif;">Dyslexic</h1>
+                        style="font-family: Aclonica, sans-serif;">
+                        <span class="d-block">AI</span>
+                        Dyslexic
+                    </h1>
                 </header>
 
             </div>
