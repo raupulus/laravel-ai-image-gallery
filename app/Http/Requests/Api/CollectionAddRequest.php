@@ -53,7 +53,7 @@ class CollectionAddRequest extends FormRequest
             $roleModel = CollectionRole::firstOrCreate([
                 'slug' => $request->role
             ], [
-                'nombre' => ucwords(Str::replace(['-', '_'], ' ', $request->role)),
+                'name' => ucwords(Str::replace(['-', '_'], ' ', $request->role)),
                 'description' => null,
             ]);
 
