@@ -29,6 +29,19 @@
                 <li class="nav-item"><a class="nav-link" href="#">Likes</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Downloads</a></li>
                 --}}
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('page.show', 'about')}}">
+                        About
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('page.show', 'social')}}">
+                        Social
+                    </a>
+                </li>
+
             </ul>
 
             <a class="btn btn-primary ms-md-2"

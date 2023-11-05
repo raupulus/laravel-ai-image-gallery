@@ -147,5 +147,6 @@
 </script>
 <link rel="stylesheet" href="{{asset('theme/bootstrap/css/bootstrap.min.css')}}">
 <link rel="stylesheet" href="{{asset('theme/css/styles.min.css')}}">
+<link rel="stylesheet" href="{{asset('css/styles.css')}}">
 <link rel="stylesheet" href="{{asset('css/collection_blocks.css')}}">
 <link rel="stylesheet" href="{{asset('theme/css/fancybox.css')}}">

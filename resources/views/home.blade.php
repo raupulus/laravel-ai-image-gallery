@@ -1,12 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container-xl" style="">
+    <div class="container-xl">
         <div class="row">
             <div class="col">
                 <header style="margin-top: 4rem;margin-bottom: 1rem;">
-                    <h1 class="text-capitalize fs-1 fw-bold text-center text-primary"
-                        style="font-family: Aclonica, sans-serif;">
+                    <h1 class="text-capitalize fs-1 fw-bold text-center text-primary main-title">
                         <span class="d-block">AI</span>
                         Dyslexic
                     </h1>

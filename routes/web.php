@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\IndexController;
 use \App\Http\Controllers\CollectionController;
-
+use \App\Http\Controllers\PageController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,6 +16,14 @@ use \App\Http\Controllers\CollectionController;
 */
 
 Route::get('/', [IndexController::class, 'index'])->name('home');
+
+#################           Páginas           #################
+
+Route::group(['prefix' => 'page'], function () {
+    Route::get('/{page}', [PageController::class, 'show'])->name('page.show');
+});
+
+#################           Colecciones           #################
 
 Route::group(['prefix' => 'collections'], function () {
     Route::get('/show/{collection}', [CollectionController::class, 'show'])->name('collections.show');
