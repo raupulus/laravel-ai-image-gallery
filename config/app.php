@@ -15,7 +15,13 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'AI Dyslexic'),
+
+
+
+    'description' => env('APP_DESCRIPTION', 'Website to display a gallery of images generated with artificial intelligence (Stable Diffusion) and Generate promt from role system with GPT'),
+
+
 
     /*
     |--------------------------------------------------------------------------
