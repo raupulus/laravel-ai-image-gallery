@@ -1,3 +1,26 @@
 .main-title {
     font-family: Aclonica, sans-serif !important;
 }
+
+/* Listas */
+.r-list li {
+    padding-left: 0.2rem;
+    list-style: none;
+}
+
+.r-list-checked {
+    padding: 0.4rem 0;
+}
+
+.r-list-checked li:before {
+    content: url("data:image/svg+xml,%3Csvg width='25' height='25' version='1.1' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m0 17.2s4.93 5.55 5.91 7.81h4.23c1.77-5.42 8.67-18.4 14.6-22.9 1.22-1.57-1.85-2.22-4.33-1.18-3.74 1.57-10.8 13.6-12.1 16.4-1.87 0.492-3.84-3.15-3.84-3.15z' fill='%231ad51a' stroke-width='.0428'/%3E%3C/svg%3E%0A");
+}
+
+.r-list-checked li {
+    padding: 0.5rem 0.3rem 0.5rem 1.5rem;
+    list-style: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    background-color: #0f2537;
+    margin: 4px 0;
+}

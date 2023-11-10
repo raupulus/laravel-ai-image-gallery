@@ -25,25 +25,40 @@
                 <div class="page-content-link-container">
                     <div>
                         <ul>
-                            <li><a href="#">ENLACE TEST</a></li>
-                            <li><a href="#">ENLACE TEST</a></li>
-                            <li><a href="#">ENLACE TEST</a></li>
+                            <li>
+                                <a href="{{route('page.show', 'about')}}">
+                                    About
+                                </a>
+                            </li>
+
+                            {{--
+                            <li><a href="#">Cookies</a></li>
+                            <li><a href="#">TEST</a></li>
+                            --}}
                         </ul>
                     </div>
 
                     <div>
                         <ul>
+                            <li>
+                                <a href="{{route('page.show', 'social')}}">
+                                    Social
+                                </a>
+                            </li>
+                            {{--
                             <li><a href="#">ENLACE TEST</a></li>
-                            <li><a href="#">ENLACE TEST</a></li>
-                            <li><a href="#">ENLACE TEST</a></li>
+                            <li><a href="#">RGPD</a></li>
+                            --}}
                         </ul>
                     </div>
 
                     <div>
                         <ul>
+                            {{--
                             <li><a href="#">ENLACE TEST</a></li>
                             <li><a href="#">ENLACE TEST</a></li>
                             <li><a href="#">ENLACE TEST</a></li>
+                            --}}
                         </ul>
                     </div>
                 </div>
