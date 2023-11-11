@@ -45,6 +45,31 @@ class CollectionController extends Controller
         return redirect()->route('collections.show', $collection->id);
     }
 
+    /**
+     * Eliminamos una colección junto con las imágenes que la componen.
+     *
+     * @param Request $request
+     * @param Collection $collection
+     * @return RedirectResponse
+     */
+    public function delete(Request $request, Collection $collection): RedirectResponse
+    {
+        $user = auth()->user();
+
+        if (!$user?->isAdmin || !$collection->id) {
+            abort(404);
+        }
+
+        $images = $collection->images;
+
+        foreach ($images as $image) {
+            $image->safeDelete();
+        }
+
+        $collection->delete();
+
+        return redirect()->route('home');
+    }
 
 
 

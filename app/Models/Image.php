@@ -135,4 +135,22 @@ class Image extends Model
         return $uploadedFile;
     }
 
+
+
+    public function safeDelete()
+    {
+        $pathImage = storage_path('app/public/' . $this->image);
+        $pathThumbnail = storage_path('app/public/' . $this->thumbnail);
+
+        if (file_exists($pathImage)) {
+            unlink($pathImage);
+        }
+
+        if (file_exists($pathThumbnail)) {
+            unlink($pathThumbnail);
+        }
+
+        $this->delete();
+    }
+
 }

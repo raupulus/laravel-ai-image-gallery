@@ -5,7 +5,7 @@
 
             <img src="{{asset('images/logo/logo_40x40.webp')}}"
                  class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon"
-                 alt="Website Logo" />
+                 alt="Website Logo"/>
 
             <span>AI Dyslexic</span>
         </a>
@@ -45,11 +45,23 @@
             </ul>
 
             <a class="btn btn-primary ms-md-2"
-                    role="button"
+               role="button"
                data-bss-hover-animate="flash"
                href="{{route('collections.random')}}">
                 Random
             </a>
+
+            @if(auth()->user())
+                <span>
+                    <form method="POST" action="{{route('logout')}}">
+                        @csrf
+
+                        <button type="submit"
+                                class="btn btn-primary ms-md-2"
+                                role="button">Logout</button>
+                    </form>
+                </span>
+            @endif
         </div>
     </div>
 </nav>

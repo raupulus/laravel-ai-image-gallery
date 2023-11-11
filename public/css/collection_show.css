@@ -76,3 +76,43 @@
         max-height: 210px;
     }
 }
+
+
+/** Acciones para admin **/
+.box-action-tools {
+    margin-bottom: 0.5rem;
+    padding: 0;
+    width: 100%;
+    text-align: right;
+}
+
+.container-action-tools {
+    padding: 0.2rem 1rem;
+    display: inline;
+}
+
+.action-tool {
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.action-tool svg {
+    translate: 0 -2px;
+}
+
+/* Tool para cada imagen */
+.tool-image-collection {
+    display: inline-block;
+    margin-bottom: 4px;
+    padding: 0.4rem;
+    cursor: pointer;
+    text-align: right;
+    border-radius: 10%;
+    background-color: #f3f3f3;
+}
+
+.tool-image-collection svg {
+
+}
+

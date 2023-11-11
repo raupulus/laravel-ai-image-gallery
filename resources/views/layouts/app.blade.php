@@ -35,6 +35,7 @@ E-mail: raul@fryntiz.dev
 </div>
 
 @include('layouts.footer')
+@yield('before_meta')
 @include('layouts.footer_meta')
 @yield('css')
 @yield('js')

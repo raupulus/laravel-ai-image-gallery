@@ -30,6 +30,11 @@ Route::group(['prefix' => 'collections'], function () {
     Route::get('/random', [CollectionController::class, 'random'])->name('collections.random');
 
 
+    ## Eliminar colección
+    Route::group(['middleware' => 'auth'], function () {
+        Route::post('/delete/{collection}', [CollectionController::class, 'delete'])->name('collection.delete');
+    });
+
     // Temporal, AJAX
 
     Route::group(['prefix' => 'ajax'], function () {
@@ -61,3 +66,6 @@ if (config('app.debug')) {
     });
 }
 
+
+
+require __DIR__.'/auth.php';
