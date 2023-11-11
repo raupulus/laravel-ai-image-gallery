@@ -32,6 +32,9 @@
             </div>
         </div>
 
+
+        @dd(auth()->user()?->isAdmin)
+
         @if($collection->url_youtube)
             <div class="row">
                 <div class="col text-center">

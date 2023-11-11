@@ -15,6 +15,14 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('role_id')
+                ->nullable()
+                ->comment('Role que representa al usuario');
+
+            $table->foreign('role_id')
+                ->references('id')->on('roles')
+                ->onUpdate('CASCADE')
+                ->onDelete('SET NULL');
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();

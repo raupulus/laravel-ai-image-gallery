@@ -41,4 +41,28 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    ######################## Sistema de roles #######################
+
+
+    /**
+     * Devuelve si el usuario es de tipo administrador.
+     *
+     * @return bool
+     */
+    public function getIsAdminAttribute(): bool
+    {
+        return $this->role_id === 1;
+    }
+
+    /**
+     * Devuelve si el usuario puede eliminar contenido
+     *
+     * @return bool
+     */
+    public function getCanDeleteAttribute(): bool
+    {
+        return $this->isAdmin;
+    }
 }
