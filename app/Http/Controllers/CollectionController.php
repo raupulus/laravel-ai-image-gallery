@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Collection;
+use App\Models\Image;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -71,6 +72,33 @@ class CollectionController extends Controller
         return redirect()->route('home');
     }
 
+    /**
+     * Elimina una imagen de una colección.
+     *
+     * @param Request $request
+     * @param Collection $collection
+     * @param Image $image
+     * @return JsonResponse|RedirectResponse
+     */
+    public function deleteImage(Request $request, Collection $collection, Image $image): JsonResponse|RedirectResponse
+    {
+        $user = auth()->user();
+
+        if (!$user?->isAdmin || !$collection->id || !$image->id) {
+            abort(404);
+        }
+
+        $image->safeDelete();
+
+        if ($request->isJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Image successfully removed from collection'
+            ]);
+        }
+
+        return redirect()->url($collection->url);
+    }
 
 
 

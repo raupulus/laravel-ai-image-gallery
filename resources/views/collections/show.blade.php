@@ -307,28 +307,53 @@
 
         {{-- Eliminar colecciones --}}
         @if(auth()->user()?->isAdmin)
-            function confirmDeleteCollection() {
-                const confirmDelete = confirm('!!!!!!!! ¿¿¿¿ SEGURO DE ELIMINAR LA COLECCIÓN ???? !!!!!!!!')
-                const form = document.getElementById('form-delete-collection');
 
-                if (confirmDelete) {
-                    form.submit();
-                }
+        /**
+         * Elimina una colección
+         */
+        function confirmDeleteCollection() {
+            const confirmDelete = confirm('!!!!!!!! ¿¿¿¿ SEGURO DE ELIMINAR LA COLECCIÓN ???? !!!!!!!!')
+            const form = document.getElementById('form-delete-collection');
+
+            if (confirmDelete) {
+                form.submit();
+            }
+        }
+
+        /**
+         * Elimina una imagen de la colección
+         * @param ele
+         */
+        function deleteImageFromCollection(ele) {
+            const url = ele.getAttribute('data-url_delete');
+            const confirmDelete = confirm('!! ¿¿ SEGURO DE ELIMINAR LA IMAGEN DE LA COLECCIÓN ?? !!')
+
+            if (!confirmDelete) {
+                return;
             }
 
-            function deleteImageFromCollection(ele) {
-                const url = '';
-                const id = parseInt("{{$collection->id}}");
-                const imageId = ''; //añadir data al bloque
+            const box = ele.closest('.every-image-collection');
 
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && box) {
+                        box.remove();
+                    }
 
-                const confirmDelete = confirm('!! ¿¿ SEGURO DE ELIMINAR LA IMAGEN DE LA COLECCIÓN ?? !!')
-
-
-                console.log(confirmDelete);
-
-                // TODO: Hacer fetch - Post
-            }
+                    if (data.message) {
+                        // TODO: TOAST MESSAGE
+                        //console.log(data.message);
+                    }
+                })
+        }
         @endif
 
 
@@ -348,12 +373,11 @@
                     btnDeleteCollection.addEventListener('click', confirmDeleteCollection)
                 }
 
-
                 const btnsDelete = document.querySelectorAll('.tool-delete-image-collection');
 
                 if (btnsDelete) {
                     btnsDelete.forEach((btnDelete) => {
-                        btnDelete.addEventListener('click', (ele) => deleteImageFromCollection(ele));
+                        btnDelete.addEventListener('click', () => deleteImageFromCollection(btnDelete));
                     });
                 }
             @endif
@@ -361,3 +385,4 @@
         });
     </script>
 @endsection
+

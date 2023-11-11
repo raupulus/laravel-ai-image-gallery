@@ -30,9 +30,14 @@ Route::group(['prefix' => 'collections'], function () {
     Route::get('/random', [CollectionController::class, 'random'])->name('collections.random');
 
 
-    ## Eliminar colección
+    ## Acciones de administración en colecciones
     Route::group(['middleware' => 'auth'], function () {
+
+        ## Eliminar colección.
         Route::post('/delete/{collection}', [CollectionController::class, 'delete'])->name('collection.delete');
+
+        ## Eliminar una imagen de la colección.
+        Route::post('/{collection}/image/{image}/delete', [CollectionController::class, 'deleteImage'])->name('collection.image.delete');
     });
 
     // Temporal, AJAX

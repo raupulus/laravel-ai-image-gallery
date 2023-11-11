@@ -3,13 +3,16 @@
 
     @foreach($images as $image)
 
-        <div class="col-md-3 text-center col-sm-4 col-6 mt-1 mb-2">
+        <div class="every-image-collection col-md-3 text-center col-sm-4 col-6 mt-1 mb-2">
 
             @if (auth()->user()?->isAdmin)
                 <div class="text-end">
 
                     {{-- Botón para Eliminar imagen --}}
-                    <span class="tool-delete-image-collection tool-image-collection">
+                    <span class="tool-delete-image-collection tool-image-collection"
+                          data-url_delete="{{route('collection.image.delete', ['collection' => $image->collection_id, 'image' => $image->id])}}"
+                          data-image_id="{{$image->id}}"
+                          data-collection_id="{{$image->collection_id}}">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              fill="#f00"
                              height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path
