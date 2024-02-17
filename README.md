@@ -29,7 +29,7 @@ Then, with all those images and using the **ffmpeg** video tool, you create auto
 between images and background music.
 
 This video will be automatically uploaded to [**tiktok**](https://www.tiktok.com/@ai_automations) with selenium and [*
-*Youtube**](https://www.youtube.com/@ai_automations_experimental) using your api and it will also be synchronized by
+*Youtube**](https://www.youtube.com/@ai_automations_experimental) using your api and, it will also be synchronized by
 sending a request to my api so that the video is set as collection/gallery cover.
 
 <p align="center">
@@ -46,15 +46,21 @@ these tools currently offer.
 Another aspect that caught my attention when carrying out this project is the possibility of Learn to work by connecting
 all the APIs of social networks and video platforms like YouTube.
 
-Generating images is quite fun and you can also use it for project covers or images with which to fill web developments
+Generating images is quite fun and, you can also use it for project covers or images with which to fill web developments
 that I carry out.
 
-The main objective is to experiment and learn although I would also like to leave some passive income trying to sell
+The main objective is to experiment and learn although, I would also like to leave some passive income trying to sell
 images on stock platforms and perhaps with some ads that are not intrusive for the user. cost of maintaining hardware.
 
 * * *
 
 ## Deploy
+
+Create postgresql database (change params)
+
+```bash
+sudo -u postgres createdb -O web -T template1 laravel_ai_image_gallery
+```
 
 Prepare **.env** and edit content:
 
