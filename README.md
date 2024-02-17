@@ -59,7 +59,7 @@ images on stock platforms and perhaps with some ads that are not intrusive for t
 Create postgresql database (change params)
 
 ```bash
-sudo -u postgres createdb -O web -T template1 laravel_ai_image_gallery
+sudo -u postgres createdb -O web -T template1 aidyslexic_raupulus_dev
 ```
 
 Prepare **.env** and edit content:
