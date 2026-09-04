@@ -4,8 +4,8 @@
 @copyright Copyright (c) 2023 Raúl Caro Pastorino
 @license https://www.gnu.org/licenses/gpl-3.0-standalone.html
 
-Author Web: https://fryntiz.es
-E-mail: raul@fryntiz.dev
+Author Web: https://raupulus.dev
+E-mail: public@raupulus.dev
 -->
 
 <html data-bs-theme="auto" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
