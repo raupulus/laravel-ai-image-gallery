@@ -1,5 +1,14 @@
 @extends('layouts.app')
 
+@section('title', ($page['title'] ?? 'Page') . ' | ' . config('app.name'))
+@section('meta-description', $page['description'] ?? config('app.description'))
+@section('canonical', route('page.show', $slug ?? 'about'))
+@section('meta-og-title', ($page['title'] ?? 'Page') . ' | ' . config('app.name'))
+@section('meta-og-description', $page['description'] ?? config('app.description'))
+@section('meta-og-url', route('page.show', $slug ?? 'about'))
+@section('meta-twitter-title', ($page['title'] ?? 'Page') . ' | ' . config('app.name'))
+@section('meta-twitter-description', $page['description'] ?? config('app.description'))
+
 @section('content')
     <div class="container-xl">
         <div class="row">

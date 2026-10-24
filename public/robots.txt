@@ -1,2 +1,7 @@
 User-agent: *
-Disallow:
+Disallow: /collections/ajax/
+Disallow: /webhooks/
+Disallow: /login
+Disallow: /tokens/
+
+Sitemap: /sitemap.xml

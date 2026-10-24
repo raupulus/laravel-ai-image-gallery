@@ -24,8 +24,9 @@
 <meta name="robots" content="@yield('meta-robots', 'index, follow')" />
 <meta name="keywords" content="@yield('meta-keywords', 'AI, Stable Diffusion, IA, Inteligencia artificial, raupulus, Raúl Caro Pastorino')" />
 
-<meta name="url" content="{{request()->fullUrl()}}">
-<meta name="identifier-URL" content="{{request()->fullUrl()}}">
+<link rel="canonical" href="@yield('canonical', request()->url())" />
+<meta name="url" content="@yield('canonical', request()->url())">
+<meta name="identifier-URL" content="@yield('canonical', request()->url())">
 <meta name="revisit-after" content="7 days">
 
 
@@ -44,14 +45,17 @@
 <meta property="og:image:secure_url"
       content="@yield('meta-og-image-secure_url', asset('images/logo/logo_640x640.webp'))" />
 <meta property="og:url"
-      content="@yield('meta-og-url', request()->fullUrl())" />
+      content="@yield('meta-og-url', request()->url())" />
 <meta property="og:image:alt"
       content="@yield('meta-og-image_alt', config('app.description'))" />
 <meta property="og:image:type"
       content="@yield('meta-og-image-type', 'image/webp')" />
 
+<meta name="twitter:card" content="@yield('meta-twitter-card', 'summary_large_image')" />
 <meta name="twitter:title" content="@yield('meta-twitter-title', config('app.name'))" />
-<meta name="twitter:card" content="@yield('meta-twitter-card', 'summary')" />
+<meta name="twitter:description" content="@yield('meta-twitter-description', config('app.description'))" />
+<meta name="twitter:image" content="@yield('meta-twitter-image', asset('images/logo/logo_640x640.webp'))" />
+<meta name="twitter:image:alt" content="@yield('meta-twitter-image-alt', config('app.description'))" />
 <meta name="twitter:site" content="@yield('meta-twitter-site', '@raupulus')" />
 <meta name="twitter:creator" content="@yield('meta-twitter-creator', '@raupulus')" />
 

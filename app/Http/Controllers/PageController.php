@@ -10,24 +10,58 @@ use Illuminate\View\View;
  */
 class PageController extends Controller
 {
-    private $pages = [
+    private static array $pages = [
         'about' => [
+            'slug' => 'about',
             'title' => 'About',
-            'view' => 'pages.content._about'
+            'description' => 'About AI Automations Experimental project and author Raúl Caro Pastorino.',
+            'view' => 'pages.content._about',
+            'active' => true,
         ],
         'cookies' => [
+            'slug' => 'cookies',
             'title' => 'Cookies',
-            'view' => 'pages.content._cookies'
+            'description' => 'Cookies Policy for AI Dyslexic.',
+            'view' => 'pages.content._cookies',
+            'active' => false,
         ],
         'rgpd' => [
-            'title' => 'RPGD',
-            'view' => 'pages.content._rgpd'
+            'slug' => 'rgpd',
+            'title' => 'RGPD',
+            'description' => 'Privacy and RGPD/GDPR Policy for AI Dyslexic.',
+            'view' => 'pages.content._rgpd',
+            'active' => false,
         ],
         'social' => [
+            'slug' => 'social',
             'title' => 'Social Networks',
-            'view' => 'pages.content._social'
+            'description' => 'Social networks and project links for AI Automations Experimental.',
+            'view' => 'pages.content._social',
+            'active' => true,
         ],
     ];
+
+    /**
+     * Devuelve todas las páginas configuradas.
+     *
+     * @return array
+     */
+    public static function getPages(): array
+    {
+        return self::$pages;
+    }
+
+    /**
+     * Devuelve únicamente las páginas activas con contenido para indexar en sitemap.
+     *
+     * @return array
+     */
+    public static function getActivePages(): array
+    {
+        return array_filter(self::$pages, function (array $page) {
+            return !empty($page['active']);
+        });
+    }
 
     /**
      * Muestra el contenido de una página del sitio concreta.
@@ -38,14 +72,13 @@ class PageController extends Controller
      */
     public function show(string $page): View|RedirectResponse
     {
-
-        $page = isset($this->pages[$page]) && $this->pages[$page] ? $this->pages[$page] : null;
-        $partial_view = $page ? $page['view'] : null;
+        $pageSlug = $page;
+        $pageData = isset(self::$pages[$pageSlug]) && self::$pages[$pageSlug] ? self::$pages[$pageSlug] : null;
+        $partial_view = $pageData ? $pageData['view'] : null;
 
         if (!$partial_view) {
             return redirect()->route('home');
         }
-
 
         $socials = [
             [
@@ -66,7 +99,6 @@ class PageController extends Controller
                 'gitlab' => 'https://gitlab.com/raupulus/python-video-publisher',
                 'github' => 'https://github.com/raupulus/python-video-publisher'
             ],
-
             [
                 'title' => 'Ffmpeg Slideshow Creator from directory',
                 'description' => 'Script to create image videos with ffmpeg including transitions and music.<br />This tool is focused on Linux and macos.
@@ -77,7 +109,8 @@ class PageController extends Controller
         ];
 
         return view('pages.show', [
-            'page' => $page,
+            'slug' => $pageSlug,
+            'page' => $pageData,
             'partial_view' => $partial_view,
             'socials' => $socials,
         ]);

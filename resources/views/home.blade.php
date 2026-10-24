@@ -1,5 +1,14 @@
 @extends('layouts.app')
 
+@section('title', config('app.name') . ' - AI Image Gallery & Prompts')
+@section('meta-description', config('app.description'))
+@section('canonical', route('home'))
+@section('meta-og-title', config('app.name') . ' - AI Image Gallery & Prompts')
+@section('meta-og-description', config('app.description'))
+@section('meta-og-url', route('home'))
+@section('meta-twitter-title', config('app.name') . ' - AI Image Gallery & Prompts')
+@section('meta-twitter-description', config('app.description'))
+
 @section('content')
     <div class="container-xl">
         <div class="row">
