@@ -97,11 +97,11 @@ class Collection extends Model
     /**
      * Prepara los tags asociados y los devuelve en un array.
      *
-     * @return array|null
+     * @return array
      */
-    public function getTagsArrayAttribute(): ?array
+    public function getTagsArrayAttribute(): array
     {
-        return $this->tags ? explode(',', $this->tags) : null;
+        return $this->tags ? explode(',', $this->tags) : [];
     }
 
     /**

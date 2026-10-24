@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('meta-description', $collection->description)
-@section('meta-keywords', 'AI, Stable Diffusion, Dall-e, Raúl Caro Pastorino, raupulus, ' . $collection->tags)
-@section('meta-og-title', $collection->title)
-@section('meta-og-description', $collection->description)
+@section('meta-description', $collection->description ?? '')
+@section('meta-keywords', 'AI, Stable Diffusion, Dall-e, Raúl Caro Pastorino, raupulus, ' . ($collection->tags ?? ''))
+@section('meta-og-title', $collection->title ?? '')
+@section('meta-og-description', $collection->description ?? '')
 @section('meta-og-image', $firstImage?->urlImage ?? asset('images/logo/logo_640x640.webp'))
 @section('meta-og-image-url', $firstImage?->urlImage ?? asset('images/logo/logo_640x640.webp'))
 @section('meta-og-image-secure_url', $firstImage?->urlImage ?? asset('images/logo/logo_640x640.webp'))
 @section('meta-og-url', $collection->url)
-@section('meta-og-image_alt', $collection->title)
-@section('meta-twitter-title', $collection->title)
+@section('meta-og-image_alt', $collection->title ?? '')
+@section('meta-twitter-title', $collection->title ?? '')
 
 @section('content')
     <div class="container-xl" style="">
@@ -24,7 +24,7 @@
             </div>
 
             <div class="col-12 text-sm-center box-tags">
-                @foreach($collection->tagsArray as $tag)
+                @foreach($collection->tagsArray ?? [] as $tag)
                     <div class="box-tag">
                         {{\Illuminate\Support\Str::ucfirst($tag)}}
                     </div>
@@ -385,4 +385,3 @@
         });
     </script>
 @endsection
-
