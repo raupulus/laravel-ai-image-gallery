@@ -5,7 +5,6 @@ namespace App\Http\Requests\Api;
 use App\Models\CollectionRole;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
-use function auth;
 
 /**
  * Request para crear un nuevo tag.
@@ -19,10 +18,7 @@ class CollectionAddRequest extends FormRequest
      */
     public function authorize()
     {
-
         return !auth()->guest();
-
-        //return auth()->id() && auth()->user()->can('store', \App\Models\Tag => =>class);
     }
 
     /**
@@ -43,7 +39,7 @@ class CollectionAddRequest extends FormRequest
 
                 $size_resized = ($width * 4 ). "x" . ($height * 4);
             } catch (\Exception $e) {
-                //"resizer" => "Real-ESRGAN x4",
+                // Ignore sizing calculation failure
             }
         }
 
@@ -60,15 +56,21 @@ class CollectionAddRequest extends FormRequest
             $roleId = $roleModel?->id;
         }
 
+        $tags = $request->tags;
+        if (is_array($tags)) {
+            $tags = implode(',', $tags);
+        } elseif (!is_string($tags)) {
+            $tags = null;
+        }
 
         $this->merge([
             'collection_role_id' => $roleId,
             'steps' => (string) $request->steps,
             'cfg_scale' => (string) $request->cfg_scale,
             'denoising_strength' => (string) $request->denoising_strength,
-            'tags' => implode(',', $request->tags),
+            'tags' => $tags,
             'size_resized' => $size_resized,
-            'restore_faces' => in_array($request->restore_faces, ['true', '1', 1]),
+            'restore_faces' => in_array($request->restore_faces, ['true', '1', 1], true),
             'title' => Str::limit($request->title, 255),
             'description' => Str::limit($request->description, 1024),
         ]);

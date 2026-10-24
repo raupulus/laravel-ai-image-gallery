@@ -43,6 +43,10 @@ class CollectionController extends Controller
     {
         $collection = Collection::inRandomOrder()->select('id')->first();
 
+        if (!$collection) {
+            return redirect()->route('home');
+        }
+
         return redirect()->route('collections.show', $collection->id);
     }
 
@@ -84,7 +88,7 @@ class CollectionController extends Controller
     {
         $user = auth()->user();
 
-        if (!$user?->isAdmin || !$collection->id || !$image->id) {
+        if (!$user?->isAdmin || !$collection->id || !$image->id || (int) $image->collection_id !== (int) $collection->id) {
             abort(404);
         }
 
@@ -97,7 +101,7 @@ class CollectionController extends Controller
             ]);
         }
 
-        return redirect()->url($collection->url);
+        return redirect()->to($collection->url);
     }
 
 
