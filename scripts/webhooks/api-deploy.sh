@@ -24,8 +24,9 @@ git checkout -- . >> $LOG 2>> $LOG
 ## Actualizo cambios.
 git pull >> $LOG 2>> $LOG
 
-## Genero assets con npm.
-npm install --production >> $LOG 2>> $LOG
+## Genero assets con pnpm.
+pnpm install >> $LOG 2>> $LOG
+pnpm run build >> $LOG 2>> $LOG
 
 ## Actualizo paquetes de composer.
 export COMPOSER_HOME=/tmp/composer_home && composer install --no-interaction --no-dev --prefer-dist >> $LOG 2>> $LOG
