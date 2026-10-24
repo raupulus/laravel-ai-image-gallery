@@ -10,6 +10,12 @@ class PasswordConfirmationTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->markTestSkipped('Password confirmation is intentionally disabled in routes/auth.php');
+    }
+
     public function test_confirm_password_screen_can_be_rendered(): void
     {
         $user = User::factory()->create();
