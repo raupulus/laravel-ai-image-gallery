@@ -14,7 +14,7 @@ class GenerateSitemap extends Command
      *
      * @var string
      */
-    protected $signature = 'sitemap:generate {--path= : Target file path for the sitemap}';
+    protected $signature = 'sitemap:generate {--path= : Target file path for the sitemap} {--force : Force generation without confirmation}';
 
     /**
      * The console command description.
