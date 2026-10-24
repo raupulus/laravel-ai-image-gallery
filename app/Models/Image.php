@@ -8,6 +8,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+use Intervention\Image\Laravel\Facades\Image as InterventionImage;
 
 class Image extends Model
 {
@@ -83,7 +84,7 @@ class Image extends Model
         $imageThumbnailName = $name . '_thumbnail.webp';
 
         if (!File::isDirectory($fullPath)) {
-            File::makeDirectory($fullPath, 493, true);
+            File::makeDirectory($fullPath, 0755, true);
         }
 
 
@@ -95,29 +96,25 @@ class Image extends Model
             $height = getimagesize($uploadedFile)[1];
         }
 
-        $imgOriginal = \Intervention\Image\Facades\Image::make($uploadedFile->getPathname());
+        $imgOriginal = InterventionImage::decodePath($uploadedFile->getPathname());
 
         $imageResize = clone($imgOriginal);
         $imageThumbnail = clone($imgOriginal);
 
         ## Primer bloque para convertir imagen principal.
-        if ($width > $imageSize) {
-            $imageResize->resize($imageSize, null, function ($constraint) {
-                $constraint->aspectRatio();
-            });
+        if ($width && $width > $imageSize) {
+            $imageResize->scaleDown(width: $imageSize);
         }
 
-        $imageResize->save($fullPath . '/' . $imageName, 90, 'webp');
+        $imageResize->save($fullPath . '/' . $imageName, quality: 90);
 
 
         ## Primer bloque para convertir imagen de miniatura.
-        if ($width > $thumbnailSize) {
-            $imageThumbnail->resize($thumbnailSize, null, function ($constraint) {
-                $constraint->aspectRatio();
-            });
+        if ($width && $width > $thumbnailSize) {
+            $imageThumbnail->scaleDown(width: $thumbnailSize);
         }
 
-        $imageThumbnail->save($fullPath . '/' . $imageThumbnailName, 70, 'webp');
+        $imageThumbnail->save($fullPath . '/' . $imageThumbnailName, quality: 70);
 
 
         // TODO: check if file exists before save

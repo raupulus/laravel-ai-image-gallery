@@ -1,9 +1,11 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use \App\Http\Controllers\IndexController;
-use \App\Http\Controllers\CollectionController;
-use \App\Http\Controllers\PageController;
+use App\Http\Controllers\IndexController;
+use App\Http\Controllers\CollectionController;
+use App\Http\Controllers\PageController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -56,21 +58,17 @@ Route::group(['prefix' => 'webhooks'], function () {
     });
 });
 
-if (config('app.debug')) {
+if (app()->isLocal() && config('app.debug')) {
     Route::get('/tokens/create', function (Request $request) {
-        //if (auth()->guest()) {
-        //    return '<h1>NO ESTAS LOGUEADO</h1>';
-        //}
+        $user = \App\Models\User::first();
+        if (!$user) {
+            abort(404, 'No user found to generate token.');
+        }
 
-        $user = \App\Models\User::find(1);
-
-        //$token = $request->user()->createToken($request->token_name);
         $token = $user->createToken('general');
 
         return ['token' => $token->plainTextToken];
     });
 }
-
-
 
 require __DIR__.'/auth.php';
