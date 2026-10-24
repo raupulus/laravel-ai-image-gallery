@@ -99,6 +99,27 @@ sending a request to my api so that the video is set as collection/gallery cover
 
 * * *
 
+## Sitemap & Cron
+
+The project includes an automatic XML sitemap generator that adheres to standard sitemap protocols and Google Image Sitemap specifications:
+
+* **Generate manually:**
+  ```bash
+  php artisan sitemap:generate
+  ```
+* **Scheduled execution:**
+  The command is registered in Laravel's scheduler (`app/Console/Kernel.php`) to run daily every night at **03:42 AM**:
+  ```bash
+  php artisan schedule:list
+  ```
+* **Production cron setup:**
+  To enable Laravel's scheduler on your production server, add this single cron entry (`crontab -e`):
+  ```cron
+  * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+  ```
+
+* * *
+
 ## Motivation
 
 I started this project out of interest in learning about the rise of artificial intelligence and possibilities that
@@ -140,6 +161,7 @@ php artisan db:seed --force
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
+php artisan sitemap:generate
 ```
 
 * * *
