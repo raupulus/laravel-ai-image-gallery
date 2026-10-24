@@ -28,13 +28,74 @@ Mostly: [Twitter](https://twitter.com/ai_automations) , [Instagram](https://www.
 Then, with all those images and using the **ffmpeg** video tool, you create automatically a slideshow with transitions
 between images and background music.
 
-This video will be automatically uploaded to [**tiktok**](https://www.tiktok.com/@ai_automations) with selenium and [*
-*Youtube**](https://www.youtube.com/@ai_automations_experimental) using your api and, it will also be synchronized by
+This video will be automatically uploaded to [**tiktok**](https://www.tiktok.com/@ai_automations) with selenium and [**Youtube**](https://www.youtube.com/@ai_automations_experimental) using your api and, it will also be synchronized by
 sending a request to my api so that the video is set as collection/gallery cover.
 
 <p align="center">
     <img src="https://aidyslexic.raupulus.dev/images/doc/preview.webp" style="width:100%; max-width: 900px;">
 </p>
+
+* * *
+
+## Requirements
+
+* **PHP:** >= 8.4 (tested and compatible with PHP 8.4 and PHP 8.5)
+* **Framework:** Laravel 13.x
+* **Database:** PostgreSQL (with `pdo_pgsql` extension)
+* **Package Managers:**
+  * [Composer](https://getcomposer.org/) >= 2.2
+  * [pnpm](https://pnpm.io/) >= 10.x / Node.js
+* **Image Processing:** Intervention Image v4 with GD / Imagick (WebP support)
+
+* * *
+
+## Installation & Development
+
+1. **Clone repository:**
+   ```bash
+   git clone https://github.com/raupulus/laravel-ai-image-gallery.git
+   cd laravel-ai-image-gallery
+   ```
+
+2. **Install PHP dependencies:**
+   ```bash
+   composer install
+   ```
+
+3. **Install JavaScript dependencies & build assets:**
+   ```bash
+   pnpm install
+   pnpm build
+   # For hot development:
+   # pnpm dev
+   ```
+
+4. **Environment configuration:**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+5. **Database setup:**
+   Create the PostgreSQL database and update credentials in `.env`:
+   ```bash
+   sudo -u postgres createdb -O dev laravel_ai_image_gallery
+   ```
+   Run migrations and seeders:
+   ```bash
+   php artisan migrate
+   php artisan db:seed
+   ```
+
+6. **Storage symlink:**
+   ```bash
+   php artisan storage:link
+   ```
+
+7. **Run tests:**
+   ```bash
+   php artisan test
+   ```
 
 * * *
 
@@ -71,13 +132,17 @@ cp .env.example .env
 Execute commands:
 
 ```bash
-composer install --no-dev
-php artisan migrate
-php artisan db:seed
+composer install --no-dev --optimize-autoloader
+pnpm install --frozen-lockfile
+pnpm build
+php artisan migrate --force
+php artisan db:seed --force
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 ```
 
 * * *
-
 
 ## Associated tools
 
@@ -116,7 +181,6 @@ This tool is focused on Linux and Macos. ​
 [ffmpeg-slideshow-from-image-directory](https://gitlab.com/raupulus/ffmpeg-slideshow-from-image-directory)
 
 [ffmpeg-slideshow-from-image-directory](https://github.com/raupulus/ffmpeg-slideshow-from-image-directory)
-
 
 * * *
 
