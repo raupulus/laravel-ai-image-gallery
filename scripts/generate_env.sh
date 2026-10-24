@@ -50,23 +50,28 @@ if [[ ! -f "${WORKSCRIPT}/.env.example.production" ]] ||
     exit 1
 fi
 
-## En caso de existir un archivo .env se omiten operaciones.
-if [[ -f "${WORKSCRIPT}/.env" ]]; then
-    echo 'Ya existe un archivo .env en el proyecto, omitiendo operaciones.'
-    exit 0
-fi
-
 ################ Incluyo archivos de funciones ################
 
 source "${WORKSCRIPT}/scripts/functions.sh"
 
-################ Comienza el flujo de generar .env ################
+################ Comienza el flujo de generar o actualizar .env ################
 
-## Creo el archivo .env a partir del archivo con parámetros predefinidos.
-cp "${WORKSCRIPT}/.env.example.production" "${WORKSCRIPT}/.env"
+## Si no existe .env se crea desde plantilla predefinida
+if [[ ! -f "${WORKSCRIPT}/.env" ]]; then
+    cp "${WORKSCRIPT}/.env.example.production" "${WORKSCRIPT}/.env"
+fi
 
 ## General
-replace_or_add_var_in_file "${WORKSCRIPT}/.env" 'APP_NAME' "${APP_NAME}"
+replace_or_add_var_in_file "${WORKSCRIPT}/.env" 'APP_NAME' "${APP_NAME:-AIDyslexic}"
+if [[ -n "${APP_ENV}" ]]; then
+    replace_or_add_var_in_file "${WORKSCRIPT}/.env" 'APP_ENV' "${APP_ENV}"
+fi
+if [[ -n "${APP_DEBUG}" ]]; then
+    replace_or_add_var_in_file "${WORKSCRIPT}/.env" 'APP_DEBUG' "${APP_DEBUG}"
+fi
+if [[ -n "${APP_URL}" ]]; then
+    replace_or_add_var_in_file "${WORKSCRIPT}/.env" 'APP_URL' "${APP_URL}"
+fi
 
 ## DB.
 replace_or_add_var_in_file "${WORKSCRIPT}/.env" 'DB_USERNAME' "${DB_USERNAME}"
