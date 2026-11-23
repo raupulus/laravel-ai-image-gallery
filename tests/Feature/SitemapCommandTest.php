@@ -46,14 +46,14 @@ class SitemapCommandTest extends TestCase
         $this->assertStringContainsString(route('page.show', 'social'), $content);
     }
 
-    public function test_sitemap_excludes_empty_pages(): void
+    public function test_sitemap_includes_all_active_legal_pages(): void
     {
         $this->artisan("sitemap:generate --path={$this->testSitemapPath}")
             ->assertSuccessful();
 
         $content = File::get($this->testSitemapPath);
-        $this->assertStringNotContainsString(route('page.show', 'cookies'), $content);
-        $this->assertStringNotContainsString(route('page.show', 'rgpd'), $content);
+        $this->assertStringContainsString(route('page.show', 'cookies'), $content);
+        $this->assertStringContainsString(route('page.show', 'rgpd'), $content);
     }
 
     public function test_sitemap_includes_collections_with_images_and_avoids_empty_collections(): void

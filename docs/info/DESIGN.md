@@ -26,7 +26,7 @@ Estilos específicos por vista (inyectados mediante `@section('head_css')` o `@s
 
 ## SEO y metadatos
 - `resources/views/layouts/head.blade.php` centraliza `<title>`, `canonical`, `meta-description`, OpenGraph (`og:*`), Twitter Cards (`twitter:*`) y favicons (`public/images/favicons/`), sobrescribibles con `@section(...)` desde cada vista.
-- Google Analytics (`gtag.js`) se carga condicionalmente en `resources/views/layouts/app.blade.php` cuando `config('services.google.analytics')` (`GOOGLE_ANALYTICS`) está definido.
+- Google Analytics (`gtag.js`) se carga en `resources/views/layouts/app.blade.php` únicamente cuando `config('services.google.analytics')` (`GOOGLE_ANALYTICS`) está definido **y** el usuario otorga consentimiento explícito (`localStorage.cookie_consent === 'accepted'`) mediante el banner `#cookie-consent-banner`.
 
 ## Assets con Vite
 - `vite.config.js` compila `resources/css/app.css` (actualmente vacío) y `resources/js/app.js` (importa `./bootstrap` con `axios`/`lodash`).

@@ -119,6 +119,28 @@ class ApiCollectionTest extends TestCase
         ]);
     }
 
+    public function test_video_update_rejects_non_youtube_or_javascript_urls(): void
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        Collection::create([
+            'batch_id' => 'api-batch-104',
+            'title' => 'Video Validation Collection',
+            'prompt' => 'Video preview',
+        ]);
+
+        $this->postJson('/api/v1/collections/video/update', [
+            'batch_id' => 'api-batch-104',
+            'url_youtube' => 'javascript:alert(1)',
+        ])->assertStatus(422);
+
+        $this->postJson('/api/v1/collections/video/update', [
+            'batch_id' => 'api-batch-104',
+            'url_youtube' => 'https://evil.example.com/embed/abc123',
+        ])->assertStatus(422);
+    }
+
     public function test_fallback_route_returns_json_404(): void
     {
         $response = $this->getJson('/api/v1/non-existent-endpoint');

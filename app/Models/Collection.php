@@ -124,6 +124,24 @@ class Collection extends Model
         return route('collections.show', $this->id);
     }
 
+    /**
+     * Devuelve la URL de inserción en modo privacidad mejorada (youtube-nocookie.com) o null si no es válida.
+     *
+     * @return string|null
+     */
+    public function getYoutubeEmbedUrlAttribute(): ?string
+    {
+        if (empty($this->url_youtube)) {
+            return null;
+        }
+
+        if (preg_match('/^https:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtube-nocookie\.com\/embed\/|youtu\.be\/)([A-Za-z0-9_-]{6,32})/', $this->url_youtube, $matches)) {
+            return 'https://www.youtube-nocookie.com/embed/' . $matches[1];
+        }
+
+        return null;
+    }
+
 
     public static function getQueryCollection(string|null $search = null): Builder
     {

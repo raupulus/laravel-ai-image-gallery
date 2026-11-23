@@ -11,8 +11,8 @@
 - Sin tablas en BD. Las páginas se definen en `PageController::$pages`:
   - `about` (`pages.content._about`, `active: true`)
   - `social` (`pages.content._social`, `active: true`)
-  - `cookies` (`pages.content._cookies`, `active: false`)
-  - `rgpd` (`pages.content._rgpd`, `active: false`)
+  - `cookies` (`pages.content._cookies`, `active: true`)
+  - `rgpd` (`pages.content._rgpd`, `active: true`)
 
 ## Flujos principales
 1. **Visualización (`PageController@show`):**
@@ -33,7 +33,7 @@
 - No utiliza variables de entorno propias.
 
 ## Trampas conocidas
-- `active => false` en `cookies` y `rgpd` solo las excluye de `PageController::getActivePages()` (y por tanto del sitemap), pero siguen devolviendo HTTP `200` si se accede directamente a `/page/cookies` o `/page/rgpd`.
+- Si en el futuro se marca una página con `active => false`, solo se excluye de `PageController::getActivePages()` (y del sitemap), pero seguirá respondiendo HTTP `200` por URL directa mientras permanezca en `$pages`.
 
 ## Tests que lo cubren
 - `tests/Feature/CollectionTest.php::test_static_pages_render_or_redirect` (`/page/about`, `/page/cookies`, `/page/invalid-page`).

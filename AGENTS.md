@@ -57,7 +57,7 @@ Guía operativa para agentes y desarrolladores que trabajen en este repositorio.
 | Permisos | `404` en lugar de `403` | `CollectionController::delete` y `deleteImage` devuelven `404` si el usuario no es `isAdmin`. |
 | Home AJAX | Desfase de página | `home.blade.php` carga 24 elementos iniciales y el scroll infinito pide la página `2 + currentPage` de 8 en 8. |
 | Sitemap | `APP_URL` en CLI/cron | `sitemap:generate` usa `APP_URL` para todas las URLs; si no está bien configurado, generará `http://localhost`. |
-| Páginas | `active => false` | `cookies` y `rgpd` quedan fuera del sitemap, pero siguen devolviendo HTTP `200` por URL directa. |
+| Páginas | `active => false` | Las páginas con `active => false` quedan fuera del sitemap, pero siguen devolviendo HTTP `200` por URL directa. |
 
 ---
 

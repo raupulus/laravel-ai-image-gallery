@@ -43,8 +43,13 @@ class CollectionVideoUpdateRequest extends FormRequest
     {
         return [
             'batch_id' => 'required|string|exists:collections,batch_id',
-            //'video_id' => 'required|int',
-            'url_youtube' => 'required|string',
+            'url_youtube' => [
+                'required',
+                'string',
+                'max:255',
+                'url',
+                'regex:/^https:\/\/(www\.)?(youtube\.com\/(watch\?v=|embed\/|shorts\/)|youtube-nocookie\.com\/embed\/|youtu\.be\/)[A-Za-z0-9_-]{6,32}([?&].*)?$/',
+            ],
         ];
     }
 }

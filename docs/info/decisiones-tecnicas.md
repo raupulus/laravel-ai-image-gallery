@@ -31,9 +31,9 @@ Registro de decisiones deliberadas del proyecto verificadas en el código, para 
 - **Decisión:** Se usa `ILIKE` sobre `title` y `tags`.
 - **Implicación:** El proyecto asume PostgreSQL como motor de base de datos en desarrollo, tests y producción.
 
-## 7. Páginas `cookies` y `rgpd` excluidas del sitemap mediante `active => false`
-- **Dónde:** `app/Http/Controllers/PageController.php`, `app/Console/Commands/GenerateSitemap.php`.
-- **Decisión:** `getActivePages()` filtra por `active === true` para que el sitemap solo indexe `about` y `social`, evitando indexar páginas legales aún vacías o inactivas.
+## 7. Páginas filtrables por `active` en sitemap, consentimiento opt-in de Analytics y `youtube-nocookie.com`
+- **Dónde:** `app/Http/Controllers/PageController.php`, `resources/views/layouts/app.blade.php`, `app/Models/Collection.php`.
+- **Decisión:** `getActivePages()` filtra por `active === true` para el sitemap (actualmente `about`, `social`, `cookies` y `rgpd` están activas). Google Analytics (`gtag.js`) permanece bloqueado hasta que el usuario pulsa aceptar en `#cookie-consent-banner`, y los vídeos de YouTube se normalizan mediante `Collection::getYoutubeEmbedUrlAttribute()` sobre `https://www.youtube-nocookie.com/embed/{id}`.
 
 ---
 

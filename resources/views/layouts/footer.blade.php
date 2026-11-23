@@ -12,6 +12,18 @@
                     GitHub
                 </a>
             </li>
+
+            <li class="list-inline-item me-2">
+                <a class="link-light" href="{{ route('page.show', 'cookies') }}">
+                    Cookies
+                </a>
+            </li>
+
+            <li class="list-inline-item">
+                <a class="link-light" href="{{ route('page.show', 'rgpd') }}">
+                    Privacy &amp; GDPR
+                </a>
+            </li>
         </ul>
 
         {{-- Twitter --}}

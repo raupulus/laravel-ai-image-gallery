@@ -10,7 +10,7 @@
   - Se ejecuta automáticamente todos los días a las `03:42` mediante el scheduler de Laravel (`app/Console/Kernel.php`).
 - **NO hace:**
   - No incluye colecciones sin imágenes ni con título vacío o `null`.
-  - No incluye páginas con `active => false` (`cookies`, `rgpd`).
+  - No incluye páginas marcadas con `active => false`.
 
 ## Modelo de datos
 - Solo lectura sobre `collections` e `images` (ver [`collections.md`](./collections.md)).

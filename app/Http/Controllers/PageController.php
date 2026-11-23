@@ -20,17 +20,17 @@ class PageController extends Controller
         ],
         'cookies' => [
             'slug' => 'cookies',
-            'title' => 'Cookies',
-            'description' => 'Cookies Policy for AI Dyslexic.',
+            'title' => 'Cookies Policy',
+            'description' => 'Cookies and local storage policy for AI Dyslexic.',
             'view' => 'pages.content._cookies',
-            'active' => false,
+            'active' => true,
         ],
         'rgpd' => [
             'slug' => 'rgpd',
-            'title' => 'RGPD',
-            'description' => 'Privacy and RGPD/GDPR Policy for AI Dyslexic.',
+            'title' => 'Privacy & GDPR',
+            'description' => 'Privacy and GDPR data protection policy for AI Dyslexic.',
             'view' => 'pages.content._rgpd',
-            'active' => false,
+            'active' => true,
         ],
         'social' => [
             'slug' => 'social',

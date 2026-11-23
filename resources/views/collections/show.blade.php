@@ -64,15 +64,14 @@
         @endif
 
 
-        @if($collection->url_youtube)
+        @if($collection->youtube_embed_url)
             <div class="row">
                 <div class="col text-center">
                     <iframe width="{{$collection->isHorizontal ? '560' : '315'}}"
                             height="{{$collection->isHorizontal ? '315' : '560'}}"
-                            src="{{$collection->url_youtube}}"
-                            style="max-width: 600px; width: 100%"
+                            src="{{$collection->youtube_embed_url}}"
+                            style="max-width: 600px; width: 100%; border: 0;"
                             title="{{$collection->title}}"
-                            frameborder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             allowfullscreen></iframe>
                 </div>
