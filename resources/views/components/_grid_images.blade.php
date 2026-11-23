@@ -1,4 +1,5 @@
 {{-- Grid con las imágenes --}}
+@php($thumbDims = $collection->thumbnailDimensions)
 <div class="row">
 
     @foreach($images as $image)
@@ -28,6 +29,9 @@
             <a href="{{$image->urlImage}}"
                data-fancybox="gallery">
                 <img class="img-fluid"
+                     width="{{$thumbDims['width']}}"
+                     height="{{$thumbDims['height']}}"
+                     style="height: auto;"
                      loading="lazy"
                      decoding="async"
                      alt="{{$collection->title}}"

@@ -4,13 +4,14 @@
 El frontend público utiliza **Bootstrap 5** empaquetado como tema estático en `public/theme/`, complementado con hojas CSS personalizadas en `public/css/` y **Fancybox** para la vista ampliada de imágenes.
 
 Orden de carga base en `resources/views/layouts/head.blade.php`:
-1. `public/theme/bootstrap/css/bootstrap.min.css`
-2. `public/theme/css/styles.min.css`
-3. `public/css/styles.css`
-4. `public/css/collection_blocks.css`
-5. `public/theme/css/fancybox.css`
+1. Preload de la fuente crítica `Aclonica` (`public/theme/fonts/K2FyfZJVlfNNSEBXGY7UAo-KBSLy.woff2`, `crossorigin`).
+2. `public/theme/bootstrap/css/bootstrap.min.css`
+3. `public/theme/css/styles.min.css` (incluye `@font-face`, `.bs-icon*` y únicamente la animación `.flash` usada en navbar; el resto de `animate.css` fue purgado).
+4. `public/css/styles.css`
 
-Estilos específicos por vista (inyectados mediante `@section('head_css')` o `@section('css')`):
+Estilos y scripts específicos por vista (inyectados mediante `@section('css')` / `@section('js')`):
+- `public/css/collection_blocks.css` (solo portada `/`)
+- `public/theme/css/fancybox.css` y `public/theme/js/fancybox.umd.js` (`defer`) — solo en portada `/` y detalle `/collections/show/{collection}`
 - `public/css/collection_show.css` (detalle de colección)
 - `public/css/pages/*` (páginas estáticas)
 
@@ -28,10 +29,10 @@ Estilos específicos por vista (inyectados mediante `@section('head_css')` o `@s
 - `public/robots.txt` bloquea `/collections/ajax/`, `/webhooks/` y `/login` y declara `Sitemap: https://aidyslexic.raupulus.dev/sitemap.xml`.
 - Google Analytics (`gtag.js`) se carga en `resources/views/layouts/app.blade.php` únicamente cuando `config('services.google.analytics')` (`GOOGLE_ANALYTICS`) está definido **y** el usuario otorga consentimiento explícito (`localStorage.cookie_consent === 'accepted'`) mediante el banner `#cookie-consent-banner`.
 
-## Assets con Vite y caching HTTP
-- `vite.config.js` compila `resources/css/app.css` y `resources/js/app.js` (importa `./bootstrap` con `axios`/`lodash`).
+## Assets estáticos y caching HTTP
+- No se usa Vite ni bundler JS en producción: todo el CSS/JS se sirve directamente desde `public/theme/`, `public/css/` (con busting `?v=filemtime(...)`) y `public/images/`.
 - Los scripts JS globales del tema (`bootstrap.min.js`, `script.min.js`) se cargan desde `public/theme/` con `defer` en `footer_meta.blade.php`.
-- `public/.htaccess` habilita compresión (`mod_deflate`) y cabeceras `Expires` (`mod_expires`) para recursos estáticos e imágenes WebP.
+- `public/.htaccess` habilita compresión (`mod_deflate`) y cabeceras `Expires` (`mod_expires`) en Apache; en despliegues con Nginx es necesario configurar `Cache-Control` largo directamente en el bloque `server` (ver `docs/deploys/README.md`).
 
 ---
 

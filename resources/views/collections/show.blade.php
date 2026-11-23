@@ -95,13 +95,16 @@
             </div>
         @else
             @if($firstImage)
+                @php($thumbDims = $collection->thumbnailDimensions)
                 <div class="row">
                     <div class="col text-center">
                         <a href="{{$firstImage->urlImage}}"
                            data-fancybox="gallery-title">
                             <img class="img-fluid"
+                                 width="{{$thumbDims['width']}}"
+                                 height="{{$thumbDims['height']}}"
                                  fetchpriority="high"
-                                 style="{{$collection->isHorizontal ? 'width: 100%; max-width: 560px;' : 'height: 100%; max-height: 560px;'}}"
+                                 style="{{$collection->isHorizontal ? 'width: 100%; max-width: 560px; height: auto;' : 'width: auto; height: 100%; max-height: 560px;'}}"
                                  alt="{{$collection->title}}"
                                  src="{{$firstImage->urlThumbnail}}">
                         </a>
@@ -349,12 +352,13 @@
 
 
 @section('css')
+    <link rel="stylesheet" href="{{asset('theme/css/fancybox.css')}}">
     <link rel="stylesheet" href="{{asset('css/collection_show.css')}}?v={{ filemtime(public_path('css/collection_show.css')) }}">
 @endsection
 
 @section('js')
-
-    <script>
+    <script src="{{asset('theme/js/fancybox.umd.js')}}" defer></script>
+    <script nonce="{{ $cspNonce ?? '' }}">
         function changeInfoSection(ele) {
             const selectors = document.querySelectorAll('.btn-info-selector');
 

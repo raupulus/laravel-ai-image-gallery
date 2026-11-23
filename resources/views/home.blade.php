@@ -92,7 +92,11 @@
             @forelse($collections as $collection)
 
                 @if(($collection->images_count ?? $collection->images->count()) > 0)
-                    @include('components._collection_block')
+                    @include('components._collection_block', [
+                        'collection' => $collection,
+                        'eager' => $loop->index < 4,
+                        'highPriority' => $loop->index < 2,
+                    ])
                 @endif
 
             @empty
@@ -134,8 +138,14 @@
 
 
 
+@section('css')
+    <link rel="stylesheet" href="{{asset('css/collection_blocks.css')}}?v={{ filemtime(public_path('css/collection_blocks.css')) }}">
+    <link rel="stylesheet" href="{{asset('theme/css/fancybox.css')}}">
+@endsection
+
 @section('js')
-    <script>
+    <script src="{{asset('theme/js/fancybox.umd.js')}}" defer></script>
+    <script nonce="{{ $cspNonce ?? '' }}">
         let currentPage = parseInt(@json($collections->currentPage()), 10) || 1;
         let hasMorePages = @json($collections->hasMorePages());
         let isLoading = false;

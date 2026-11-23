@@ -6,6 +6,8 @@ Recibimos siempre "$collection" que es una instancia de tupla con el modelo Coll
 
 @php($image = $collection->primaryImage)
 @php($imagesCount = $collection->images_count ?? $collection->images->count())
+@php($eager = $eager ?? false)
+@php($highPriority = $highPriority ?? false)
 
 <div class="col-md-3 text-center col-sm-4 col-6 mt-1 mb-2">
     <a href="{{$collection->url}}"
@@ -30,7 +32,8 @@ Recibimos siempre "$collection" que es una instancia de tupla con el modelo Coll
                 <img class="img-crop"
                      width="400"
                      height="200"
-                     loading="lazy"
+                     @if($highPriority) fetchpriority="high" @endif
+                     @if(! $eager) loading="lazy" @endif
                      decoding="async"
                      alt="{{$collection->title}}"
                      src="{{$image->urlThumbnail}}">
