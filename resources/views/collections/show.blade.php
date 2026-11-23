@@ -349,12 +349,10 @@
 
 
 @section('css')
-    <link rel="stylesheet" href="{{asset('theme/css/fancybox.css')}}">
     <link rel="stylesheet" href="{{asset('css/collection_show.css')}}">
 @endsection
 
 @section('js')
-    <script src="{{asset('theme/js/fancybox.umd.js')}}" defer></script>
 
     <script>
         function changeInfoSection(ele) {

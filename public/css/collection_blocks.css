@@ -1,29 +1,30 @@
-
-
-
 /**
  * Botón superpuesto a la imagen para llevar a la galería
  */
 
-
 .collection-block-box-btn-show-collection {
     position: absolute;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    padding: 0.5rem 0.9rem;
+    padding: 0.4rem 0.7rem;
     text-decoration: none;
     font-weight: bold;
-    color: #ffffff;
-    background-color: rgba(0, 0, 0, 0.72);
+    color: rgb(240, 240, 240);
+    background-color: rgba(0, 0, 0, 0.7);
     border-radius: 1rem;
     translate: -50% 40px;
     z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+.col-md-3:hover .collection-block-box-btn-show-collection,
+.collection-block-box-btn-show-collection:focus-visible {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .collection-block-box-btn-show-collection:hover {
-    background-color: rgba(0, 0, 0, 0.95);
+    background-color: rgba(0, 0, 0, 1);
     color: #ffffff;
 }
 
@@ -32,13 +33,8 @@
  */
 
 .collection-block-head a {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
     text-decoration: none;
-    color: #ffffff;
-    font-size: 0.875rem;
+    color: #fff;
 }
 
 /**
@@ -46,11 +42,12 @@
  */
 
 .collection-block-image:hover {
-    opacity: 0.95;
+    opacity: 0.9;
 }
 
-.collection-block-image:hover .img-crop, .image-crop-container:hover .img-crop {
-    transform: scale(1.06);
+.collection-block-image:hover .img-crop,
+.image-crop-container:hover .img-crop {
+    transform: scale(1.08);
 }
 
 .image-crop-container {
@@ -62,7 +59,7 @@
 
 .box-image-crop-link {
     display: block;
-    cursor: pointer;
+    cursor: zoom-in;
     width: 100%;
     height: 100%;
 }
@@ -78,11 +75,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .img-crop {
+    .img-crop,
+    .collection-block-box-btn-show-collection {
         transition: none;
     }
 
-    .collection-block-image:hover .img-crop, .image-crop-container:hover .img-crop {
+    .collection-block-image:hover .img-crop,
+    .image-crop-container:hover .img-crop {
         transform: none;
     }
 }
@@ -99,11 +98,6 @@
 }
 
 .collection-block-footer a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    padding: 0.4rem 0.5rem;
     width: 100%;
     height: 100%;
     text-decoration: none;

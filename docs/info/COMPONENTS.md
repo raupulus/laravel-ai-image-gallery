@@ -10,7 +10,7 @@
 ## Componentes de galería (`resources/views/components/`)
 - `_collection_block.blade.php` — tarjeta de una colección para el grid de portada y respuestas AJAX.
   - **Entrada esperada:** `$collection` (instancia de `App\Models\Collection`).
-  - Muestra contador de imágenes, enlace a `$collection->url`, miniatura (`$image->urlThumbnail`) con `loading="lazy"` vinculada a `$collection->url` y título resumido (`$collection->titleResume`).
+  - Muestra contador de imágenes, enlace a `$collection->url` en cabecera/título/botón hover, miniatura (`$image->urlThumbnail`) con `loading="lazy"` vinculada a `$image->urlImage` (`data-fancybox="gallery"`) para abrir el visor lightbox, y título resumido (`$collection->titleResume`).
 - `_grid_images.blade.php` — parcial de rejilla de imágenes dentro de una colección.
 
 ## Vistas principales

@@ -8,9 +8,9 @@ Orden de carga base en `resources/views/layouts/head.blade.php`:
 2. `public/theme/css/styles.min.css`
 3. `public/css/styles.css`
 4. `public/css/collection_blocks.css`
+5. `public/theme/css/fancybox.css`
 
-Estilos y librerías específicos por vista (inyectados mediante `@section('head_css')`, `@section('css')` o `@section('js')`):
-- `public/theme/css/fancybox.css` y `public/theme/js/fancybox.umd.js` (`defer`) — cargados únicamente en el detalle de colección (`collections/show.blade.php`).
+Estilos específicos por vista (inyectados mediante `@section('head_css')` o `@section('css')`):
 - `public/css/collection_show.css` (detalle de colección)
 - `public/css/pages/*` (páginas estáticas)
 
