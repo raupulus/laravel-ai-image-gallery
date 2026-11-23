@@ -28,6 +28,8 @@ Recibimos siempre "$collection" que es una instancia de tupla con el modelo Coll
                class="box-image-crop-link"
                data-fancybox="gallery">
                 <img class="img-crop"
+                     width="400"
+                     height="200"
                      loading="lazy"
                      decoding="async"
                      alt="{{$collection->title}}"
