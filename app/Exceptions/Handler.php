@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -43,6 +44,14 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
+        $this->shouldRenderJsonWhen(function (Request $request, Throwable $e): bool {
+            if ($request->is('api/*')) {
+                return true;
+            }
+
+            return $request->expectsJson();
+        });
+
         $this->reportable(function (Throwable $e) {
             //
         });

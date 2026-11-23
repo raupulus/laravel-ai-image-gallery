@@ -22,6 +22,7 @@ Guía operativa para agentes y desarrolladores que trabajen en este repositorio.
 │   ├── Models/                  # Collection, CollectionRole, Image, Role, User
 │   ├── Policies/                # CollectionPolicy
 │   ├── Providers/
+│   ├── Services/                # ImageStorageService
 │   └── View/Components/
 ├── bootstrap/
 ├── config/

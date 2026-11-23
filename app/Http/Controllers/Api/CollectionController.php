@@ -8,85 +8,76 @@ use App\Http\Requests\Api\CollectionUpdateRequest;
 use App\Http\Requests\Api\CollectionVideoUpdateRequest;
 use App\Models\Collection;
 use App\Models\Image;
-use Illuminate\Http\Request;
+use App\Services\ImageStorageService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class CollectionController extends Controller
 {
-
-    public function add(CollectionAddRequest $request)
+    public function add(CollectionAddRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        $seeds = isset($validated['seeds']) ? $validated['seeds'] : null;
-
-        if ($seeds) {
-            unset($validated['seeds']);
-        }
+        $seeds = $validated['seeds'] ?? null;
+        unset($validated['seeds']);
 
         $collection = Collection::updateOrCreate(
-            [
-                'batch_id' => $validated['batch_id']
-            ],
+            ['batch_id' => $validated['batch_id']],
             $validated
         );
 
-        Cache::remember('collection-image-update-' . $collection->id, 3600, function () use ($seeds) {
-            return $seeds;
-        });
+        Cache::put('collection-image-update-' . $collection->id, $seeds, 3600);
 
         return response()->json([
-            //'request_data' => $request->all(),
-            //'request_data_validated' => $validated,
             'success' => true,
             'data' => [
                 'collection_id' => $collection->id,
-                'url' => $collection->url
-            ]
-            //'seeds' => $seeds,
-
+                'url' => $collection->url,
+            ],
         ]);
     }
 
-    public function update(CollectionUpdateRequest $request, Collection $collection)
-    {
+    public function update(
+        CollectionUpdateRequest $request,
+        Collection $collection,
+        ImageStorageService $imageStorage
+    ): JsonResponse {
         $validated = $request->validated();
-
-        $imageBase64 = $request->get('image');
-
+        $imageBase64 = (string) $request->input('image');
         unset($validated['image']);
 
-        $image = Image::create($validated);
+        $paths = $imageStorage->storeFromBase64((int) $collection->id, $imageBase64);
 
-        $image->storeImageFromBase64($imageBase64);
-
-        /*
         try {
-            $image->storeImageFromBase64($imageBase64);
-        } catch (\Exception $e) {
-            $image->delete();
+            $image = Image::create(array_merge($validated, $paths));
+        } catch (Throwable $e) {
+            $imageStorage->deletePaths([$paths['image'], $paths['thumbnail']]);
+
+            Log::error('Failed to persist uploaded collection image metadata', [
+                'collection_id' => $collection->id,
+                'exception' => $e->getMessage(),
+            ]);
 
             return response()->json([
                 'success' => false,
-            ]);
+                'message' => 'Failed to save image.',
+            ], 500);
         }
-        */
 
         return response()->json([
             'success' => true,
-            //'request_data' => $request->all(),
-            'request_data_validated' => $validated,
             'data' => [
                 'image' => [
                     'id' => $image->id,
                     'url_thumbnail' => $image->urlThumbnail,
-                    'url_image' => $image->urlImage
-                ]
-            ]
-            //'collection' => $collection,
+                    'url_image' => $image->urlImage,
+                ],
+            ],
         ]);
     }
 
-    public function videoUpdate(CollectionVideoUpdateRequest $request)
+    public function videoUpdate(CollectionVideoUpdateRequest $request): JsonResponse
     {
         $validated = $request->validated();
 
@@ -95,8 +86,7 @@ class CollectionController extends Controller
         ]);
 
         return response()->json([
-            'success' => true
+            'success' => true,
         ]);
-
     }
 }

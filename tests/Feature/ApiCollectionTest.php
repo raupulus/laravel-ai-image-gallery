@@ -172,6 +172,37 @@ class ApiCollectionTest extends TestCase
         ])->assertStatus(422);
     }
 
+    public function test_unauthenticated_api_request_without_accept_json_returns_json(): void
+    {
+        $response = $this->post('/api/v1/collections/add', []);
+        $response->assertStatus(401);
+        $response->assertJson(['message' => 'Unauthenticated.']);
+    }
+
+    public function test_update_collection_rejects_corrupt_or_non_image_base64(): void
+    {
+        $admin = User::factory()->admin()->create();
+        Sanctum::actingAs($admin, ['collections:write']);
+
+        $collection = Collection::create([
+            'batch_id' => 'api-batch-corrupt-img',
+            'title' => 'Corrupt Image Test',
+            'prompt' => 'Test',
+        ]);
+
+        $this->postJson("/api/v1/collections/update/{$collection->id}", [
+            'image' => 'not-valid-base64!!!',
+            'order' => 1,
+        ])->assertStatus(422)->assertJsonValidationErrors(['image']);
+
+        $this->postJson("/api/v1/collections/update/{$collection->id}", [
+            'image' => 'data:text/plain;base64,' . base64_encode('hello world'),
+            'order' => 1,
+        ])->assertStatus(422)->assertJsonValidationErrors(['image']);
+
+        $this->assertDatabaseCount('images', 0);
+    }
+
     public function test_fallback_route_returns_json_404(): void
     {
         $response = $this->getJson('/api/v1/non-existent-endpoint');

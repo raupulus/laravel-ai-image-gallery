@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Collection;
 use App\Models\Image;
+use App\Services\ImageStorageService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class CollectionController extends Controller
@@ -57,7 +59,7 @@ class CollectionController extends Controller
      * @param Collection $collection
      * @return RedirectResponse
      */
-    public function delete(Request $request, Collection $collection): RedirectResponse
+    public function delete(Request $request, Collection $collection, ImageStorageService $imageStorage): RedirectResponse
     {
         $user = auth()->user();
 
@@ -65,39 +67,52 @@ class CollectionController extends Controller
             abort(404);
         }
 
-        $images = $collection->images;
+        $collectionId = (int) $collection->id;
+        $paths = [];
 
-        foreach ($images as $image) {
-            $image->safeDelete();
-        }
+        DB::transaction(function () use ($collection, &$paths): void {
+            $paths = $collection->images()
+                ->get(['image', 'thumbnail'])
+                ->flatMap(static fn (Image $img): array => [$img->image, $img->thumbnail])
+                ->all();
 
-        $collection->delete();
+            $collection->images()->delete();
+            $collection->delete();
+        });
+
+        $imageStorage->deletePaths($paths);
+        $imageStorage->deleteCollectionDirectory($collectionId);
 
         return redirect()->route('home');
     }
 
     /**
      * Elimina una imagen de una colección.
-     *
-     * @param Request $request
-     * @param Collection $collection
-     * @param Image $image
-     * @return JsonResponse|RedirectResponse
      */
-    public function deleteImage(Request $request, Collection $collection, Image $image): JsonResponse|RedirectResponse
-    {
+    public function deleteImage(
+        Request $request,
+        Collection $collection,
+        Image $image,
+        ImageStorageService $imageStorage
+    ): JsonResponse|RedirectResponse {
         $user = auth()->user();
 
         if (! $user || $user->cannot('delete', $collection) || ! $collection->id || ! $image->id || (int) $image->collection_id !== (int) $collection->id) {
             abort(404);
         }
 
-        $image->safeDelete();
+        $paths = [$image->image, $image->thumbnail];
+
+        DB::transaction(function () use ($image): void {
+            $image->delete();
+        });
+
+        $imageStorage->deletePaths($paths);
 
         if ($request->isJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Image successfully removed from collection'
+                'message' => 'Image successfully removed from collection',
             ]);
         }
 

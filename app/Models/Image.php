@@ -2,13 +2,10 @@
 
 namespace App\Models;
 
+use App\Services\ImageStorageService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\File;
-use Intervention\Image\Laravel\Facades\Image as InterventionImage;
 
 class Image extends Model
 {
@@ -51,101 +48,26 @@ class Image extends Model
      *
      * @return UploadedFile|null
      */
+    /**
+     * Almacena la imagen recibida en base64 y su miniatura en formato WebP.
+     */
     public function storeImageFromBase64(string $base64): ?UploadedFile
     {
-        // Get file data base64 string
-        $fileData = base64_decode(Arr::last(explode(',', $base64)));
+        $paths = app(ImageStorageService::class)->storeFromBase64((int) $this->collection_id, $base64);
 
-        // Create temp file and get its absolute path
-        $tempFile = tmpfile();
-        $tempFilePath = stream_get_meta_data($tempFile)['uri'];
-
-        // Save file data in file
-        file_put_contents($tempFilePath, $fileData);
-
-        $tempFileObject = new \Illuminate\Http\File($tempFilePath);
-
-        $uploadedFile = new UploadedFile(
-            $tempFileObject->getPathname(),
-            $tempFileObject->getFilename(),
-            $tempFileObject->getMimeType(),
-            0,
-            true // Mark it as test, since the file isn't from real HTTP POST.
-        );
-
-
-        $thumbnailSize = 400;
-        $imageSize = 3840;
-        $path = 'collections/' . $this->collection->id;
-        $fullPath =  storage_path('app/public/' . $path);
-        $width = $height = null;
-        $name = $this->collection->id . '_' . Str::random(30);
-        $imageName = $name . '.webp';
-        $imageThumbnailName = $name . '_thumbnail.webp';
-
-        if (!File::isDirectory($fullPath)) {
-            File::makeDirectory($fullPath, 0755, true);
-        }
-
-
-        if (isset(getimagesize($uploadedFile)[0])) {
-            $width = getimagesize($uploadedFile)[0];
-        }
-
-        if (isset(getimagesize($uploadedFile)[1])) {
-            $height = getimagesize($uploadedFile)[1];
-        }
-
-        $imgOriginal = InterventionImage::decodePath($uploadedFile->getPathname());
-
-        $imageResize = clone($imgOriginal);
-        $imageThumbnail = clone($imgOriginal);
-
-        ## Primer bloque para convertir imagen principal.
-        if ($width && $width > $imageSize) {
-            $imageResize->scaleDown(width: $imageSize);
-        }
-
-        $imageResize->save($fullPath . '/' . $imageName, quality: 90);
-
-
-        ## Primer bloque para convertir imagen de miniatura.
-        if ($width && $width > $thumbnailSize) {
-            $imageThumbnail->scaleDown(width: $thumbnailSize);
-        }
-
-        $imageThumbnail->save($fullPath . '/' . $imageThumbnailName, quality: 70);
-
-
-        // TODO: check if file exists before save
-
-        $this->image = $path . '/' . $imageName;
-        $this->thumbnail = $path . '/' . $imageThumbnailName;
+        $this->image = $paths['image'];
+        $this->thumbnail = $paths['thumbnail'];
         $this->save();
 
-        // Close this file after response is sent.
-        // Closing the file will cause to remove it from temp director!
-        app()->terminating(function () use ($tempFile) {
-            fclose($tempFile);
-        });
-
-        return $uploadedFile;
+        return null;
     }
 
-
-
-    public function safeDelete()
+    /**
+     * Elimina los archivos físicos asociados y el registro en base de datos.
+     */
+    public function safeDelete(): void
     {
-        $pathImage = storage_path('app/public/' . $this->image);
-        $pathThumbnail = storage_path('app/public/' . $this->thumbnail);
-
-        if (file_exists($pathImage)) {
-            unlink($pathImage);
-        }
-
-        if (file_exists($pathThumbnail)) {
-            unlink($pathThumbnail);
-        }
+        app(ImageStorageService::class)->deletePaths([$this->image, $this->thumbnail]);
 
         $this->delete();
     }

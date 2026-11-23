@@ -2,10 +2,11 @@
 
 ## Qué hace y qué NO hace
 - **Hace:**
-  - Expone la API REST bajo `/api/v1` protegida con Laravel Sanctum (`auth:sanctum`) para que clientes externos (generadores de imágenes y publicadores de vídeo) creen colecciones, suban imágenes en base64 y asocien la URL de YouTube.
-  - Convierte y redimensiona cada imagen subida en base64 a formato `.webp` (máximo 3840px de ancho, calidad 90) y genera su miniatura `_thumbnail.webp` (máximo 400px de ancho, calidad 70) mediante `Intervention\Image\Laravel\Facades\Image`.
+  - Expone la API REST bajo `/api/v1` protegida con Laravel Sanctum (`auth:sanctum`) y `CollectionPolicy` para que clientes externos (generadores de imágenes y publicadores de vídeo) creen colecciones, suban imágenes en base64 y asocien la URL de YouTube.
+  - Devuelve respuestas JSON incluso cuando el cliente no envía la cabecera `Accept: application/json` (`Handler::shouldRenderJsonWhen`).
+  - Valida tamaño máximo (~20 MB), decodificación base64 estricta y MIME real por magic bytes mediante `App\Services\ImageStorageService` (sin archivos temporales con fuga ni filas huérfanas si falla), reconvirtiendo cada imagen a `.webp` (máximo 3840px de ancho, calidad 90, orientando y eliminando metadatos EXIF) y su miniatura `_thumbnail.webp` (máximo 400px de ancho, calidad 70) mediante `Storage::disk('public')`.
   - Crea automáticamente `CollectionRole` por `slug` si no existe al recibir `role`.
-  - Almacena temporalmente el array `seeds` en caché durante 3600 segundos para asociar cada `seed` al subir las imágenes por `order`.
+  - Almacena y actualiza el array `seeds` en caché (`Cache::put`) durante 3600 segundos para asociar cada `seed` al subir las imágenes por `order`.
 - **NO hace:**
   - No expone endpoints públicos de lectura de colecciones (la lectura pública es web/AJAX en [`collections.md`](./collections.md)).
   - No llama a APIs externas de IA ni de YouTube; recibe los datos ya generados por herramientas satélite.
@@ -22,9 +23,9 @@
    - Devuelve JSON `{ success: true, data: { collection_id, url } }`.
 2. **Subir imagen a colección (`POST /api/v1/collections/update/{collection}`):**
    - `CollectionUpdateRequest::prepareForValidation()` recupera `seed` desde caché usando `order` como índice y añade `collection_id`.
-   - Crea el registro `Image` y ejecuta `$image->storeImageFromBase64($imageBase64)`.
-   - `storeImageFromBase64()` decodifica el base64 a un archivo temporal (`tmpfile()`), lo procesa con `InterventionImage::decodePath()`, guarda `storage/app/public/collections/{id}/{id}_{random30}.webp` y `_thumbnail.webp`, actualiza las rutas en BD y registra el cierre del temporal en `app()->terminating()`.
-   - Devuelve JSON `{ success: true, request_data_validated, data: { image: { id, url_thumbnail, url_image } } }`.
+   - `ImageStorageService::storeFromBase64()` valida longitud, decodifica en modo estricto, comprueba MIME real con `finfo`, orienta y recodifica a WebP (`quality: 90` y miniatura `400px` `quality: 70`) y guarda en `Storage::disk('public')`.
+   - Crea el registro `Image` con las rutas ya generadas (si falla la inserción en BD, revierte borrando los archivos y registra el error).
+   - Devuelve JSON `{ success: true, data: { image: { id, url_thumbnail, url_image } } }`.
 3. **Asociar vídeo de YouTube (`POST /api/v1/collections/video/update`):**
    - `CollectionVideoUpdateRequest` valida `batch_id` (debe existir en `collections`) y `url_youtube`.
    - Actualiza `url_youtube` en la colección por `batch_id` y devuelve `{ success: true }`.
@@ -53,14 +54,12 @@
 ## Trampas conocidas
 - El prefijo real de las rutas API es `/api/v1` (configurado en `app/Providers/RouteServiceProvider.php`), no `/api`.
 - `CollectionAddRequest::prepareForValidation()` trunca `title` a 255 caracteres con `Str::limit` aunque la columna y la regla `max:511` permiten 511.
-- Si `Image::storeImageFromBase64()` falla, el bloque `try/catch` en `Api\CollectionController::update` está comentado, por lo que podría quedar un registro `Image` huérfano en BD sin archivos.
-- En `CollectionUpdateRequest`, la regla de `image` es solo `'required'` (no valida MIME ni tamaño en la request).
 
 ## Tests que lo cubren
-- `tests/Feature/ApiCollectionTest.php` (rechazo 401 sin auth, `/api/v1/user`, `/collections/add`, `/collections/update/{collection}` con PNG base64 1x1 y limpieza de archivo, `/collections/video/update`, fallback 404).
+- `tests/Feature/ApiCollectionTest.php` (rechazo 401 sin auth y JSON sin `Accept`, rechazo 403 no-admin y token sin scope, `/api/v1/user`, `/collections/add`, `/collections/update/{collection}` con PNG válido y rechazo `422` de base64 corrupto/no-imagen, `/collections/video/update`, comando `api:token`, fallback 404).
 
 ## Pendiente real
-- `TODO` en `Image::storeImageFromBase64` (línea 120): comprobar si el archivo existe antes de guardar.
+- Ninguno verificado en código.
 
 ---
 
