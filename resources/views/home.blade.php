@@ -63,7 +63,7 @@
 
             @foreach($collections as $collection)
 
-                @if($collection->images->count())
+                @if(($collection->images_count ?? $collection->images->count()) > 0)
                     @include('components._collection_block')
                 @endif
 

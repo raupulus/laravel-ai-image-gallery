@@ -32,10 +32,25 @@ class GenerateSitemap extends Command
     {
         $this->info('Starting sitemap generation...');
 
-        $targetPath = $this->option('path') ?: public_path('sitemap.xml');
+        $targetPath = (string) ($this->option('path') ?: public_path('sitemap.xml'));
+        $directory = dirname($targetPath);
+
+        if (! is_dir($directory) && ! mkdir($directory, 0755, true) && ! is_dir($directory)) {
+            $this->error("Unable to create sitemap directory: {$directory}");
+
+            return self::FAILURE;
+        }
+
+        $tmpPath = $targetPath . '.tmp.' . getmypid();
 
         $xml = new XMLWriter();
-        $xml->openMemory();
+
+        if (! $xml->openURI($tmpPath)) {
+            $this->error("Unable to open temporary sitemap file for writing: {$tmpPath}");
+
+            return self::FAILURE;
+        }
+
         $xml->setIndent(true);
         $xml->setIndentString('    ');
         $xml->startDocument('1.0', 'UTF-8');
@@ -45,100 +60,109 @@ class GenerateSitemap extends Command
         $xml->writeAttribute('xmlns:image', 'http://www.google.com/schemas/sitemap-image/1.1');
 
         $urlCount = 0;
+        $collectionCount = 0;
         $imageCount = 0;
 
-        // 1. Home page
-        $latestCollection = Collection::query()
-            ->whereNotNull('title')
-            ->where('title', '!=', '')
-            ->whereHas('images')
-            ->latest('updated_at')
-            ->first();
+        try {
+            // 1. Home page
+            $latestCollection = Collection::query()
+                ->whereNotNull('title')
+                ->where('title', '!=', '')
+                ->whereHas('images')
+                ->latest('updated_at')
+                ->first();
 
-        $homeLastmod = $latestCollection?->updated_at?->toAtomString() ?? now()->toAtomString();
+            $homeLastmod = $latestCollection?->updated_at?->toAtomString() ?? now()->toAtomString();
 
-        $xml->startElement('url');
-        $xml->writeElement('loc', route('home'));
-        $xml->writeElement('lastmod', $homeLastmod);
-        $xml->writeElement('changefreq', 'daily');
-        $xml->writeElement('priority', '1.0');
-        $xml->endElement();
-        $urlCount++;
-
-        // 2. Static pages (only active, non-empty pages)
-        $activePages = PageController::getActivePages();
-        foreach ($activePages as $slug => $page) {
             $xml->startElement('url');
-            $xml->writeElement('loc', route('page.show', $slug));
-            $xml->writeElement('changefreq', 'monthly');
-            $xml->writeElement('priority', '0.6');
+            $xml->writeElement('loc', route('home'));
+            $xml->writeElement('lastmod', $homeLastmod);
+            $xml->writeElement('changefreq', 'daily');
+            $xml->writeElement('priority', '1.0');
             $xml->endElement();
             $urlCount++;
-        }
 
-        // 3. Collections (strictly non-empty: must have images and valid title)
-        $collections = Collection::query()
-            ->whereNotNull('title')
-            ->where('title', '!=', '')
-            ->whereHas('images')
-            ->with(['images' => function ($query) {
-                $query->orderBy('order')->orderBy('id');
-            }])
-            ->orderByDesc('updated_at')
-            ->get();
-
-        foreach ($collections as $collection) {
-            $xml->startElement('url');
-            $xml->writeElement('loc', route('collections.show', $collection->id));
-
-            $lastmod = ($collection->updated_at ?? $collection->created_at ?? now())->toAtomString();
-            $xml->writeElement('lastmod', $lastmod);
-            $xml->writeElement('changefreq', 'weekly');
-            $xml->writeElement('priority', '0.8');
-
-            foreach ($collection->images as $image) {
-                if (empty($image->image) && empty($image->url_image)) {
-                    continue;
-                }
-
-                $imageUrl = $image->url_image;
-                if ($imageUrl) {
-                    $xml->startElement('image:image');
-                    $xml->writeElement('image:loc', $imageUrl);
-
-                    if (!empty($collection->title)) {
-                        $xml->writeElement('image:title', $collection->title);
-                    }
-
-                    if (!empty($collection->description)) {
-                        $xml->writeElement('image:caption', $collection->description);
-                    }
-
-                    $xml->endElement(); // image:image
-                    $imageCount++;
-                }
+            // 2. Static pages (only active, non-empty pages)
+            $activePages = PageController::getActivePages();
+            foreach ($activePages as $slug => $page) {
+                $xml->startElement('url');
+                $xml->writeElement('loc', route('page.show', $slug));
+                $xml->writeElement('changefreq', 'monthly');
+                $xml->writeElement('priority', '0.6');
+                $xml->endElement();
+                $urlCount++;
             }
 
-            $xml->endElement(); // url
-            $urlCount++;
+            // 3. Collections streamed in chunks to avoid unbounded memory usage
+            Collection::query()
+                ->whereNotNull('title')
+                ->where('title', '!=', '')
+                ->whereHas('images')
+                ->with(['images' => function ($query): void {
+                    $query->orderBy('order')->orderBy('id');
+                }])
+                ->chunkById(200, function ($collections) use ($xml, &$urlCount, &$collectionCount, &$imageCount): void {
+                    foreach ($collections as $collection) {
+                        $xml->startElement('url');
+                        $xml->writeElement('loc', route('collections.show', $collection->id));
+
+                        $lastmod = ($collection->updated_at ?? $collection->created_at ?? now())->toAtomString();
+                        $xml->writeElement('lastmod', $lastmod);
+                        $xml->writeElement('changefreq', 'weekly');
+                        $xml->writeElement('priority', '0.8');
+
+                        foreach ($collection->images as $image) {
+                            if (empty($image->image) && empty($image->url_image)) {
+                                continue;
+                            }
+
+                            $imageUrl = $image->url_image;
+                            if ($imageUrl) {
+                                $xml->startElement('image:image');
+                                $xml->writeElement('image:loc', $imageUrl);
+
+                                if (! empty($collection->title)) {
+                                    $xml->writeElement('image:title', $collection->title);
+                                }
+
+                                if (! empty($collection->description)) {
+                                    $xml->writeElement('image:caption', $collection->description);
+                                }
+
+                                $xml->endElement();
+                                $imageCount++;
+                            }
+                        }
+
+                        $xml->endElement();
+                        $urlCount++;
+                        $collectionCount++;
+                    }
+
+                    $xml->flush();
+                });
+
+            $xml->endElement(); // urlset
+            $xml->endDocument();
+            $xml->flush();
+
+            if (! rename($tmpPath, $targetPath)) {
+                $this->error("Failed to move temporary sitemap into place: {$targetPath}");
+                @unlink($tmpPath);
+
+                return self::FAILURE;
+            }
+        } catch (\Throwable $e) {
+            @unlink($tmpPath);
+            $this->error('Sitemap generation failed: ' . $e->getMessage());
+
+            return self::FAILURE;
         }
-
-        $xml->endElement(); // urlset
-        $xml->endDocument();
-
-        $content = $xml->outputMemory();
-
-        $directory = dirname($targetPath);
-        if (!is_dir($directory)) {
-            mkdir($directory, 0755, true);
-        }
-
-        file_put_contents($targetPath, $content);
 
         $this->info("Sitemap successfully generated at: {$targetPath}");
-        $this->line("Indexed URLs: {$urlCount} (including {$collections->count()} collections, " . count($activePages) . " static pages, and home)");
+        $this->line("Indexed URLs: {$urlCount} (including {$collectionCount} collections, " . count($activePages) . ' static pages, and home)');
         $this->line("Indexed Images: {$imageCount}");
 
-        return Command::SUCCESS;
+        return self::SUCCESS;
     }
 }

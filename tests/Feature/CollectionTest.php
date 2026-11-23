@@ -75,10 +75,23 @@ class CollectionTest extends TestCase
 
     public function test_random_collection_redirects_to_collection_show(): void
     {
+        Collection::create([
+            'batch_id' => 'batch-test-empty-random',
+            'title' => 'Empty Collection Skipped',
+            'prompt' => 'No images yet',
+        ]);
+
         $collection = Collection::create([
             'batch_id' => 'batch-test-3',
             'title' => 'Random Target',
             'prompt' => 'A starry night sky',
+        ]);
+
+        Image::create([
+            'collection_id' => $collection->id,
+            'thumbnail' => 'collections/3/thumb.webp',
+            'image' => 'collections/3/main.webp',
+            'order' => 1,
         ]);
 
         $response = $this->get('/collections/random');

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,8 +25,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Paginator::defaultView('pagination::bootstrap-5');
+        Model::preventLazyLoading(! app()->isProduction());
 
-        ##Paginator::defaultSimpleView('your-pagination-view-name');
+        Paginator::defaultView('pagination::bootstrap-5');
     }
 }

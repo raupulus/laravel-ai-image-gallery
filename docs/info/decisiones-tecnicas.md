@@ -35,6 +35,11 @@ Registro de decisiones deliberadas del proyecto verificadas en el código, para 
 - **Dónde:** `app/Http/Controllers/PageController.php`, `resources/views/layouts/app.blade.php`, `app/Models/Collection.php`.
 - **Decisión:** `getActivePages()` filtra por `active === true` para el sitemap (actualmente `about`, `social`, `cookies` y `rgpd` están activas). Google Analytics (`gtag.js`) permanece bloqueado hasta que el usuario pulsa aceptar en `#cookie-consent-banner`, y los vídeos de YouTube se normalizan mediante `Collection::getYoutubeEmbedUrlAttribute()` sobre `https://www.youtube-nocookie.com/embed/{id}`.
 
+## 8. Protección estricta contra lazy loading (`preventLazyLoading`)
+- **Dónde:** `app/Providers/AppServiceProvider.php`.
+- **Decisión:** `Model::preventLazyLoading(! app()->isProduction())` activo en local y testing, y desactivado en producción para no tirar `500` inesperados al usuario final.
+- **Motivo:** Detectar consultas N+1 durante desarrollo y tests sin comprometer la disponibilidad en producción.
+
 ---
 
 > Creado: 2026-11-23 · Última revisión: 2026-11-23

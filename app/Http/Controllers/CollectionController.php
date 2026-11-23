@@ -25,28 +25,32 @@ class CollectionController extends Controller
      */
     public function show(Collection $collection): View
     {
-
-        // TODO: Crear sistema de notificaciones y/o búsqueda para controlar entrar a sitios que no existan
+        $collection->load([
+            'images' => fn ($query) => $query->orderBy('order')->orderBy('id'),
+            'collectionRole',
+        ]);
 
         $images = $collection->images;
 
         return view('collections.show', [
             'collection' => $collection,
             'images' => $images,
-            'firstImage' => $images->first()
+            'firstImage' => $images->first(),
         ]);
     }
 
     /**
      * Busca una colección aleatoria y lleva hacia ella.
-     *
-     * @return RedirectResponse
      */
     public function random(): RedirectResponse
     {
-        $collection = Collection::inRandomOrder()->select('id')->first();
+        $collection = Collection::query()
+            ->whereHas('images')
+            ->inRandomOrder()
+            ->select('id')
+            ->first();
 
-        if (!$collection) {
+        if (! $collection) {
             return redirect()->route('home');
         }
 

@@ -17,7 +17,8 @@
 
 ## Flujos principales
 1. Ejecución manual (`php artisan sitemap:generate`) o programada (`php artisan schedule:run` a las `03:42`).
-2. `GenerateSitemap::handle()` construye el XML en memoria con `XMLWriter`, crea el directorio destino si no existe y escribe el archivo en `public/sitemap.xml` (o en la ruta indicada con `--path=`).
+2. `GenerateSitemap::handle()` escribe en streaming sobre un archivo temporal con `XMLWriter::openURI()` procesando colecciones mediante `chunkById(200)` (sin acumular todo el catálogo en RAM), lo renombra atómicamente sobre `public/sitemap.xml` (o `--path=`) y devuelve `Command::FAILURE` si falla la escritura.
+3. En `app/Console/Kernel.php`, la tarea programada incluye `->withoutOverlapping()`.
 
 ## Puntos de entrada
 | Tipo | Firma | Auth / Permisos | Límites / Notas |

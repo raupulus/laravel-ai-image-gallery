@@ -149,12 +149,14 @@ class Collection extends Model
 
     /**
      * Devuelve la primera imagen que encuentre para la colección.
-     *
-     * @return Model|HasMany|object|null
      */
-    public function getPrimaryImageAttribute()
+    public function getPrimaryImageAttribute(): ?Image
     {
-        return $this->images()->first();
+        if ($this->relationLoaded('images')) {
+            return $this->images->first();
+        }
+
+        return $this->images()->orderBy('order')->orderBy('id')->first();
     }
 
     /**
@@ -186,30 +188,27 @@ class Collection extends Model
     }
 
 
-    public static function getQueryCollection(string|null $search = null): Builder
+    public static function getQueryCollection(?string $search = null): Builder
     {
-        $collections = self::select([
-            'collections.*',
-            DB::raw('images.collection_id')
-        ])
-            ->leftJoin('images', 'collections.id', '=', 'images.collection_id')
-            ->whereNotNull('images.collection_id')
+        $collections = self::query()
+            ->whereHas('images')
             ->whereNotNull('title')
-            ->groupBy('images.collection_id')
-            ->groupBy('collections.id');
-
+            ->where('title', '!=', '')
+            ->with([
+                'images' => fn ($query) => $query->orderBy('order')->orderBy('id'),
+            ])
+            ->withCount('images');
 
         if ($search !== null && $search !== '') {
             $escaped = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $search);
 
-            $collections->where(function ($q) use ($escaped) {
-                return $q->orWhere('title', 'ILIKE', '%' . $escaped . '%')
+            $collections->where(function (Builder $q) use ($escaped): void {
+                $q->orWhere('title', 'ILIKE', '%' . $escaped . '%')
                     ->orWhere('tags', 'ILIKE', '%' . $escaped . '%');
             });
         }
 
         return $collections;
-
     }
 
 
