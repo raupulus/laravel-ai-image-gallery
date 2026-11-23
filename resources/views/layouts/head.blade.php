@@ -1,34 +1,21 @@
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 {{-- Título, 50-60 carácteres máximo --}}
 <title>@yield('title', config('app.name'))</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="csrf-token" content="{{ csrf_token() }}" />
-<meta name="csrf_token" content="{{ csrf_token() }}" />
 
 {{-- Idioma del contenido --}}
-<meta property="og:locale" content="@yield('meta-og-locale', 'en_EN')">
-<meta http-equiv="Content-Language" content="en" />
-
-{{-- Alcance para distribuir el contenido --}}
-<meta name="distribution" content="global" />
+<meta property="og:locale" content="@yield('meta-og-locale', 'en_US')" />
 
 @yield('meta')
 
-<meta name="language" content="@yield('meta-og-locale', 'English')">
-<meta name="description" content="@yield('meta-description', config('app.description'))" /> {{-- Máximo 150-160 carácteres --}}
-<meta name="author" content="@yield('meta-author', 'Raúl Caro Pastorino')" />
-<meta name="copyright" content="@yield('meta-author', 'Raúl Caro Pastorino')" />
-<meta name="robots" content="@yield('meta-robots', 'index, follow')" />
-<meta name="keywords" content="@yield('meta-keywords', 'AI, Stable Diffusion, IA, Inteligencia artificial, raupulus, Raúl Caro Pastorino')" />
+<meta name="description" content="@yield('meta-description', config('app.description'))" />
+<meta name="author" content="@yield('meta-author', 'Raúl Caro Pastorino (@raupulus)')" />
+<meta name="robots" content="@yield('meta-robots', (request()->routeIs('login') || request()->filled('search')) ? 'noindex, nofollow' : 'index, follow')" />
 
 <link rel="canonical" href="@yield('canonical', request()->url())" />
-<meta name="url" content="@yield('canonical', request()->url())">
-<meta name="identifier-URL" content="@yield('canonical', request()->url())">
-<meta name="revisit-after" content="7 days">
-
 
 {{-- Redes sociales --}}
 <meta property="og:title"
@@ -60,12 +47,12 @@
 <meta name="twitter:creator" content="@yield('meta-twitter-creator', '@raupulus')" />
 
 {{-- Iconos --}}
-{{-- TODO → Dinamizar para reescribirlo desde cada parte de la api --}}
-<link rel="apple-touch-icon" sizes="32x32" href="{{asset('images/favicons/favicon_32x32.ico')}}" />
 <link rel="apple-touch-icon" sizes="256x256" href="{{asset('images/favicons/favicon_256x256.ico')}}" />
-<link rel="icon" type="image/png" sizes="256x256"  href="{{asset('images/favicons/favicon_256x256.ico')}}" />
-<link rel="icon" type="image/png" sizes="32x32" href="{{asset('images/favicons/favicon_32x32.ico')}}" />
-<link rel="icon" type="image/png" sizes="96x96" href="{{asset('images/favicons/favicon_96x96.png')}}" />
+<link rel="icon" type="image/x-icon" sizes="256x256" href="{{asset('images/favicons/favicon_256x256.ico')}}" />
+<link rel="icon" type="image/x-icon" sizes="96x96" href="{{asset('images/favicons/favicon_96x96.ico')}}" />
+<link rel="icon" type="image/x-icon" sizes="32x32" href="{{asset('images/favicons/favicon_32x32.ico')}}" />
+
+@yield('structured_data')
 
 
 <script>

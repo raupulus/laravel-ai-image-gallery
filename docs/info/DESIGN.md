@@ -25,7 +25,8 @@ Estilos específicos por vista (inyectados mediante `@section('head_css')` o `@s
 - `App\Providers\AppServiceProvider::boot()` configura `Paginator::defaultView('pagination::bootstrap-5')`.
 
 ## SEO y metadatos
-- `resources/views/layouts/head.blade.php` centraliza `<title>`, `canonical`, `meta-description`, OpenGraph (`og:*`), Twitter Cards (`twitter:*`) y favicons (`public/images/favicons/`), sobrescribibles con `@section(...)` desde cada vista.
+- `resources/views/layouts/head.blade.php` centraliza `<title>`, `canonical`, `meta-description`, OpenGraph (`og:*`, `og:locale` `en_US`), Twitter Cards (`twitter:*`), favicons `.ico` (`32x32`, `96x96`, `256x256`), `robots` (`noindex, nofollow` en `/login` y búsquedas `?search=`) y `@yield('structured_data')` (JSON-LD `WebSite` en portada e `ImageGallery` en detalle), sobrescribibles desde cada vista.
+- `public/robots.txt` bloquea `/collections/ajax/`, `/webhooks/` y `/login` y declara `Sitemap: https://aidyslexic.raupulus.dev/sitemap.xml`.
 - Google Analytics (`gtag.js`) se carga en `resources/views/layouts/app.blade.php` únicamente cuando `config('services.google.analytics')` (`GOOGLE_ANALYTICS`) está definido **y** el usuario otorga consentimiento explícito (`localStorage.cookie_consent === 'accepted'`) mediante el banner `#cookie-consent-banner`.
 
 ## Assets con Vite

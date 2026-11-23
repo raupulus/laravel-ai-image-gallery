@@ -2,6 +2,5 @@ User-agent: *
 Disallow: /collections/ajax/
 Disallow: /webhooks/
 Disallow: /login
-Disallow: /tokens/
 
-Sitemap: /sitemap.xml
+Sitemap: https://aidyslexic.raupulus.dev/sitemap.xml

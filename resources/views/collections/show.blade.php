@@ -17,6 +17,21 @@
 @section('meta-twitter-image', $firstImage?->urlImage ?? asset('images/logo/logo_640x640.webp'))
 @section('meta-twitter-image-alt', $collection->title ?? 'AI Generated Image')
 
+@section('structured_data')
+    @php
+        $gallerySchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'ImageGallery',
+            'name' => $collection->title,
+            'description' => $collection->description ?: ($collection->title . ' - AI image collection.'),
+            'url' => $collection->url,
+            'image' => $firstImage?->urlImage ?? asset('images/logo/logo_640x640.webp'),
+            'datePublished' => optional($collection->created_at)->toAtomString(),
+        ];
+    @endphp
+    <script type="application/ld+json">{!! json_encode($gallerySchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
+@endsection
+
 @section('content')
     <div class="container-xl" style="">
         <div class="row mt-5 mb-3">

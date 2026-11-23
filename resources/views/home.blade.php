@@ -9,6 +9,24 @@
 @section('meta-twitter-title', config('app.name') . ' - AI Image Gallery & Prompts')
 @section('meta-twitter-description', config('app.description'))
 
+@section('structured_data')
+    @php
+        $homeSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebSite',
+            'name' => config('app.name'),
+            'description' => config('app.description'),
+            'url' => route('home'),
+            'potentialAction' => [
+                '@type' => 'SearchAction',
+                'target' => route('home') . '?search={search_term_string}',
+                'query-input' => 'required name=search_term_string',
+            ],
+        ];
+    @endphp
+    <script type="application/ld+json">{!! json_encode($homeSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
+@endsection
+
 @section('content')
     <div class="container-xl">
         <div class="row">
