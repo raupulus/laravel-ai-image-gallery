@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class CollectionController extends Controller
@@ -123,12 +124,18 @@ class CollectionController extends Controller
 
     /*****************    AJAX  **************/
 
-    public function ajaxGetHomeCards(Request $request, int $page = 1, string|null $search = null): JsonResponse
+    public function ajaxGetHomeCards(Request $request, int $page = 1, ?string $search = null): JsonResponse
     {
-        $collections = Collection::getQueryCollection($search);
+        $safePage = max(1, min($page, 10000));
+        $safeSearch = is_string($search) ? trim(Str::limit($search, 100, '')) : null;
+        if ($safeSearch === '') {
+            $safeSearch = null;
+        }
+
+        $collections = Collection::getQueryCollection($safeSearch);
 
         $collections = $collections->orderByDesc('created_at')
-            ->paginate(8, null, null, $page);
+            ->paginate(8, null, null, $safePage);
 
         $html = '';
 

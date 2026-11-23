@@ -3,9 +3,10 @@
 namespace App\Http\Requests\Api;
 
 use App\Models\Collection;
-use App\Models\Image;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 /**
  * Request para adjuntar una imagen a una colección vía API.
@@ -29,42 +30,48 @@ class CollectionUpdateRequest extends FormRequest
 
     /**
      * Prepare the data for validation.
-     *
-     * @return void
      */
-    protected function prepareForValidation()
+    protected function prepareForValidation(): void
     {
-        $request = request();
+        $collection = $this->route('collection');
+        $order = $this->input('order');
+        $seed = null;
 
-        $collection = $request->route()->parameter('collection');
+        if ($collection instanceof Collection && (is_int($order) || (is_string($order) && is_numeric($order)))) {
+            try {
+                $seeds = Cache::get('collection-image-update-' . $collection->id);
 
-        try {
-            $seeds = Cache::get('collection-image-update-' . $collection->id);
-            $seed = $seeds[$request->get('order')];
-        } catch (\Exception) {
-            $seed = null;
+                if (is_array($seeds) && array_key_exists((int) $order, $seeds)) {
+                    $seed = $seeds[(int) $order];
+                }
+            } catch (Throwable $e) {
+                Log::warning('Failed to read cached seeds for collection image upload', [
+                    'collection_id' => $collection->id,
+                    'order' => $order,
+                    'exception' => $e->getMessage(),
+                ]);
+            }
         }
 
         $this->merge([
-            'collection_id' => $collection->id,
+            'collection_id' => $collection instanceof Collection ? $collection->id : null,
             'seed' => $seed,
-            'order' => $request->get('order'),
+            'order' => $order,
         ]);
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array
+     * @return array<string, string>
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            'collection_id' => 'required|int|exists:collections,id',
-            'image' => 'required',
-            //'image' => 'required|image|mimes:jpeg,png|max:255',
-            'seed' => 'nullable|int',
-            'order' => 'required|int',
+            'collection_id' => 'required|integer|exists:collections,id',
+            'image' => 'required|string|max:28000000',
+            'seed' => 'nullable|integer',
+            'order' => 'required|integer|min:0|max:1000',
         ];
     }
 }

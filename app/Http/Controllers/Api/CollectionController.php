@@ -7,11 +7,13 @@ use App\Http\Requests\Api\CollectionAddRequest;
 use App\Http\Requests\Api\CollectionUpdateRequest;
 use App\Http\Requests\Api\CollectionVideoUpdateRequest;
 use App\Models\Collection;
+use App\Models\CollectionRole;
 use App\Models\Image;
 use App\Services\ImageStorageService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Throwable;
 
 class CollectionController extends Controller
@@ -21,6 +23,18 @@ class CollectionController extends Controller
         $validated = $request->validated();
         $seeds = $validated['seeds'] ?? null;
         unset($validated['seeds']);
+
+        if (empty($validated['collection_role_id']) && ! empty($validated['role'])) {
+            $roleSlug = (string) $validated['role'];
+            $roleModel = CollectionRole::firstOrCreate(
+                ['slug' => $roleSlug],
+                [
+                    'name' => ucwords(Str::replace(['-', '_'], ' ', $roleSlug)),
+                    'description' => null,
+                ]
+            );
+            $validated['collection_role_id'] = $roleModel->id;
+        }
 
         $collection = Collection::updateOrCreate(
             ['batch_id' => $validated['batch_id']],

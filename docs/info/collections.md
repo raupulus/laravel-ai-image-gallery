@@ -45,7 +45,7 @@
 | `GET` | `/` | `home` | Pública | Pagina 24 colecciones con imágenes y título |
 | `GET` | `/collections/show/{collection}` | `collections.show` | Pública | Route model binding por `id` |
 | `GET` | `/collections/random` | `collections.random` | Pública | Redirige a `home` si no hay colecciones |
-| `GET` | `/collections/ajax/get/cards/{page?}/{search?}` | `collection.ajax.get.cards` | Pública | Devuelve JSON con HTML renderizado (8 por página) |
+| `GET` | `/collections/ajax/get/cards/{page?}/{search?}` | `collection.ajax.get.cards` | Pública (`throttle:60,1`, `page` numérico `1..10000`) | Devuelve JSON con HTML renderizado (8 por página) y búsqueda escapada (`%`, `_`) |
 | `POST` | `/collections/delete/{collection}` | `collection.delete` | `auth` + `isAdmin` | `404` si no es admin |
 | `POST` | `/collections/{collection}/image/{image}/delete` | `collection.image.delete` | `auth` + `isAdmin` | `404` si no es admin o la imagen no pertenece a la colección |
 

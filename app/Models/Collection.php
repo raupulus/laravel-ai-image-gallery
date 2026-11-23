@@ -156,11 +156,12 @@ class Collection extends Model
             ->groupBy('collections.id');
 
 
-        if ($search) {
+        if ($search !== null && $search !== '') {
+            $escaped = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $search);
 
-            $collections->where(function ($q) use ($search) {
-                return $q->orWhere('title', 'ILIKE', '%' . $search . '%')
-                    ->orWhere('tags', 'ILIKE', '%' . $search . '%');
+            $collections->where(function ($q) use ($escaped) {
+                return $q->orWhere('title', 'ILIKE', '%' . $escaped . '%')
+                    ->orWhere('tags', 'ILIKE', '%' . $escaped . '%');
             });
         }
 

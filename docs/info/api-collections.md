@@ -17,9 +17,9 @@
 
 ## Flujos principales
 1. **Crear o actualizar colección (`POST /api/v1/collections/add`):**
-   - `CollectionAddRequest::prepareForValidation()` calcula `size_resized` (x4 si `resizer === "Real-ESRGAN x4"`), resuelve o crea `CollectionRole` por `role`, convierte `tags` array a CSV, normaliza `restore_faces` a booleano y trunca `title` (255) y `description` (1024).
-   - `Collection::updateOrCreate(['batch_id' => ...], $validated)` crea/actualiza la colección.
-   - Guarda `$seeds` en caché bajo la clave `collection-image-update-{collection_id}` durante 3600s.
+   - `CollectionAddRequest::prepareForValidation()` normaliza entradas de forma pura (sin escrituras en BD): calcula `size_resized` (x4 si `resizer === "Real-ESRGAN x4"` con regex `\d+x\d+`), convierte `tags` array a CSV (límite 255), normaliza `restore_faces` booleano (incluyendo `true` nativo), mantiene `null` cuando `steps`/`cfg_scale`/`denoising_strength` llegan vacíos y recorta `title` (511) / `description` (1024) sin añadir `...`. Valida `seeds` (`array|max:100` con elementos `integer`).
+   - `Api\CollectionController::add()` resuelve o crea `CollectionRole` por `role` antes de `Collection::updateOrCreate(['batch_id' => ...], $validated)`.
+   - Guarda `$seeds` en caché bajo la clave `collection-image-update-{collection_id}` durante 3600s (`Cache::put`).
    - Devuelve JSON `{ success: true, data: { collection_id, url } }`.
 2. **Subir imagen a colección (`POST /api/v1/collections/update/{collection}`):**
    - `CollectionUpdateRequest::prepareForValidation()` recupera `seed` desde caché usando `order` como índice y añade `collection_id`.
@@ -53,7 +53,6 @@
 
 ## Trampas conocidas
 - El prefijo real de las rutas API es `/api/v1` (configurado en `app/Providers/RouteServiceProvider.php`), no `/api`.
-- `CollectionAddRequest::prepareForValidation()` trunca `title` a 255 caracteres con `Str::limit` aunque la columna y la regla `max:511` permiten 511.
 
 ## Tests que lo cubren
 - `tests/Feature/ApiCollectionTest.php` (rechazo 401 sin auth y JSON sin `Accept`, rechazo 403 no-admin y token sin scope, `/api/v1/user`, `/collections/add`, `/collections/update/{collection}` con PNG válido y rechazo `422` de base64 corrupto/no-imagen, `/collections/video/update`, comando `api:token`, fallback 404).

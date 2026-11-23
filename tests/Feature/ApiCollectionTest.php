@@ -203,6 +203,54 @@ class ApiCollectionTest extends TestCase
         $this->assertDatabaseCount('images', 0);
     }
 
+    public function test_add_collection_validates_seeds_and_preserves_null_numeric_params(): void
+    {
+        $admin = User::factory()->admin()->create();
+        Sanctum::actingAs($admin, ['collections:write']);
+
+        $this->postJson('/api/v1/collections/add', [
+            'batch_id' => 'api-batch-invalid-seeds',
+            'title' => 'Invalid Seeds',
+            'prompt' => 'Test',
+            'seeds' => ['not-an-int'],
+        ])->assertStatus(422)->assertJsonValidationErrors(['seeds.0']);
+
+        $response = $this->postJson('/api/v1/collections/add', [
+            'batch_id' => 'api-batch-null-params',
+            'title' => 'Null Params Collection',
+            'prompt' => 'Mountain lake',
+            'role' => 'photographer-landscape',
+            'restore_faces' => true,
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('collections', [
+            'batch_id' => 'api-batch-null-params',
+            'steps' => null,
+            'cfg_scale' => null,
+            'denoising_strength' => null,
+            'restore_faces' => true,
+        ]);
+        $this->assertDatabaseHas('collection_roles', ['slug' => 'photographer-landscape']);
+    }
+
+    public function test_update_collection_rejects_out_of_range_order(): void
+    {
+        $admin = User::factory()->admin()->create();
+        Sanctum::actingAs($admin, ['collections:write']);
+
+        $collection = Collection::create([
+            'batch_id' => 'api-batch-order-bounds',
+            'title' => 'Order Bounds Test',
+            'prompt' => 'Test',
+        ]);
+
+        $this->postJson("/api/v1/collections/update/{$collection->id}", [
+            'image' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+            'order' => -1,
+        ])->assertStatus(422)->assertJsonValidationErrors(['order']);
+    }
+
     public function test_fallback_route_returns_json_404(): void
     {
         $response = $this->getJson('/api/v1/non-existent-endpoint');

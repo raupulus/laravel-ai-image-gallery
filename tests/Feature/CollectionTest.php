@@ -196,4 +196,42 @@ class CollectionTest extends TestCase
         $response->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->assertHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
     }
+
+    public function test_home_handles_array_search_parameter_and_escapes_sql_wildcards(): void
+    {
+        $collection = Collection::create([
+            'batch_id' => 'batch-wildcard',
+            'title' => '100% Pure AI Art',
+            'prompt' => 'Test',
+        ]);
+
+        Image::create([
+            'collection_id' => $collection->id,
+            'thumbnail' => 'collections/w/thumb.webp',
+            'image' => 'collections/w/main.webp',
+            'order' => 1,
+        ]);
+
+        $other = Collection::create([
+            'batch_id' => 'batch-other',
+            'title' => 'Sunset Forest',
+            'prompt' => 'Forest',
+        ]);
+
+        Image::create([
+            'collection_id' => $other->id,
+            'thumbnail' => 'collections/o/thumb.webp',
+            'image' => 'collections/o/main.webp',
+            'order' => 1,
+        ]);
+
+        // Array search parameter must not throw TypeError
+        $this->get('/?search[]=foo')->assertStatus(200);
+
+        // Literal "%" search must match only "100% Pure AI Art", not every row
+        $response = $this->get('/?search=%25');
+        $response->assertStatus(200);
+        $response->assertSee('100% Pure AI Art');
+        $response->assertDontSee('Sunset Forest');
+    }
 }

@@ -4,22 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Collection;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class IndexController extends Controller
 {
-
     /**
      * Página principal.
-     *
-     * @param Request $request
-     *
-     * @return View
      */
     public function index(Request $request): View
     {
-        $search = $request->get('search');
+        $rawSearch = $request->query('search');
+        $search = is_string($rawSearch) ? trim(Str::limit($rawSearch, 100, '')) : null;
+
+        if ($search === '') {
+            $search = null;
+        }
 
         $collections = Collection::getQueryCollection($search);
 

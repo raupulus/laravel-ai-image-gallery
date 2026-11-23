@@ -44,8 +44,9 @@ Route::group(['prefix' => 'collections'], function () {
 
     // Temporal, AJAX
 
-    Route::group(['prefix' => 'ajax'], function () {
+    Route::group(['prefix' => 'ajax', 'middleware' => 'throttle:60,1'], function () {
         Route::get('/get/cards/{page?}/{search?}', [CollectionController::class, 'ajaxGetHomeCards'])
+            ->whereNumber('page')
             ->name('collection.ajax.get.cards');
     });
 });
