@@ -63,15 +63,17 @@
                         @csrf
                     </form>
 
-                    <span
-                        class="action-tool tool-delete-collection btn btn-sm btn-danger">
+                    <button type="button"
+                            class="action-tool tool-delete-collection btn btn-sm btn-danger"
+                            aria-label="Delete collection">
                         <svg xmlns="http://www.w3.org/2000/svg"
-                             fill="#000"
-                             height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path
+                             fill="currentColor"
+                             aria-hidden="true"
+                             height="1em" viewBox="0 0 448 512"><path
                                 d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/></svg>
 
                         Delete Collection
-                    </span>
+                    </button>
 
                 </div>
 
@@ -240,42 +242,91 @@
                     <div class="row mt-4">
                         <div class="col-12">
                             <div class="box-metadata-info">
-                                <div class="metadata-info-selector list-group">
-                                    <span data-id="metadata-description"
-                                          class="btn-info-selector list-group-item list-group-item-action active">
+                                <div class="metadata-info-selector list-group" role="tablist" aria-label="Collection details">
+                                    <button type="button"
+                                            id="tab-description"
+                                            role="tab"
+                                            aria-selected="true"
+                                            aria-controls="metadata-description"
+                                            data-id="metadata-description"
+                                            class="btn-info-selector list-group-item list-group-item-action active">
                                         Description
-                                    </span>
+                                    </button>
 
-                                    <span data-id="metadata-prompt"
-                                          class="btn-info-selector list-group-item list-group-item-action">
+                                    <button type="button"
+                                            id="tab-prompt"
+                                            role="tab"
+                                            aria-selected="false"
+                                            aria-controls="metadata-prompt"
+                                            data-id="metadata-prompt"
+                                            class="btn-info-selector list-group-item list-group-item-action">
                                         Prompt
-                                    </span>
+                                    </button>
 
-                                    <span data-id="metadata-negative"
-                                          class="btn-info-selector list-group-item list-group-item-action">
+                                    <button type="button"
+                                            id="tab-negative"
+                                            role="tab"
+                                            aria-selected="false"
+                                            aria-controls="metadata-negative"
+                                            data-id="metadata-negative"
+                                            class="btn-info-selector list-group-item list-group-item-action">
                                         Negative
-                                    </span>
+                                    </button>
                                 </div>
 
                                 <div class="metadata-info-content">
-                                    <div id="metadata-description" class="collection-metadata-block">
-                                        {{$collection->description}}
+                                    <div id="metadata-description"
+                                         role="tabpanel"
+                                         aria-labelledby="tab-description"
+                                         class="collection-metadata-block">
+                                        {{$collection->description ?: 'No description provided.'}}
                                     </div>
 
                                     <div id="metadata-prompt"
+                                         role="tabpanel"
+                                         aria-labelledby="tab-prompt"
+                                         hidden
                                          class="collection-metadata-block collection-metadata-block-hidden">
                                         {{$collection->prompt}}
                                     </div>
 
                                     <div id="metadata-negative"
+                                         role="tabpanel"
+                                         aria-labelledby="tab-negative"
+                                         hidden
                                          class="collection-metadata-block collection-metadata-block-hidden">
-                                        {{$collection->negative_prompt}}
+                                        {{$collection->negative_prompt ?: 'None'}}
                                     </div>
                                 </div>
 
                             </div>
                         </div>
                     </div>
+
+                    @if(auth()->user()?->isAdmin)
+                        <div id="admin-feedback-toast"
+                             class="alert alert-success d-none mt-3 text-start"
+                             role="status"
+                             aria-live="polite"></div>
+
+                        <dialog id="admin-confirm-dialog"
+                                aria-labelledby="admin-confirm-title"
+                                class="bg-dark text-light border border-secondary rounded p-4 shadow-lg"
+                                style="max-width: 440px; width: 92%;">
+                            <h2 id="admin-confirm-title" class="h5 mb-2">Confirm action</h2>
+                            <p id="admin-confirm-message" class="mb-4 text-light-emphasis">
+                                Are you sure you want to proceed?
+                            </p>
+                            <div class="d-flex justify-content-end gap-2">
+                                <button type="button" id="admin-confirm-cancel" class="btn btn-outline-light">
+                                    Cancel
+                                </button>
+                                <button type="button" id="admin-confirm-accept" class="btn btn-danger">
+                                    Delete
+                                </button>
+                            </div>
+                        </dialog>
+                    @endif
 
                 </div>
 
@@ -304,104 +355,156 @@
 
     <script>
         function changeInfoSection(ele) {
-            let selectors = document.querySelectorAll('.btn-info-selector');
+            const selectors = document.querySelectorAll('.btn-info-selector');
 
             selectors.forEach(selector => {
                 selector.classList.remove('active');
+                selector.setAttribute('aria-selected', 'false');
             });
 
             ele.classList.add('active');
+            ele.setAttribute('aria-selected', 'true');
 
             const id = ele.getAttribute('data-id');
+            const targetBlock = document.getElementById(id);
 
-            const block = document.getElementById(id);
-
-            document.querySelectorAll('.collection-metadata-block').forEach(block => {
-                block.classList.add('collection-metadata-block-hidden');
+            document.querySelectorAll('.collection-metadata-block').forEach(panel => {
+                panel.classList.add('collection-metadata-block-hidden');
+                panel.hidden = true;
             });
 
-            if (block) {
-                block.classList.remove('collection-metadata-block-hidden');
+            if (targetBlock) {
+                targetBlock.classList.remove('collection-metadata-block-hidden');
+                targetBlock.hidden = false;
             }
         }
 
         {{-- Eliminar colecciones --}}
         @if(auth()->user()?->isAdmin)
 
-        /**
-         * Elimina una colección
-         */
-        function confirmDeleteCollection() {
-            const confirmDelete = confirm('!!!!!!!! ¿¿¿¿ SEGURO DE ELIMINAR LA COLECCIÓN ???? !!!!!!!!')
-            const form = document.getElementById('form-delete-collection');
+        let pendingConfirmAction = null;
 
-            if (confirmDelete) {
-                form.submit();
-            }
-        }
+        function openAdminConfirmDialog(title, message, onConfirm) {
+            const dialog = document.getElementById('admin-confirm-dialog');
+            const titleEl = document.getElementById('admin-confirm-title');
+            const messageEl = document.getElementById('admin-confirm-message');
 
-        /**
-         * Elimina una imagen de la colección
-         * @param ele
-         */
-        function deleteImageFromCollection(ele) {
-            const url = ele.getAttribute('data-url_delete');
-            const confirmDelete = confirm('!! ¿¿ SEGURO DE ELIMINAR LA IMAGEN DE LA COLECCIÓN ?? !!')
-
-            if (!confirmDelete) {
+            if (!dialog || typeof dialog.showModal !== 'function') {
+                if (window.confirm(message)) {
+                    onConfirm();
+                }
                 return;
             }
 
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            pendingConfirmAction = onConfirm;
+            dialog.showModal();
+        }
+
+        function showAdminToast(message, isError = false) {
+            const toast = document.getElementById('admin-feedback-toast');
+            if (!toast) {
+                return;
+            }
+
+            toast.classList.remove('d-none', 'alert-success', 'alert-danger');
+            toast.classList.add(isError ? 'alert-danger' : 'alert-success');
+            toast.textContent = message;
+        }
+
+        /**
+         * Elimina una colección previa confirmación mediante modal accesible.
+         */
+        function confirmDeleteCollection() {
+            const form = document.getElementById('form-delete-collection');
+            if (!form) {
+                return;
+            }
+
+            openAdminConfirmDialog(
+                'Delete Collection',
+                'This will permanently remove the collection and all of its images.',
+                () => form.submit()
+            );
+        }
+
+        /**
+         * Elimina una imagen de la colección.
+         * @param {HTMLElement} ele
+         */
+        function deleteImageFromCollection(ele) {
+            const url = ele.getAttribute('data-url_delete');
             const box = ele.closest('.every-image-collection');
 
-            fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success && box) {
-                        box.remove();
-                    }
+            openAdminConfirmDialog(
+                'Delete Image',
+                'This image will be permanently removed from the collection.',
+                () => {
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success && box) {
+                                box.remove();
+                            }
 
-                    if (data.message) {
-                        // TODO: TOAST MESSAGE
-                        //console.log(data.message);
-                    }
-                })
+                            showAdminToast(data.message || 'Image deleted.', !data.success);
+                        })
+                        .catch(() => {
+                            showAdminToast('Failed to delete image. Please try again.', true);
+                        });
+                }
+            );
         }
         @endif
 
-
         window.document.addEventListener('DOMContentLoaded', () => {
-            let infoOptions = document.querySelectorAll('.btn-info-selector');
+            const infoOptions = document.querySelectorAll('.btn-info-selector');
 
             infoOptions.forEach(ele => {
                 ele.addEventListener('click', () => changeInfoSection(ele));
             });
 
-
-            {{-- Eliminar colecciones --}}
             @if(auth()->user()?->isAdmin)
+                const dialog = document.getElementById('admin-confirm-dialog');
+                const btnCancel = document.getElementById('admin-confirm-cancel');
+                const btnAccept = document.getElementById('admin-confirm-accept');
+
+                if (btnCancel && dialog) {
+                    btnCancel.addEventListener('click', () => {
+                        pendingConfirmAction = null;
+                        dialog.close();
+                    });
+                }
+
+                if (btnAccept && dialog) {
+                    btnAccept.addEventListener('click', () => {
+                        const action = pendingConfirmAction;
+                        pendingConfirmAction = null;
+                        dialog.close();
+                        if (typeof action === 'function') {
+                            action();
+                        }
+                    });
+                }
+
                 const btnDeleteCollection = document.querySelector('.tool-delete-collection');
 
                 if (btnDeleteCollection) {
-                    btnDeleteCollection.addEventListener('click', confirmDeleteCollection)
+                    btnDeleteCollection.addEventListener('click', confirmDeleteCollection);
                 }
 
-                const btnsDelete = document.querySelectorAll('.tool-delete-image-collection');
-
-                if (btnsDelete) {
-                    btnsDelete.forEach((btnDelete) => {
-                        btnDelete.addEventListener('click', () => deleteImageFromCollection(btnDelete));
-                    });
-                }
+                document.querySelectorAll('.tool-delete-image-collection').forEach((btnDelete) => {
+                    btnDelete.addEventListener('click', () => deleteImageFromCollection(btnDelete));
+                });
             @endif
-
         });
     </script>
 @endsection

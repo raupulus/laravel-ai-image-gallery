@@ -39,6 +39,7 @@
    - Requiere sesión autenticada (`auth`) y permiso `CollectionPolicy::delete` (`$user->isAdmin`; si no, devuelve `404`).
    - `delete` borra las imágenes y la colección dentro de `DB::transaction()` y, tras confirmar la transacción, elimina los archivos físicos y el directorio `collections/{id}` mediante `ImageStorageService`.
    - `deleteImage` verifica que `$image->collection_id === $collection->id`, borra el registro dentro de `DB::transaction()`, elimina los archivos físicos y devuelve JSON si `$request->isJson()` o redirige a `$collection->url`.
+   - En interfaz (`collections/show.blade.php`), las confirmaciones de borrado emplean un `<dialog>` modal nativo con `aria-live` (`#admin-feedback-toast`) en lugar de `confirm()`/`alert()`.
 
 ## Puntos de entrada
 | Método | Ruta | Nombre | Auth / Permisos | Límites / Notas |

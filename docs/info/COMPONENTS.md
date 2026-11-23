@@ -20,9 +20,10 @@
 - Utilizados por las vistas de `resources/views/auth/`.
 
 ## Vistas principales
-- `resources/views/home.blade.php` — portada con buscador (`GET /?search=...`), grid inicial de 24 colecciones (`#box-all-collections-blocks`) y script inline de scroll infinito que consulta `collection.ajax.get.cards`.
-- `resources/views/collections/show.blade.php` — detalle de colección con galería de imágenes, metadatos de generación (prompt, modelo, parámetros) y controles de borrado para admin.
+- `resources/views/home.blade.php` — portada con buscador accesible (`<search>` + `<label>` + botón `Clear`), estado vacío (`@forelse`), grid inicial de 24 colecciones (`#box-all-collections-blocks`), contador inicializado desde servidor (`$collections->total()`) con `aria-live="polite"` y script de scroll infinito que consulta `collection.ajax.get.cards`.
+- `resources/views/collections/show.blade.php` — detalle de colección con galería de imágenes, metadatos de generación en pestañas ARIA (`role="tablist"` / `role="tab"` / `role="tabpanel"`), diálogo nativo `<dialog>` para confirmaciones de borrado admin y región `aria-live` (`#admin-feedback-toast`).
 - `resources/views/pages/show.blade.php` — contenedor de páginas estáticas que incluye `pages.content._about`, `_social`, `_cookies` o `_rgpd`.
+- `resources/views/errors/404.blade.php` y `500.blade.php` — páginas de error con la identidad visual del sitio y retorno directo al inicio.
 
 ---
 

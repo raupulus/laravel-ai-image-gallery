@@ -18,7 +18,7 @@
 1. **Visualización (`PageController@show`):**
    - Busca `$page` en `self::$pages`.
    - Si no existe, redirige a `route('home')`.
-   - Si existe (incluso si `active` es `false`), renderiza `resources/views/pages/show.blade.php` incluyendo el parcial correspondiente y pasando el array `$socials` con texto plano escapado con `nl2br(e(...))` y enlaces a los repositorios asociados.
+   - Si existe (incluso si `active` es `false`), renderiza `resources/views/pages/show.blade.php` incluyendo el parcial correspondiente y pasando el array `$socials` con texto plano escapado con `nl2br(e(...))`, `rel="noopener noreferrer"` y atributos ARIA en los enlaces a repositorios y redes sociales.
 
 ## Puntos de entrada
 | Método | Ruta | Nombre | Auth / Permisos | Límites / Notas |

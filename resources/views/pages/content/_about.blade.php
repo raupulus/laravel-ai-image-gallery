@@ -29,7 +29,7 @@
 
         <p>
             Once a batch of images is generated they will be uploaded to my own
-            <a rel="me" href="{{route('home')}}" target="_blank">
+            <a rel="me" href="{{route('home')}}">
                 API
             </a>
             to be stored as a gallery.
@@ -39,19 +39,19 @@
             Subsequently, the images will be published on the integrated social networks.
             Mostly:
 
-            <a rel="me" href="https://twitter.com/ai_automations" target="_blank">
+            <a rel="me noopener noreferrer" href="https://twitter.com/ai_automations" target="_blank">
                 Twitter
             </a>,
 
-            <a rel="me" href="https://www.instagram.com/ai_automations_experimental" target="_blank">
+            <a rel="me noopener noreferrer" href="https://www.instagram.com/ai_automations_experimental" target="_blank">
                 Instagram
             </a>,
 
-            <a rel="me" href="https://mastodon.online/@ai_automations_experimental" target="_blank">
+            <a rel="me noopener noreferrer" href="https://mastodon.online/@ai_automations_experimental" target="_blank">
                 Mastodon
             </a>,
 
-            <a rel="me" href="https://t.me/ai_automations_experimental" target="_blank">
+            <a rel="me noopener noreferrer" href="https://t.me/ai_automations_experimental" target="_blank">
                 Telegram
             </a>
         </p>
@@ -63,9 +63,9 @@
 
         <p>
             This video will be automatically uploaded to
-            <a rel="me" href="https://www.tiktok.com/@ai_automations" target="_blank"><strong>tiktok</strong></a>
+            <a rel="me noopener noreferrer" href="https://www.tiktok.com/@ai_automations" target="_blank"><strong>tiktok</strong></a>
             with selenium and
-            <a rel="me" href="https://www.youtube.com/@ai_automations_experimental" target="_blank">
+            <a rel="me noopener noreferrer" href="https://www.youtube.com/@ai_automations_experimental" target="_blank">
                 <strong>Youtube</strong>
             </a>
             using your api and it will also be synchronized by sending a request to my api so that the video is set as

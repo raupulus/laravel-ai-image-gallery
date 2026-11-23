@@ -44,34 +44,44 @@
 
         <div class="row">
             <div class="col" style="height: auto;">
-                <form method="GET" action="{{route('home')}}"
-                      style="max-width: 700px;margin: auto;margin-top: 3rem;margin-bottom: 3rem;">
-                    <div class="input-group">
-                        <span class="input-group-text">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 width="1em" height="1em"
-                                 fill="currentColor" viewBox="0 0 16 16"
-                                 class="bi bi-search-heart-fill"
-                                 style="font-size: 38px;">
-                                <path
-                                    d="M6.5 13a6.474 6.474 0 0 0 3.845-1.258h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.008 1.008 0 0 0-.115-.1A6.471 6.471 0 0 0 13 6.5 6.502 6.502 0 0 0 6.5 0a6.5 6.5 0 1 0 0 13Zm0-8.518c1.664-1.673 5.825 1.254 0 5.018-5.825-3.764-1.664-6.69 0-5.018Z"></path>
-                            </svg>
-                        </span>
+                <search>
+                    <form method="GET" action="{{route('home')}}"
+                          style="max-width: 700px;margin: auto;margin-top: 3rem;margin-bottom: 3rem;">
+                        <label for="main-input-search" class="visually-hidden">Search collections by title or tags</label>
+                        <div class="input-group">
+                            <span class="input-group-text" aria-hidden="true">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     width="1em" height="1em"
+                                     fill="currentColor" viewBox="0 0 16 16"
+                                     class="bi bi-search-heart-fill"
+                                     style="font-size: 38px;">
+                                    <path
+                                        d="M6.5 13a6.474 6.474 0 0 0 3.845-1.258h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.008 1.008 0 0 0-.115-.1A6.471 6.471 0 0 0 13 6.5 6.502 6.502 0 0 0 6.5 0a6.5 6.5 0 1 0 0 13Zm0-8.518c1.664-1.673 5.825 1.254 0 5.018-5.825-3.764-1.664-6.69 0-5.018Z"></path>
+                                </svg>
+                            </span>
 
-                        <input id="main-input-search"
-                               class="form-control"
-                               name="search"
-                               type="search"
-                               value="{{$search}}"
-                               placeholder="Search for an collection">
+                            <input id="main-input-search"
+                                   class="form-control"
+                                   name="search"
+                                   type="search"
+                                   value="{{$search}}"
+                                   placeholder="Search for a collection">
 
-                        <button class="btn btn-primary text-center"
-                                type="submit"
-                                style="text-align: center;">
-                            Go
-                        </button>
-                    </div>
-                </form>
+                            @if($search)
+                                <a href="{{route('home')}}"
+                                   class="btn btn-outline-light d-inline-flex align-items-center"
+                                   aria-label="Clear search filter">
+                                    Clear
+                                </a>
+                            @endif
+
+                            <button class="btn btn-primary text-center"
+                                    type="submit">
+                                Go
+                            </button>
+                        </div>
+                    </form>
+                </search>
             </div>
         </div>
 
@@ -79,13 +89,24 @@
         {{-- Grid con las imágenes --}}
         <div id="box-all-collections-blocks" class="row">
 
-            @foreach($collections as $collection)
+            @forelse($collections as $collection)
 
                 @if(($collection->images_count ?? $collection->images->count()) > 0)
                     @include('components._collection_block')
                 @endif
 
-            @endforeach
+            @empty
+                <div class="col-12">
+                    <div class="alert alert-dark text-center py-4 my-3" role="status">
+                        @if($search)
+                            <p class="mb-2">No collections matched "<strong>{{ $search }}</strong>".</p>
+                            <a href="{{ route('home') }}" class="btn btn-primary btn-sm">Reset search</a>
+                        @else
+                            <p class="mb-0">No collections are available yet.</p>
+                        @endif
+                    </div>
+                </div>
+            @endforelse
 
         </div>
 
@@ -96,10 +117,10 @@
         </div>
 
         <div id="box-collections-end" class="row">
-            <div class="col-12 text-info p-1">
+            <div class="col-12 text-info p-1" aria-live="polite">
 
                 Total Collections:
-                <span id="total-images" class="font-monospace">0</span>
+                <span id="total-images" class="font-monospace">{{ $collections->total() }}</span>
 
             </div>
         </div>
