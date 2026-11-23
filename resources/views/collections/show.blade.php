@@ -349,7 +349,7 @@
 
 
 @section('css')
-    <link rel="stylesheet" href="{{asset('css/collection_show.css')}}">
+    <link rel="stylesheet" href="{{asset('css/collection_show.css')}}?v={{ filemtime(public_path('css/collection_show.css')) }}">
 @endsection
 
 @section('js')

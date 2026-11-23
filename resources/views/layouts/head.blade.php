@@ -56,7 +56,7 @@
 
 <link rel="stylesheet" href="{{asset('theme/bootstrap/css/bootstrap.min.css')}}">
 <link rel="stylesheet" href="{{asset('theme/css/styles.min.css')}}">
-<link rel="stylesheet" href="{{asset('css/styles.css')}}">
-<link rel="stylesheet" href="{{asset('css/collection_blocks.css')}}">
+<link rel="stylesheet" href="{{asset('css/styles.css')}}?v={{ filemtime(public_path('css/styles.css')) }}">
+<link rel="stylesheet" href="{{asset('css/collection_blocks.css')}}?v={{ filemtime(public_path('css/collection_blocks.css')) }}">
 <link rel="stylesheet" href="{{asset('theme/css/fancybox.css')}}" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="{{asset('theme/css/fancybox.css')}}"></noscript>

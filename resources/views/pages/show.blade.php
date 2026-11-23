@@ -80,5 +80,5 @@
 
 
 @section('css')
-        <link rel="stylesheet" href="{{asset('css/pages/show.css')}}">
+    <link rel="stylesheet" href="{{asset('css/pages/show.css')}}?v={{ filemtime(public_path('css/pages/show.css')) }}">
 @endsection
