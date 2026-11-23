@@ -9,13 +9,12 @@ class RoleSeeder extends Seeder
 {
     private $datas = [
         [
-            'slug' => "admin",
-            'name' => "Admin",
+            'slug' => 'admin',
+            'name' => 'Admin',
             'show_name' => 'Admin',
-            'description' => "Site Admin"
+            'description' => 'Site Admin',
         ],
     ];
-
 
     /**
      * Run the database seeds.
@@ -24,14 +23,14 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        foreach($this->datas as $data) {
+        foreach ($this->datas as $data) {
             Role::firstOrCreate([
-                    'slug' => $data['slug']
-                ], [
-                    'name' => $data['name'],
-                    'show_name' => $data['show_name'],
-                    'description' => $data['description']
-                ]
+                'slug' => $data['slug'],
+            ], [
+                'name' => $data['name'],
+                'show_name' => $data['show_name'],
+                'description' => $data['description'],
+            ]
             );
         }
     }

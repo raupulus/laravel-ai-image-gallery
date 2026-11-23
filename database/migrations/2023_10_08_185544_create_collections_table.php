@@ -27,12 +27,10 @@ return new class extends Migration
                 ->onUpdate('CASCADE')
                 ->onDelete('SET NULL');
 
-
             // Se mantiene temporalmente hasta terminar de utilizar la nueva tabla de roles.
             $table->string('role', 255)
                 ->nullable()
                 ->comment('Identifica el role usado para generar la imagen, parámetros que influyen en la descripción del prompt');
-
 
             $table->string('batch_id', 255)
                 ->comment('Cadena para identificar el lote subido, esto se utiliza por que antes de subir no se conoce el ID');

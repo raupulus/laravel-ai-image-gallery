@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -18,19 +19,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class CollectionRole extends Model
 {
+    use HasFactory;
+
     protected $table = 'collection_roles';
 
     protected $fillable = ['slug', 'name', 'description'];
 
-
     /**
      * Relación con todas las colecciones asociadas al role actual.
-     *
-     * @return HasMany
      */
     public function collections(): HasMany
     {
         return $this->hasMany(Collection::class, 'collection_role_id', 'id');
     }
-
 }

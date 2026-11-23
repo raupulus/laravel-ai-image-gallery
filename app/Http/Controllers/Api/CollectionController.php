@@ -41,7 +41,7 @@ class CollectionController extends Controller
             $validated
         );
 
-        Cache::put('collection-image-update-' . $collection->id, $seeds, 3600);
+        Cache::put('collection-image-update-'.$collection->id, $seeds, 3600);
 
         return response()->json([
             'success' => true,

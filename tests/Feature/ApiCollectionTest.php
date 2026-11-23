@@ -117,7 +117,7 @@ class ApiCollectionTest extends TestCase
 
         $image = Image::where('collection_id', $collection->id)->first();
         $this->assertNotNull($image);
-        $this->assertTrue(file_exists(storage_path('app/public/' . $image->thumbnail)));
+        $this->assertTrue(file_exists(storage_path('app/public/'.$image->thumbnail)));
 
         // Clean up test image
         $image->safeDelete();
@@ -196,7 +196,7 @@ class ApiCollectionTest extends TestCase
         ])->assertStatus(422)->assertJsonValidationErrors(['image']);
 
         $this->postJson("/api/v1/collections/update/{$collection->id}", [
-            'image' => 'data:text/plain;base64,' . base64_encode('hello world'),
+            'image' => 'data:text/plain;base64,'.base64_encode('hello world'),
             'order' => 1,
         ])->assertStatus(422)->assertJsonValidationErrors(['image']);
 

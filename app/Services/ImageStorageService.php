@@ -39,10 +39,10 @@ class ImageStorageService
     {
         $binary = $this->decodeAndValidateBinary($base64);
 
-        $directory = 'collections/' . $collectionId;
-        $baseName = $collectionId . '_' . Str::random(30);
-        $imageRelativePath = $directory . '/' . $baseName . '.webp';
-        $thumbnailRelativePath = $directory . '/' . $baseName . '_thumbnail.webp';
+        $directory = 'collections/'.$collectionId;
+        $baseName = $collectionId.'_'.Str::random(30);
+        $imageRelativePath = $directory.'/'.$baseName.'.webp';
+        $thumbnailRelativePath = $directory.'/'.$baseName.'_thumbnail.webp';
 
         try {
             $original = InterventionImage::decodeBinary($binary);
@@ -96,7 +96,7 @@ class ImageStorageService
      */
     public function deleteCollectionDirectory(int $collectionId): void
     {
-        Storage::disk('public')->deleteDirectory('collections/' . $collectionId);
+        Storage::disk('public')->deleteDirectory('collections/'.$collectionId);
     }
 
     /**

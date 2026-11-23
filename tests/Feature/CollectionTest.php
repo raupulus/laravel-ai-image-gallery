@@ -14,6 +14,7 @@ class CollectionTest extends TestCase
     use RefreshDatabase;
 
     private Role $adminRole;
+
     private Role $userRole;
 
     protected function setUp(): void
@@ -23,13 +24,13 @@ class CollectionTest extends TestCase
         $this->adminRole = Role::firstOrCreate(['slug' => 'admin'], [
             'name' => 'Admin',
             'show_name' => 'Admin',
-            'description' => 'Site Admin'
+            'description' => 'Site Admin',
         ]);
 
         $this->userRole = Role::firstOrCreate(['slug' => 'user'], [
             'name' => 'User',
             'show_name' => 'User',
-            'description' => 'Standard User'
+            'description' => 'Standard User',
         ]);
     }
 
@@ -68,7 +69,7 @@ class CollectionTest extends TestCase
             'order' => 1,
         ]);
 
-        $response = $this->get('/collections/show/' . $collection->id);
+        $response = $this->get('/collections/show/'.$collection->id);
         $response->assertStatus(200);
         $response->assertSee('Art Gallery Show');
     }
@@ -95,7 +96,7 @@ class CollectionTest extends TestCase
         ]);
 
         $response = $this->get('/collections/random');
-        $response->assertRedirect('/collections/show/' . $collection->id);
+        $response->assertRedirect('/collections/show/'.$collection->id);
     }
 
     public function test_non_admin_cannot_delete_collection(): void
@@ -107,7 +108,7 @@ class CollectionTest extends TestCase
             'prompt' => 'Castle on a hill',
         ]);
 
-        $response = $this->actingAs($user)->post('/collections/delete/' . $collection->id);
+        $response = $this->actingAs($user)->post('/collections/delete/'.$collection->id);
         $response->assertStatus(404);
         $this->assertDatabaseHas('collections', ['id' => $collection->id]);
     }
@@ -121,7 +122,7 @@ class CollectionTest extends TestCase
             'prompt' => 'ToDelete',
         ]);
 
-        $response = $this->actingAs($admin)->post('/collections/delete/' . $collection->id);
+        $response = $this->actingAs($admin)->post('/collections/delete/'.$collection->id);
         $response->assertRedirect(route('home'));
         $this->assertDatabaseMissing('collections', ['id' => $collection->id]);
     }
@@ -148,7 +149,7 @@ class CollectionTest extends TestCase
         $response->assertStatus(200);
         $response->assertJson([
             'success' => true,
-            'message' => 'Image successfully removed from collection'
+            'message' => 'Image successfully removed from collection',
         ]);
         $this->assertDatabaseMissing('images', ['id' => $image->id]);
     }
@@ -176,7 +177,7 @@ class CollectionTest extends TestCase
             'total',
             'page',
             'hasMorePages',
-            'lastItem'
+            'lastItem',
         ]);
     }
 

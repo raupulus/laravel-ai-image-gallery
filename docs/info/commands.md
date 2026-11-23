@@ -24,11 +24,19 @@ php artisan db:seed
 ## Tests y calidad de código
 
 ```bash
-# Suite completa de PHPUnit
+# Suite completa de PHPUnit (PostgreSQL)
 php artisan test
 
+# Análisis estático PHPStan / Larastan (nivel 5)
+composer phpstan
+
 # Formateador de código (Laravel Pint)
-./vendor/bin/pint
+./vendor/bin/pint --test
+
+# Auditorías de vulnerabilidades y build de assets
+composer audit --no-interaction
+pnpm audit
+pnpm build
 ```
 
 ## Comandos Artisan propios y scheduler

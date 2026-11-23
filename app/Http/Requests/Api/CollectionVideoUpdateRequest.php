@@ -25,10 +25,7 @@ class CollectionVideoUpdateRequest extends FormRequest
      *
      * @return void
      */
-    protected function prepareForValidation()
-    {
-
-    }
+    protected function prepareForValidation() {}
 
     /**
      * Get the validation rules that apply to the request.

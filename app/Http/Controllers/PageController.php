@@ -43,8 +43,6 @@ class PageController extends Controller
 
     /**
      * Devuelve todas las páginas configuradas.
-     *
-     * @return array
      */
     public static function getPages(): array
     {
@@ -53,22 +51,18 @@ class PageController extends Controller
 
     /**
      * Devuelve únicamente las páginas activas con contenido para indexar en sitemap.
-     *
-     * @return array
      */
     public static function getActivePages(): array
     {
         return array_filter(self::$pages, function (array $page) {
-            return !empty($page['active']);
+            return ! empty($page['active']);
         });
     }
 
     /**
      * Muestra el contenido de una página del sitio concreta.
      *
-     * @param string $page Recibe el slug de la página a la que quiere acceder
-     *
-     * @return View|RedirectResponse
+     * @param  string  $page  Recibe el slug de la página a la que quiere acceder
      */
     public function show(string $page): View|RedirectResponse
     {
@@ -76,7 +70,7 @@ class PageController extends Controller
         $pageData = isset(self::$pages[$pageSlug]) && self::$pages[$pageSlug] ? self::$pages[$pageSlug] : null;
         $partial_view = $pageData ? $pageData['view'] : null;
 
-        if (!$partial_view) {
+        if (! $partial_view) {
             return redirect()->route('home');
         }
 

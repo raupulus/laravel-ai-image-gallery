@@ -25,8 +25,6 @@ class GenerateSitemap extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
     public function handle(): int
     {
@@ -41,9 +39,9 @@ class GenerateSitemap extends Command
             return self::FAILURE;
         }
 
-        $tmpPath = $targetPath . '.tmp.' . getmypid();
+        $tmpPath = $targetPath.'.tmp.'.getmypid();
 
-        $xml = new XMLWriter();
+        $xml = new XMLWriter;
 
         if (! $xml->openURI($tmpPath)) {
             $this->error("Unable to open temporary sitemap file for writing: {$tmpPath}");
@@ -154,13 +152,13 @@ class GenerateSitemap extends Command
             }
         } catch (\Throwable $e) {
             @unlink($tmpPath);
-            $this->error('Sitemap generation failed: ' . $e->getMessage());
+            $this->error('Sitemap generation failed: '.$e->getMessage());
 
             return self::FAILURE;
         }
 
         $this->info("Sitemap successfully generated at: {$targetPath}");
-        $this->line("Indexed URLs: {$urlCount} (including {$collectionCount} collections, " . count($activePages) . ' static pages, and home)');
+        $this->line("Indexed URLs: {$urlCount} (including {$collectionCount} collections, ".count($activePages).' static pages, and home)');
         $this->line("Indexed Images: {$imageCount}");
 
         return self::SUCCESS;

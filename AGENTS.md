@@ -6,7 +6,7 @@ Guía operativa para agentes y desarrolladores que trabajen en este repositorio.
 - **Backend:** PHP `>= 8.4`, Laravel `^13.0`, Laravel Sanctum `^4.0`, Intervention Image Laravel `^4.1` (WebP).
 - **Base de datos:** PostgreSQL (`pdo_pgsql`).
 - **Frontend:** Blade, Bootstrap 5 (`public/theme/`), Fancybox, CSS propio (`public/css/`), Vite `^8.3.5` (`pnpm`).
-- **Tests y formato:** PHPUnit `^13.0` (`php artisan test`), Laravel Pint (`./vendor/bin/pint`).
+- **Tests y formato:** PHPUnit `^13.0` (`php artisan test`), Laravel Pint (`./vendor/bin/pint`), PHPStan / Larastan (`composer phpstan`, nivel 5 en `phpstan.neon`).
 
 ## Estructura real del repositorio
 ```text
@@ -46,8 +46,8 @@ Guía operativa para agentes y desarrolladores que trabajen en este repositorio.
 ├── scripts/                     # exist_db_or_create.sh, functions.sh, generate_env.sh, webhooks/api-deploy.sh
 ├── storage/
 └── tests/
-    ├── Feature/                 # ApiCollectionTest, CollectionTest, SitemapCommandTest, Auth/
-    └── Unit/
+    ├── Feature/                 # ApiCollectionTest, CollectionTest, ErrorPagesTest, SitemapCommandTest, Auth/
+    └── Unit/                    # CollectionModelTest
 ```
 
 ## Trampas conocidas

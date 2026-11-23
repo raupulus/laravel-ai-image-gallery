@@ -19,26 +19,25 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [IndexController::class, 'index'])->name('home');
 
-#################           Páginas           #################
+// ################           Páginas           #################
 
 Route::group(['prefix' => 'page'], function () {
     Route::get('/{page}', [PageController::class, 'show'])->name('page.show');
 });
 
-#################           Colecciones           #################
+// ################           Colecciones           #################
 
 Route::group(['prefix' => 'collections'], function () {
     Route::get('/show/{collection}', [CollectionController::class, 'show'])->name('collections.show');
     Route::get('/random', [CollectionController::class, 'random'])->name('collections.random');
 
-
-    ## Acciones de administración en colecciones
+    // # Acciones de administración en colecciones
     Route::group(['middleware' => 'auth'], function () {
 
-        ## Eliminar colección.
+        // # Eliminar colección.
         Route::post('/delete/{collection}', [CollectionController::class, 'delete'])->name('collection.delete');
 
-        ## Eliminar una imagen de la colección.
+        // # Eliminar una imagen de la colección.
         Route::post('/{collection}/image/{image}/delete', [CollectionController::class, 'deleteImage'])->name('collection.image.delete');
     });
 

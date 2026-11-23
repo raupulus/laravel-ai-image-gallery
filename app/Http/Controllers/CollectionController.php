@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Collection;
 use App\Models\Image;
 use App\Services\ImageStorageService;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,14 +15,8 @@ use Illuminate\View\View;
 
 class CollectionController extends Controller
 {
-
-
     /**
      * Muestra una colección concreta con todas sus imágenes y metadatos.
-     *
-     * @param Collection $collection
-     *
-     * @return View
      */
     public function show(Collection $collection): View
     {
@@ -59,10 +54,6 @@ class CollectionController extends Controller
 
     /**
      * Eliminamos una colección junto con las imágenes que la componen.
-     *
-     * @param Request $request
-     * @param Collection $collection
-     * @return RedirectResponse
      */
     public function delete(Request $request, Collection $collection, ImageStorageService $imageStorage): RedirectResponse
     {
@@ -78,7 +69,7 @@ class CollectionController extends Controller
         DB::transaction(function () use ($collection, &$paths): void {
             $paths = $collection->images()
                 ->get(['image', 'thumbnail'])
-                ->flatMap(static fn (Image $img): array => [$img->image, $img->thumbnail])
+                ->flatMap(static fn (Model $img): array => $img instanceof Image ? [$img->image, $img->thumbnail] : [])
                 ->all();
 
             $collection->images()->delete();
@@ -124,8 +115,6 @@ class CollectionController extends Controller
         return redirect()->to($collection->url);
     }
 
-
-
     /*****************    AJAX  **************/
 
     public function ajaxGetHomeCards(Request $request, int $page = 1, ?string $search = null): JsonResponse
@@ -139,13 +128,13 @@ class CollectionController extends Controller
         $collections = Collection::getQueryCollection($safeSearch);
 
         $collections = $collections->orderByDesc('created_at')
-            ->paginate(8, null, null, $safePage);
+            ->paginate(8, ['*'], 'page', $safePage);
 
         $html = '';
 
-        $collections->each(function ($ele) use (&$html)  {
+        $collections->each(function ($ele) use (&$html) {
             $html .= \view('components._collection_block', [
-                'collection' => $ele
+                'collection' => $ele,
             ])->render();
         });
 
@@ -158,7 +147,4 @@ class CollectionController extends Controller
             'lastItem' => $collections->lastItem(),
         ]);
     }
-
-
-
 }

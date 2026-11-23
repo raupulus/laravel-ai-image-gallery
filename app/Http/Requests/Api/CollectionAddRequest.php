@@ -31,7 +31,7 @@ class CollectionAddRequest extends FormRequest
         $sizeResized = null;
 
         if (is_string($size) && $resizer === 'Real-ESRGAN x4' && preg_match('/^(\d+)\s*[xX]\s*(\d+)$/', trim($size), $matches)) {
-            $sizeResized = ((int) $matches[1] * 4) . 'x' . ((int) $matches[2] * 4);
+            $sizeResized = ((int) $matches[1] * 4).'x'.((int) $matches[2] * 4);
         }
 
         $tags = $this->input('tags');

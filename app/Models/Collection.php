@@ -5,10 +5,10 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
@@ -39,6 +39,8 @@ use Illuminate\Support\Str;
  */
 class Collection extends Model
 {
+    use HasFactory;
+
     protected $table = 'collections';
 
     protected $fillable = [
@@ -99,38 +101,31 @@ class Collection extends Model
 
     /**
      * Devuelve si las proporciones de las imágenes son horizontal.
-     *
-     * @return bool
      */
     public function getIsHorizontalAttribute(): bool
     {
         $size = $this->size;
 
-        if (!$size) {
+        if (! $size) {
             return true;
         }
 
-        $width = (int)explode('x', $size)[0];
-        $height = (int)explode('x', $size)[1];
+        $width = (int) explode('x', $size)[0];
+        $height = (int) explode('x', $size)[1];
 
         return $width > $height;
     }
 
     /**
      * Devuelve si las proporciones de las imágenes son vertical.
-     *
-     * @return bool
      */
     public function getIsVerticalAttribute(): bool
     {
-        return !$this->isHorizontal;
+        return ! $this->isHorizontal;
     }
-
 
     /**
      * Devuelve el título con longitud limitada.
-     *
-     * @return string
      */
     public function getTitleResumeAttribute(): string
     {
@@ -139,8 +134,6 @@ class Collection extends Model
 
     /**
      * Prepara los tags asociados y los devuelve en un array.
-     *
-     * @return array
      */
     public function getTagsArrayAttribute(): array
     {
@@ -156,13 +149,14 @@ class Collection extends Model
             return $this->images->first();
         }
 
-        return $this->images()->orderBy('order')->orderBy('id')->first();
+        /** @var Image|null $image */
+        $image = $this->images()->orderBy('order')->orderBy('id')->first();
+
+        return $image;
     }
 
     /**
      * Devuelve la url hacia la ruta de la colección instanciada.
-     *
-     * @return string
      */
     public function getUrlAttribute(): string
     {
@@ -171,8 +165,6 @@ class Collection extends Model
 
     /**
      * Devuelve la URL de inserción en modo privacidad mejorada (youtube-nocookie.com) o null si no es válida.
-     *
-     * @return string|null
      */
     public function getYoutubeEmbedUrlAttribute(): ?string
     {
@@ -181,12 +173,11 @@ class Collection extends Model
         }
 
         if (preg_match('/^https:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtube-nocookie\.com\/embed\/|youtu\.be\/)([A-Za-z0-9_-]{6,32})/', $this->url_youtube, $matches)) {
-            return 'https://www.youtube-nocookie.com/embed/' . $matches[1];
+            return 'https://www.youtube-nocookie.com/embed/'.$matches[1];
         }
 
         return null;
     }
-
 
     public static function getQueryCollection(?string $search = null): Builder
     {
@@ -203,13 +194,11 @@ class Collection extends Model
             $escaped = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $search);
 
             $collections->where(function (Builder $q) use ($escaped): void {
-                $q->orWhere('title', 'ILIKE', '%' . $escaped . '%')
-                    ->orWhere('tags', 'ILIKE', '%' . $escaped . '%');
+                $q->orWhere('title', 'ILIKE', '%'.$escaped.'%')
+                    ->orWhere('tags', 'ILIKE', '%'.$escaped.'%');
             });
         }
 
         return $collections;
     }
-
-
 }

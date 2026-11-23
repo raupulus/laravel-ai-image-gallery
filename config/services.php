@@ -32,7 +32,7 @@ return [
     ],
 
     'google' => [
-        'analytics' => env('GOOGLE_ANALYTICS', null)
-    ]
+        'analytics' => env('GOOGLE_ANALYTICS', null),
+    ],
 
 ];

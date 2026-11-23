@@ -39,7 +39,7 @@ class CollectionUpdateRequest extends FormRequest
 
         if ($collection instanceof Collection && (is_int($order) || (is_string($order) && is_numeric($order)))) {
             try {
-                $seeds = Cache::get('collection-image-update-' . $collection->id);
+                $seeds = Cache::get('collection-image-update-'.$collection->id);
 
                 if (is_array($seeds) && array_key_exists((int) $order, $seeds)) {
                     $seed = $seeds[(int) $order];

@@ -9,6 +9,15 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @property int $id
+ * @property int|null $role_id
+ * @property string $name
+ * @property string $email
+ * @property-read Role|null $role
+ * @property-read bool $isAdmin
+ * @property-read bool $canDelete
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -16,7 +25,7 @@ class User extends Authenticatable
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'name',
@@ -27,7 +36,7 @@ class User extends Authenticatable
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = [
         'password',
@@ -44,13 +53,12 @@ class User extends Authenticatable
         'role_id' => 'integer',
     ];
 
-
-    ######################## Sistema de roles #######################
+    // ####################### Sistema de roles #######################
 
     /**
      * Relación con el rol del usuario.
      *
-     * @return BelongsTo
+     * @return BelongsTo<Role, $this>
      */
     public function role(): BelongsTo
     {
@@ -75,8 +83,6 @@ class User extends Authenticatable
 
     /**
      * Devuelve si el usuario puede eliminar contenido
-     *
-     * @return bool
      */
     public function getCanDeleteAttribute(): bool
     {

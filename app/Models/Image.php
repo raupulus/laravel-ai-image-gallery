@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Services\ImageStorageService;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\UploadedFile;
@@ -23,6 +24,8 @@ use Illuminate\Http\UploadedFile;
  */
 class Image extends Model
 {
+    use HasFactory;
+
     protected $table = 'images';
 
     protected $fillable = [
@@ -54,21 +57,18 @@ class Image extends Model
 
     public function getUrlThumbnailAttribute(): string
     {
-        return asset('storage/' . $this->thumbnail);
+        return asset('storage/'.$this->thumbnail);
     }
 
     public function getUrlImageAttribute(): string
     {
-        return asset('storage/' . $this->image);
+        return asset('storage/'.$this->image);
     }
-
 
     /**
      * Recibe un string en base64 y lo convierte en un archivo.
      *
-     * @param string $base64 Cadena en base64
-     *
-     * @return UploadedFile|null
+     * @param  string  $base64  Cadena en base64
      */
     /**
      * Almacena la imagen recibida en base64 y su miniatura en formato WebP.
@@ -93,5 +93,4 @@ class Image extends Model
 
         $this->delete();
     }
-
 }
