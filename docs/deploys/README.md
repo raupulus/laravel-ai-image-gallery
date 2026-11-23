@@ -11,8 +11,9 @@
    sudo -u postgres createdb -O web -T template1 aidyslexic_raupulus_dev
    ```
 2. Preparar `.env` desde `.env.example.production` (o con `scripts/generate_env.sh` desde la raíz, sin usar `root`):
-   - Verificar `APP_ENV=production`, `APP_DEBUG=false` y `APP_URL` con el dominio real (necesario para `sitemap:generate` y enlaces absolutos).
-   - Configurar credenciales de PostgreSQL (`DB_*`), correo (`MAIL_*`) y opcionalmente `GOOGLE_ANALYTICS`.
+   - Verificar `APP_ENV=production`, `APP_DEBUG=false`, `LOG_LEVEL=warning`, `SESSION_SECURE_COOKIE=true` y `APP_URL` con el dominio real (necesario para `sitemap:generate` y enlaces absolutos).
+   - Configurar `APP_DESCRIPTION`, credenciales de PostgreSQL (`DB_*`), correo (`MAIL_*`), `CORS_ALLOWED_ORIGINS` si hubiera clientes web externos y opcionalmente `GOOGLE_ANALYTICS`.
+   - El middleware global `SecurityHeaders` emite automáticamente `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` y `Strict-Transport-Security` bajo HTTPS.
 3. Crear el symlink de almacenamiento público si no existe:
    ```bash
    php artisan storage:link
