@@ -17,13 +17,12 @@ Guía operativa para agentes y desarrolladores que trabajen en este repositorio.
 │   ├── Http/
 │   │   ├── Controllers/         # IndexController, CollectionController, PageController, WebhookController, Api/, Auth/
 │   │   ├── Middleware/          # SecurityHeaders, TrustHosts, ...
-│   │   ├── Requests/            # Api/, Auth/, ProfileUpdateRequest
+│   │   ├── Requests/            # Api/, Auth/
 │   │   └── Resources/           # UserResource
 │   ├── Models/                  # Collection, CollectionRole, Image, Role, User
 │   ├── Policies/                # CollectionPolicy
 │   ├── Providers/
-│   ├── Services/                # ImageStorageService
-│   └── View/Components/
+│   └── Services/                # ImageStorageService
 ├── bootstrap/
 ├── config/
 ├── database/
@@ -42,7 +41,7 @@ Guía operativa para agentes y desarrolladores que trabajen en este repositorio.
 ├── resources/
 │   ├── css/
 │   ├── js/
-│   └── views/                   # auth/, collections/, components/, layouts/, pages/, vendor/
+│   └── views/                   # auth/, collections/, components/, errors/, layouts/, pages/, vendor/
 ├── routes/                      # web.php, api.php (prefijo /api/v1), auth.php, channels.php, console.php
 ├── scripts/                     # exist_db_or_create.sh, functions.sh, generate_env.sh, webhooks/api-deploy.sh
 ├── storage/
@@ -56,7 +55,7 @@ Guía operativa para agentes y desarrolladores que trabajen en este repositorio.
 | --- | --- | --- |
 | API | Prefijo `/api/v1` | `RouteServiceProvider` monta `routes/api.php` bajo `/api/v1`, no `/api`. |
 | BD | `ILIKE` de PostgreSQL | `Collection::getQueryCollection()` usa `ILIKE`; requiere PostgreSQL. |
-| Auth | Rutas Breeze comentadas | En `routes/auth.php` solo `login` y `logout` están activos; el resto está comentado aunque existan controladores/vistas/tests. |
+| Auth | Rutas Breeze minimizadas | En `routes/auth.php` solo existen `login` y `logout`; el resto de scaffolding Breeze no utilizado fue eliminado. |
 | Permisos | `404` en lugar de `403` | `CollectionController::delete` y `deleteImage` devuelven `404` si el usuario no es `isAdmin`. |
 | Home AJAX | Desfase de página | `home.blade.php` carga 24 elementos iniciales y el scroll infinito pide la página `2 + currentPage` de 8 en 8. |
 | Sitemap | `APP_URL` en CLI/cron | `sitemap:generate` usa `APP_URL` para todas las URLs; si no está bien configurado, generará `http://localhost`. |

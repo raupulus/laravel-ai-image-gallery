@@ -46,9 +46,9 @@ php artisan test
 
 | Script | Uso | Notas |
 | --- | --- | --- |
-| `scripts/generate_env.sh [DB_USERNAME] [DB_PASSWORD]` | Crea o actualiza `.env` a partir de `.env.example.production` y variables de entorno (`APP_*`, `DB_*`, `GOOGLE_CAPTCHA_*`, `MAIL_*`) | Debe ejecutarse desde la raíz del proyecto y **no** como `root`. Usa `scripts/functions.sh`. |
+| `scripts/generate_env.sh [DB_USERNAME] [DB_PASSWORD]` | Crea o actualiza `.env` a partir de `.env.example.production` y variables de entorno sin imprimir credenciales (`APP_*`, `DB_*`, `GOOGLE_CAPTCHA_*`, `MAIL_*`) | Debe ejecutarse desde la raíz del proyecto y **no** como `root`. Usa `scripts/functions.sh`. |
 | `scripts/exist_db_or_create.sh [DB_USERNAME] [DB_PASSWORD]` | Comprueba si existe la BD PostgreSQL `aidyslexic_raupulus_dev` y la crea si no existe | Requiere `psql`. |
-| `scripts/webhooks/api-deploy.sh` | Despliegue automático: `artisan down`, `git checkout -- .`, `git pull`, `pnpm install && pnpm run build`, `composer install --no-dev`, `artisan migrate --force`, `artisan up` | Escribe logs en `storage/logs/script-laravel-ai-image-gallery-deploy.log`. |
+| `scripts/webhooks/api-deploy.sh` | Despliegue automático con `set -euo pipefail` y `trap 'php artisan up' EXIT`: `artisan down`, `git checkout -- .`, `git pull`, `pnpm install --frozen-lockfile && pnpm run build`, `composer install --no-dev --optimize-autoloader`, `artisan migrate --force`, `config:cache`, `route:cache`, `view:cache` | Escribe logs en `storage/logs/script-laravel-ai-image-gallery-deploy.log`. |
 | `scripts/functions.sh` | Funciones auxiliares compartidas (`replace_or_add_var_in_file`, etc.) | Cargado mediante `source` por otros scripts. |
 
 ---

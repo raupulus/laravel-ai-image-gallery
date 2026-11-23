@@ -33,17 +33,16 @@ php artisan sitemap:generate
 ```
 
 ## 3. Despliegue automatizado por webhook
-El repositorio incluye `scripts/webhooks/api-deploy.sh`, que ejecuta en orden:
+El repositorio incluye `scripts/webhooks/api-deploy.sh` (`set -euo pipefail` y `trap cleanup EXIT` para garantizar `php artisan up` ante fallos), que ejecuta en orden:
 1. `php artisan down`
 2. `git checkout -- .` y `git pull`
-3. `pnpm install` y `pnpm run build`
-4. `composer install --no-interaction --no-dev --prefer-dist`
+3. `pnpm install --frozen-lockfile` y `pnpm run build`
+4. `composer install --no-interaction --no-dev --optimize-autoloader --prefer-dist`
 5. `php artisan migrate --force`
-6. `php artisan up`
+6. `php artisan config:cache`, `php artisan route:cache` y `php artisan view:cache`
+7. `php artisan up` (mediante `trap ... EXIT`)
 
 Los logs se escriben en `storage/logs/script-laravel-ai-image-gallery-deploy.log`.
-
-> ⚠️ Sin verificar en servidor real: el script `api-deploy.sh` no ejecuta `config:cache`, `route:cache`, `view:cache` ni `sitemap:generate`; si el servidor usa caché de configuración o rutas en producción, conviene refrescarlas tras el despliegue.
 
 ## 4. Cron de producción (Laravel Scheduler)
 Para ejecutar `sitemap:generate` diariamente a las `03:42` (`app/Console/Kernel.php`), añadir al crontab del usuario web:

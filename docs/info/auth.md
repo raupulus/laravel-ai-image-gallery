@@ -8,7 +8,7 @@
   - Soporta tokens personales de API con Laravel Sanctum (`HasApiTokens` en `User`) emitidos por CLI mediante `php artisan api:token {email?} {--name=general}` con scope `collections:write` y expiración configurable (`SANCTUM_TOKEN_EXPIRATION`).
   - Mantiene el endpoint stub `/webhooks/twitter` mediante `WebhookController@twitter`.
 - **NO hace:**
-  - No permite registro público, recuperación de contraseña, verificación de email ni confirmación/cambio de contraseña por web: esas rutas están comentadas en `routes/auth.php` (aunque sus controladores y vistas Breeze existen en el repositorio).
+  - No permite registro público, recuperación de contraseña, verificación de email ni confirmación/cambio de contraseña por web (`routes/auth.php` solo define `login` y `logout`).
   - No expone ningún endpoint web para emitir tokens Sanctum (la ruta `/tokens/create` fue eliminada).
 
 ## Modelo de datos
@@ -46,7 +46,6 @@
 | `RouteServiceProvider::HOME` | `/` | Destino tras login |
 
 ## Trampas conocidas
-- Existen tests de Breeze en `tests/Feature/Auth/` (`RegistrationTest`, `PasswordResetTest`, `EmailVerificationTest`, `PasswordConfirmationTest`, `PasswordUpdateTest`) para rutas que actualmente están comentadas en `routes/auth.php`.
 - `User::getIsAdminAttribute()` exige un registro `Role` con `slug === 'admin'` (ya no acepta `role_id === 1` sin verificar el `slug`).
 
 ## Tests que lo cubren

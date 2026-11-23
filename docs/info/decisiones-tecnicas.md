@@ -4,8 +4,8 @@ Registro de decisiones deliberadas del proyecto verificadas en el código, para 
 
 ## 1. Registro público y flujos de contraseña deshabilitados en web
 - **Dónde:** `routes/auth.php`.
-- **Decisión:** Solo están activas las rutas `login` y `logout`. El registro (`register`), recuperación de contraseña, verificación de email y cambio de contraseña permanecen comentados aunque existan los controladores y vistas de Breeze.
-- **Motivo:** El sitio es una galería personal administrada por el creador; no se admiten altas públicas de usuarios.
+- **Decisión:** Solo existen las rutas `login` y `logout`; el resto de scaffolding Breeze no utilizado (registro, recuperación de contraseña, verificación de email y edición de perfil) fue eliminado del repositorio.
+- **Motivo:** El sitio es una galería personal administrada por el creador; no se admiten altas públicas de usuarios ni recuperación pública.
 
 ## 2. Respuesta `404` en acciones de administración sin permisos
 - **Dónde:** `app/Http/Controllers/CollectionController.php` (`delete`, `deleteImage`).

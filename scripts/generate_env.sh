@@ -19,15 +19,12 @@
 
 
 ################ Asignación de variables por parámetros ################
-echo $DB_USERNAME
-echo $DB_PASSWORD
-
-if [[ ! $DB_USERNAME ]]; then
-    DB_USERNAME=${1}
+if [[ ! "${DB_USERNAME:-}" ]]; then
+    DB_USERNAME="${1:-}"
 fi
 
-if [[ ! $DB_PASSWORD ]]; then
-    DB_PASSWORD=${2}
+if [[ ! "${DB_PASSWORD:-}" ]]; then
+    DB_PASSWORD="${2:-}"
 fi
 
 ################ Creo variables de trabajo ################
