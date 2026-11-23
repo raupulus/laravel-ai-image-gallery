@@ -22,7 +22,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role_id',
     ];
 
     /**
@@ -60,12 +59,18 @@ class User extends Authenticatable
 
     /**
      * Devuelve si el usuario es de tipo administrador.
-     *
-     * @return bool
      */
     public function getIsAdminAttribute(): bool
     {
-        return (int) $this->role_id === 1 || $this->role?->slug === 'admin';
+        if ($this->relationLoaded('role')) {
+            return $this->role?->slug === 'admin';
+        }
+
+        if ($this->role_id === null) {
+            return false;
+        }
+
+        return $this->role()->where('slug', 'admin')->exists();
     }
 
     /**

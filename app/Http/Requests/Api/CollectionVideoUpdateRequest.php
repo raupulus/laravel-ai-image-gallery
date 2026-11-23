@@ -2,26 +2,22 @@
 
 namespace App\Http\Requests\Api;
 
+use App\Models\Collection;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Cache;
-use function auth;
 
 /**
- * Request para crear un nuevo tag.
+ * Request para asociar una URL de YouTube a una colección vía API.
  */
 class CollectionVideoUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
+        $user = $this->user();
 
-        return ! auth()->guest();
-
-        //return auth()->id() && auth()->user()->can('store', \App\Models\Tag::class);
+        return (bool) ($user?->can('update', Collection::class) && $user->tokenCan('collections:write'));
     }
 
     /**

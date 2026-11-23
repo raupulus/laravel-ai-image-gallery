@@ -34,11 +34,11 @@
 ## Puntos de entrada
 | Método | Ruta | Auth / Permisos | Límites / Notas |
 | --- | --- | --- | --- |
-| `GET` | `/api/v1/user` | `auth:sanctum` | Rate limit `api`: 60 req/min por usuario o IP |
-| `POST` | `/api/v1/collections/add` | `auth:sanctum` (`!auth()->guest()`) | Rate limit `api`: 60 req/min |
-| `POST` | `/api/v1/collections/update/{collection}` | `auth:sanctum` (`!auth()->guest()`) | Recibe `image` (base64) y `order` (int) |
-| `POST` | `/api/v1/collections/video/update` | `auth:sanctum` (`!auth()->guest()`) | Actualiza `url_youtube` por `batch_id` |
-| `ANY` | `/api/v1/*` (fallback) | Pública | Devuelve `404` JSON `{"message": "Page Not Found"}` |
+| `GET` | `/api/v1/user` | `auth:sanctum` (`UserResource`) | Devuelve campos mínimos (`id`, `name`, `email`, `is_admin`); rate limit `60 req/min` |
+| `POST` | `/api/v1/collections/add` | `auth:sanctum` + `CollectionPolicy::create` (`isAdmin` + `collections:write`) | Rate limit `api`: 60 req/min |
+| `POST` | `/api/v1/collections/update/{collection}` | `auth:sanctum` + `CollectionPolicy::update` (`isAdmin` + `collections:write`) | Recibe `image` (base64) y `order` (int) |
+| `POST` | `/api/v1/collections/video/update` | `auth:sanctum` + `CollectionPolicy::update` (`isAdmin` + `collections:write`) | Actualiza `url_youtube` por `batch_id` |
+| `ANY` | `/api/v1/*` (fallback) | Pública (`FallbackController`) | Devuelve `404` JSON `{"message": "Page Not Found"}` |
 
 ## Dependencias
 - **Depende de:** `laravel/sanctum`, `intervention/image-laravel` (con GD/Imagick y soporte WebP), `Cache` (`collection-image-update-{id}`), `storage/app/public/collections/`.

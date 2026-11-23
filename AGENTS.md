@@ -12,13 +12,15 @@ Guía operativa para agentes y desarrolladores que trabajen en este repositorio.
 ```text
 .
 ├── app/
-│   ├── Console/Commands/        # GenerateSitemap (sitemap:generate)
+│   ├── Console/Commands/        # CreateApiToken (api:token), GenerateSitemap (sitemap:generate)
 │   ├── Exceptions/
 │   ├── Http/
-│   │   ├── Controllers/         # IndexController, CollectionController, PageController, Api/, Auth/
-│   │   ├── Middleware/
-│   │   └── Requests/            # Api/, Auth/, ProfileUpdateRequest
+│   │   ├── Controllers/         # IndexController, CollectionController, PageController, WebhookController, Api/, Auth/
+│   │   ├── Middleware/          # SecurityHeaders, TrustHosts, ...
+│   │   ├── Requests/            # Api/, Auth/, ProfileUpdateRequest
+│   │   └── Resources/           # UserResource
 │   ├── Models/                  # Collection, CollectionRole, Image, Role, User
+│   ├── Policies/                # CollectionPolicy
 │   ├── Providers/
 │   └── View/Components/
 ├── bootstrap/

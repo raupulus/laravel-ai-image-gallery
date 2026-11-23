@@ -2,27 +2,29 @@
 
 namespace App\Http\Requests\Api;
 
+use App\Models\Collection;
 use App\Models\Image;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Cache;
-use function auth;
 
 /**
- * Request para crear un nuevo tag.
+ * Request para adjuntar una imagen a una colección vía API.
  */
 class CollectionUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
+        $user = $this->user();
+        $collection = $this->route('collection');
 
-        return ! auth()->guest();
+        if (! $collection instanceof Collection) {
+            return false;
+        }
 
-        //return auth()->id() && auth()->user()->can('store', \App\Models\Tag::class);
+        return (bool) ($user?->can('update', $collection) && $user->tokenCan('collections:write'));
     }
 
     /**

@@ -61,7 +61,7 @@ class CollectionController extends Controller
     {
         $user = auth()->user();
 
-        if (!$user?->isAdmin || !$collection->id) {
+        if (! $user || $user->cannot('delete', $collection) || ! $collection->id) {
             abort(404);
         }
 
@@ -88,7 +88,7 @@ class CollectionController extends Controller
     {
         $user = auth()->user();
 
-        if (!$user?->isAdmin || !$collection->id || !$image->id || (int) $image->collection_id !== (int) $collection->id) {
+        if (! $user || $user->cannot('delete', $collection) || ! $collection->id || ! $image->id || (int) $image->collection_id !== (int) $collection->id) {
             abort(404);
         }
 

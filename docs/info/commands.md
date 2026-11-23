@@ -35,6 +35,7 @@ php artisan test
 
 | Comando | Descripción | Programación |
 | --- | --- | --- |
+| `php artisan api:token {email?} {--name=general}` | Emite un token Sanctum con scope `collections:write` para un usuario administrador | Manual / CLI |
 | `php artisan sitemap:generate` | Genera `public/sitemap.xml` con portada, páginas activas y colecciones con imágenes | Diario a las `03:42` (`app/Console/Kernel.php`) |
 | `php artisan sitemap:generate --path=/ruta/sitemap.xml` | Genera el sitemap en una ruta personalizada | Manual / tests |
 | `php artisan sitemap:generate --force` | Acepta `--force` para compatibilidad CI/CD | Manual / CI |

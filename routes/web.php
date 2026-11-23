@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\IndexController;
 use App\Http\Controllers\CollectionController;
+use App\Http\Controllers\IndexController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\WebhookController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,24 +51,7 @@ Route::group(['prefix' => 'collections'], function () {
 });
 
 Route::group(['prefix' => 'webhooks'], function () {
-    Route::any('/twitter', function () {
-        return response()->json([
-            'success' => true
-        ]);
-    });
+    Route::any('/twitter', [WebhookController::class, 'twitter'])->name('webhooks.twitter');
 });
-
-if (app()->isLocal() && config('app.debug')) {
-    Route::get('/tokens/create', function (Request $request) {
-        $user = \App\Models\User::first();
-        if (!$user) {
-            abort(404, 'No user found to generate token.');
-        }
-
-        $token = $user->createToken('general');
-
-        return ['token' => $token->plainTextToken];
-    });
-}
 
 require __DIR__.'/auth.php';

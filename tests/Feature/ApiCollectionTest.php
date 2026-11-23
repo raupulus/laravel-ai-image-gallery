@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Collection;
 use App\Models\Image;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
@@ -29,13 +30,43 @@ class ApiCollectionTest extends TestCase
 
         $response = $this->getJson('/api/v1/user');
         $response->assertStatus(200);
-        $response->assertJson(['id' => $user->id, 'email' => $user->email]);
+        $response->assertJson([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'is_admin' => false,
+        ]);
+        $response->assertJsonMissingPath('role_id');
+    }
+
+    public function test_non_admin_user_cannot_write_via_api(): void
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user, ['collections:write']);
+
+        $this->postJson('/api/v1/collections/add', [
+            'batch_id' => 'api-batch-denied',
+            'title' => 'Unauthorized',
+            'prompt' => 'Prompt',
+        ])->assertStatus(403);
+    }
+
+    public function test_token_without_write_ability_cannot_write_via_api(): void
+    {
+        $admin = User::factory()->admin()->create();
+        Sanctum::actingAs($admin, ['collections:read']);
+
+        $this->postJson('/api/v1/collections/add', [
+            'batch_id' => 'api-batch-scope-denied',
+            'title' => 'Missing Scope',
+            'prompt' => 'Prompt',
+        ])->assertStatus(403);
     }
 
     public function test_can_add_collection_via_api(): void
     {
-        $user = User::factory()->create();
-        Sanctum::actingAs($user);
+        $admin = User::factory()->admin()->create();
+        Sanctum::actingAs($admin, ['collections:write']);
 
         $payload = [
             'batch_id' => 'api-batch-101',
@@ -60,8 +91,8 @@ class ApiCollectionTest extends TestCase
 
     public function test_can_update_collection_with_image_via_api(): void
     {
-        $user = User::factory()->create();
-        Sanctum::actingAs($user);
+        $admin = User::factory()->admin()->create();
+        Sanctum::actingAs($admin, ['collections:write']);
 
         $collection = Collection::create([
             'batch_id' => 'api-batch-102',
@@ -94,8 +125,8 @@ class ApiCollectionTest extends TestCase
 
     public function test_can_update_video_via_api(): void
     {
-        $user = User::factory()->create();
-        Sanctum::actingAs($user);
+        $admin = User::factory()->admin()->create();
+        Sanctum::actingAs($admin, ['collections:write']);
 
         $collection = Collection::create([
             'batch_id' => 'api-batch-103',
@@ -121,8 +152,8 @@ class ApiCollectionTest extends TestCase
 
     public function test_video_update_rejects_non_youtube_or_javascript_urls(): void
     {
-        $user = User::factory()->create();
-        Sanctum::actingAs($user);
+        $admin = User::factory()->admin()->create();
+        Sanctum::actingAs($admin, ['collections:write']);
 
         Collection::create([
             'batch_id' => 'api-batch-104',
@@ -146,5 +177,27 @@ class ApiCollectionTest extends TestCase
         $response = $this->getJson('/api/v1/non-existent-endpoint');
         $response->assertStatus(404);
         $response->assertJson(['message' => 'Page Not Found']);
+    }
+
+    public function test_artisan_api_token_command_issues_scoped_token_only_to_admins(): void
+    {
+        $userRole = Role::firstOrCreate(['slug' => 'user'], [
+            'name' => 'User',
+            'show_name' => 'User',
+            'description' => 'Standard User',
+        ]);
+
+        $normalUser = User::factory()->create(['role_id' => $userRole->id]);
+        $admin = User::factory()->admin()->create();
+
+        $this->artisan('api:token', ['email' => $normalUser->email])
+            ->assertExitCode(1);
+
+        $this->artisan('api:token', ['email' => $admin->email, '--name' => 'cli-test'])
+            ->assertExitCode(0);
+
+        $token = $admin->tokens()->where('name', 'cli-test')->first();
+        $this->assertNotNull($token);
+        $this->assertSame(['collections:write'], $token->abilities);
     }
 }

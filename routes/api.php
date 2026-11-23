@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\CollectionController;
+use App\Http\Controllers\Api\FallbackController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
-use \App\Http\Controllers\Api\CollectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,24 +16,15 @@ use \App\Http\Controllers\Api\CollectionController;
 |
 */
 
+Route::middleware('auth:sanctum')->get('/user', [UserController::class, 'show']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-
-Route::group(['middleware' => 'auth:sanctum', 'prefix' => '/collections'], function ()
-{
-
+Route::group(['middleware' => 'auth:sanctum', 'prefix' => '/collections'], function () {
     Route::post('/add', [CollectionController::class, 'add']);
     Route::post('/update/{collection}', [CollectionController::class, 'update']);
     Route::post('/video/update', [CollectionController::class, 'videoUpdate']);
-
 });
 
-/**
+/*
  * Ruta por defecto cuando no se encuentra una petición.
  */
-Route::fallback(function(){
-    return response()->json(['message' => 'Page Not Found'], 404);
-});
+Route::fallback(FallbackController::class);

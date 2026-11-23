@@ -2,23 +2,24 @@
 
 namespace App\Http\Requests\Api;
 
+use App\Models\Collection;
 use App\Models\CollectionRole;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 
 /**
- * Request para crear un nuevo tag.
+ * Request para crear o actualizar una colección vía API.
  */
 class CollectionAddRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
-        return !auth()->guest();
+        $user = $this->user();
+
+        return (bool) ($user?->can('create', Collection::class) && $user->tokenCan('collections:write'));
     }
 
     /**
