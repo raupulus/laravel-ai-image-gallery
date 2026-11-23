@@ -100,6 +100,7 @@
                         <a href="{{$firstImage->urlImage}}"
                            data-fancybox="gallery-title">
                             <img class="img-fluid"
+                                 fetchpriority="high"
                                  style="{{$collection->isHorizontal ? 'width: 100%; max-width: 560px;' : 'height: 100%; max-height: 560px;'}}"
                                  alt="{{$collection->title}}"
                                  src="{{$firstImage->urlThumbnail}}">
@@ -348,10 +349,12 @@
 
 
 @section('css')
+    <link rel="stylesheet" href="{{asset('theme/css/fancybox.css')}}">
     <link rel="stylesheet" href="{{asset('css/collection_show.css')}}">
 @endsection
 
 @section('js')
+    <script src="{{asset('theme/js/fancybox.umd.js')}}" defer></script>
 
     <script>
         function changeInfoSection(ele) {

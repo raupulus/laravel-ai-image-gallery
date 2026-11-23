@@ -28,6 +28,8 @@
             <a href="{{$image->urlImage}}"
                data-fancybox="gallery">
                 <img class="img-fluid"
+                     loading="lazy"
+                     decoding="async"
                      alt="{{$collection->title}}"
                      src="{{$image->urlThumbnail}}">
             </a>

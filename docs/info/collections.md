@@ -30,10 +30,10 @@
 1. **Home y búsqueda (`IndexController@index`):**
    - Recibe `search` por query string, consulta `Collection::getQueryCollection($search)->orderByDesc('created_at')->paginate(24)` y renderiza `resources/views/home.blade.php`.
 2. **Scroll infinito AJAX (`CollectionController@ajaxGetHomeCards`):**
-   - Al llegar al final de la lista en `home.blade.php`, el JS solicita `/collections/ajax/get/cards/{2 + currentPage}/{search?}`.
+   - Un `IntersectionObserver` sobre `#box-collections-end` solicita `/collections/ajax/get/cards/{2 + currentPage}/{search?}` únicamente cuando `$collections->hasMorePages()` es verdadero y evitando peticiones solapadas (`isLoading`).
    - El controlador pagina de 8 en 8, renderiza `components._collection_block` por cada colección y devuelve JSON (`success`, `html`, `total`, `page`, `hasMorePages`, `lastItem`).
 3. **Detalle y aleatoria (`CollectionController@show` / `random`):**
-   - `show` precarga `$collection->load(['images', 'collectionRole'])` ordenadas por `(order, id)` y renderiza `resources/views/collections/show.blade.php`.
+   - `show` precarga `$collection->load(['images', 'collectionRole'])` ordenadas por `(order, id)`, prioriza la imagen principal con `fetchpriority="high"` y aplica `loading="lazy"` + Fancybox `defer` en las miniaturas de `resources/views/collections/show.blade.php`.
    - `random` busca una colección aleatoria con imágenes (`whereHas('images')`) y redirige a `collections.show` (o a `home` si no hay ninguna).
 4. **Borrado admin (`CollectionController@delete` / `deleteImage`):**
    - Requiere sesión autenticada (`auth`) y permiso `CollectionPolicy::delete` (`$user->isAdmin`; si no, devuelve `404`).

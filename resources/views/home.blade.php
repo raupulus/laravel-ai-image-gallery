@@ -122,6 +122,10 @@
                 Total Collections:
                 <span id="total-images" class="font-monospace">{{ $collections->total() }}</span>
 
+                <span id="ajax-load-error" class="text-danger ms-2 d-none" role="status">
+                    Could not load more collections.
+                </span>
+
             </div>
         </div>
 
@@ -132,75 +136,92 @@
 
 @section('js')
     <script>
-        let currentPage = parseInt("{{isset($page) && $page ? $page : 1}}");
-        let hasMorePages = true;
+        let currentPage = parseInt(@json($collections->currentPage()), 10) || 1;
+        let hasMorePages = @json($collections->hasMorePages());
+        let isLoading = false;
 
-        function fetchNextCollectionBlocks(box) {
-            currentPage += 1
+        function fetchNextCollectionBlocks(box, observer) {
+            if (!hasMorePages || isLoading) {
+                return;
+            }
 
-            const search = document.getElementById('main-input-search').value;
+            isLoading = true;
+            currentPage += 1;
+
+            const errorBanner = document.getElementById('ajax-load-error');
+            if (errorBanner) {
+                errorBanner.classList.add('d-none');
+            }
+
+            const searchInput = document.getElementById('main-input-search');
+            const search = searchInput ? searchInput.value.trim() : '';
             let url = "{{route('collection.ajax.get.cards')}}";
 
-            url += '/' + (2 + currentPage); // Sumo 3 para compensar 24 imágenes al comenzar (8 por carga de página)
+            url += '/' + (2 + currentPage);
 
             if (search) {
-                url += '/' + search;
+                url += '/' + encodeURIComponent(search);
             }
 
             fetch(url, {
-                method: "GET",
+                method: 'GET',
                 headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
+                    'Accept': 'application/json',
                 }
             })
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error('HTTP ' + res.status);
+                    }
+                    return res.json();
+                })
                 .then(data => {
                     if (data.success) {
-
                         if (data.html) {
                             box.insertAdjacentHTML('beforeend', data.html);
                         }
 
-                        hasMorePages = data.hasMorePages;
+                        hasMorePages = Boolean(data.hasMorePages);
 
-                        let totalSpan = document.getElementById('total-images');
-
-                        if (totalSpan && data.total) {
+                        const totalSpan = document.getElementById('total-images');
+                        if (totalSpan && typeof data.total !== 'undefined') {
                             totalSpan.textContent = data.total;
+                        }
+
+                        if (!hasMorePages && observer) {
+                            observer.disconnect();
                         }
                     }
                 })
+                .catch(() => {
+                    currentPage -= 1;
+                    if (errorBanner) {
+                        errorBanner.classList.remove('d-none');
+                    }
+                })
+                .finally(() => {
+                    isLoading = false;
+                });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             const boxCollections = document.getElementById('box-all-collections-blocks');
+            const sentinel = document.getElementById('box-collections-end');
 
-            if (boxCollections) {
-                const elementInView = (el, percentageScroll = 100) => {
-                    const elementTop = el.getBoundingClientRect().top;
+            if (!boxCollections || !sentinel || !hasMorePages) {
+                return;
+            }
 
-                    return (
-                        elementTop <=
-                        ((window.innerHeight || document.documentElement.clientHeight) * (percentageScroll/100))
-                    );
-                };
-
-                const handleScrollAnimation = () => {
-                    const ele = document.getElementById('box-collections-end');
-
-                    if (elementInView(ele, 90)) {
-                        fetchNextCollectionBlocks(boxCollections);
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries) => {
+                    if (entries.some(entry => entry.isIntersecting)) {
+                        fetchNextCollectionBlocks(boxCollections, observer);
                     }
-                }
+                }, {
+                    rootMargin: '250px 0px',
+                });
 
-                window.addEventListener('scroll', () => {
-                    if (hasMorePages) {
-                        handleScrollAnimation();
-                    }
-                })
-
-                handleScrollAnimation();
+                observer.observe(sentinel);
             }
         });
     </script>

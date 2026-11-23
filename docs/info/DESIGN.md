@@ -3,14 +3,14 @@
 ## Arquitectura de estilos
 El frontend público utiliza **Bootstrap 5** empaquetado como tema estático en `public/theme/`, complementado con hojas CSS personalizadas en `public/css/` y **Fancybox** para la vista ampliada de imágenes.
 
-Orden de carga en `resources/views/layouts/head.blade.php`:
+Orden de carga base en `resources/views/layouts/head.blade.php`:
 1. `public/theme/bootstrap/css/bootstrap.min.css`
 2. `public/theme/css/styles.min.css`
 3. `public/css/styles.css`
 4. `public/css/collection_blocks.css`
-5. `public/theme/css/fancybox.css`
 
-Estilos específicos por vista (inyectados mediante `@section('head_css')` o `@section('css')`):
+Estilos y librerías específicos por vista (inyectados mediante `@section('head_css')`, `@section('css')` o `@section('js')`):
+- `public/theme/css/fancybox.css` y `public/theme/js/fancybox.umd.js` (`defer`) — cargados únicamente en el detalle de colección (`collections/show.blade.php`).
 - `public/css/collection_show.css` (detalle de colección)
 - `public/css/pages/*` (páginas estáticas)
 
@@ -28,9 +28,10 @@ Estilos específicos por vista (inyectados mediante `@section('head_css')` o `@s
 - `public/robots.txt` bloquea `/collections/ajax/`, `/webhooks/` y `/login` y declara `Sitemap: https://aidyslexic.raupulus.dev/sitemap.xml`.
 - Google Analytics (`gtag.js`) se carga en `resources/views/layouts/app.blade.php` únicamente cuando `config('services.google.analytics')` (`GOOGLE_ANALYTICS`) está definido **y** el usuario otorga consentimiento explícito (`localStorage.cookie_consent === 'accepted'`) mediante el banner `#cookie-consent-banner`.
 
-## Assets con Vite
-- `vite.config.js` compila `resources/css/app.css` (actualmente vacío) y `resources/js/app.js` (importa `./bootstrap` con `axios`/`lodash`).
-- Los scripts JS del tema se sirven directamente desde `public/theme/js/` (`fancybox.umd.js`, `script.min.js`).
+## Assets con Vite y caching HTTP
+- `vite.config.js` compila `resources/css/app.css` y `resources/js/app.js` (importa `./bootstrap` con `axios`/`lodash`).
+- Los scripts JS globales del tema (`bootstrap.min.js`, `script.min.js`) se cargan desde `public/theme/` con `defer` en `footer_meta.blade.php`.
+- `public/.htaccess` habilita compresión (`mod_deflate`) y cabeceras `Expires` (`mod_expires`) para recursos estáticos e imágenes WebP.
 
 ---
 

@@ -24,10 +24,11 @@ Recibimos siempre "$collection" que es una instancia de tupla con el modelo Coll
 
     @if($image)
         <div class="collection-block-image image-crop-container">
-            <a href="{{$image->urlImage}}"
-               class="box-image-crop-link"
-               data-fancybox="gallery">
+            <a href="{{$collection->url}}"
+               class="box-image-crop-link">
                 <img class="img-crop"
+                     loading="lazy"
+                     decoding="async"
                      alt="{{$collection->title}}"
                      src="{{$image->urlThumbnail}}">
             </a>
