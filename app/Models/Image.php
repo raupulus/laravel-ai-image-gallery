@@ -3,10 +3,24 @@
 namespace App\Models;
 
 use App\Services\ImageStorageService;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\UploadedFile;
 
+/**
+ * @property int $id
+ * @property int $collection_id
+ * @property string|null $thumbnail
+ * @property string|null $image
+ * @property int|null $seed
+ * @property int|null $order
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Collection $collection
+ * @property-read string $urlThumbnail
+ * @property-read string $urlImage
+ */
 class Image extends Model
 {
     protected $table = 'images';
@@ -20,22 +34,30 @@ class Image extends Model
     ];
 
     /**
-     * Relación con la colección de imágenes.
+     * Attribute type casts.
      *
-     * @return BelongsTo
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'collection_id' => 'integer',
+        'order' => 'integer',
+        'seed' => 'integer',
+    ];
+
+    /**
+     * Relación con la colección de imágenes.
      */
     public function collection(): BelongsTo
     {
         return $this->belongsTo(Collection::class, 'collection_id', 'id');
     }
 
-    public function getUrlThumbnailAttribute()
+    public function getUrlThumbnailAttribute(): string
     {
         return asset('storage/' . $this->thumbnail);
     }
 
-
-    public function getUrlImageAttribute()
+    public function getUrlImageAttribute(): string
     {
         return asset('storage/' . $this->image);
     }

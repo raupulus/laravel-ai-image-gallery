@@ -13,16 +13,16 @@
 
 ## Modelo de datos
 - **`collections`** (`App\Models\Collection`):
-  - Campos principales: `id`, `collection_role_id` (FK nullable a `collection_roles.id`, `ON DELETE SET NULL`), `role` (string legacy nullable), `batch_id` (string), `ai`, `title` (511), `description` (1024), `tags` (255, CSV), `prompt` (text), `negative_prompt` (text), `model`, `size`, `size_resized`, `steps`, `cfg_scale`, `denoising_strength`, `restore_faces` (bool), `resizer`, `refiner_model`, `url_youtube`, timestamps.
-  - Relaciones: `images()` (`hasMany(Image)`), `roleTmp()` (`belongsTo(CollectionRole)`).
-  - Accessors: `isHorizontal`, `isVertical`, `titleResume` (límite 50 chars), `tagsArray`, `primaryImage`, `url`.
+  - Campos principales: `id`, `collection_role_id` (FK nullable a `collection_roles.id`, `ON DELETE SET NULL`, indexado), `role` (string legacy nullable), `batch_id` (string `unique`), `ai`, `title` (511), `description` (1024), `tags` (255, CSV), `prompt` (text), `negative_prompt` (text), `model`, `size`, `size_resized`, `steps` (50), `cfg_scale` (50), `denoising_strength` (50), `restore_faces` (bool cast), `resizer`, `refiner_model`, `url_youtube`, `created_at` (indexado), timestamps.
+  - Relaciones: `images()` (`hasMany(Image)`), `collectionRole()` (`belongsTo(CollectionRole)`, con alias `roleTmp()`).
+  - Accessors: `isHorizontal`, `isVertical`, `titleResume` (límite 50 chars), `tagsArray`, `primaryImage`, `url`, `youtubeEmbedUrl`.
   - Consulta compartida: `Collection::getQueryCollection(?string $search)` hace `leftJoin` con `images`, filtra `images.collection_id IS NOT NULL` y `title IS NOT NULL`, agrupa por `images.collection_id` y `collections.id`, y aplica búsqueda `ILIKE` (PostgreSQL) en `title` y `tags`.
 - **`images`** (`App\Models\Image`):
-  - Campos: `id`, `collection_id` (FK a `collections.id`, `ON DELETE CASCADE`), `order`, `seed`, `image` (ruta relativa en `storage/app/public`), `thumbnail` (ruta relativa en `storage/app/public`), timestamps.
+  - Campos: `id`, `collection_id` (FK a `collections.id`, `ON DELETE CASCADE`, índice compuesto `(collection_id, order)`), `order` (int cast), `seed` (int cast), `image` (ruta relativa en `storage/app/public`), `thumbnail` (ruta relativa en `storage/app/public`), timestamps.
   - Accessors: `urlImage` (`asset('storage/' . $this->image)`), `urlThumbnail` (`asset('storage/' . $this->thumbnail)`).
   - Borrado seguro: `Image::safeDelete()` elimina los archivos físicos en `storage/app/public/` si existen y luego borra el registro.
 - **`collection_roles`** (`App\Models\CollectionRole`):
-  - Campos: `id`, `slug`, `name`, `description`.
+  - Campos: `id`, `slug` (`unique`), `name`, `description`.
   - Seeder inicial: `Database\Seeders\CollectionRoleSeeder` (5 roles: `photographer_people`, `photographer_animals`, `photographer`, `artist_monster`, `artist`).
 
 ## Flujos principales

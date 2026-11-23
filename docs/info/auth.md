@@ -12,9 +12,9 @@
   - No expone ningún endpoint web para emitir tokens Sanctum (la ruta `/tokens/create` fue eliminada).
 
 ## Modelo de datos
-- **`roles`** (`App\Models\Role`): `id`, `slug`, `name`, `show_name`, `description`.
+- **`roles`** (`App\Models\Role`): `id`, `slug` (`unique`), `name`, `show_name`, `description`.
   - Seeder: `Database\Seeders\RoleSeeder` crea el rol `admin`.
-- **`users`** (`App\Models\User`): `id`, `role_id` (FK nullable a `roles.id`, `ON DELETE SET NULL`), `name`, `email` (unique), `email_verified_at`, `password`, `remember_token`.
+- **`users`** (`App\Models\User`): `id`, `role_id` (FK nullable a `roles.id`, `ON DELETE SET NULL`, indexado), `name`, `email` (unique), `email_verified_at`, `password`, `remember_token`.
   - Accessors:
     - `isAdmin`: `true` únicamente si la relación `role` tiene `slug === 'admin'` (comprobado sin lazy loading).
     - `canDelete`: alias de `$this->isAdmin`.

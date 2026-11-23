@@ -2,42 +2,79 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+/**
+ * @property int $id
+ * @property int|null $collection_role_id
+ * @property string $batch_id
+ * @property string|null $ai
+ * @property string|null $role
+ * @property string $title
+ * @property string|null $description
+ * @property string|null $tags
+ * @property string $prompt
+ * @property string|null $negative_prompt
+ * @property string|null $model
+ * @property string|null $size
+ * @property string|null $size_resized
+ * @property string|null $resizer
+ * @property string|null $steps
+ * @property string|null $cfg_scale
+ * @property string|null $denoising_strength
+ * @property bool $restore_faces
+ * @property string|null $refiner_model
+ * @property string|null $url_youtube
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read EloquentCollection<int, Image> $images
+ * @property-read CollectionRole|null $collectionRole
+ */
 class Collection extends Model
 {
     protected $table = 'collections';
 
     protected $fillable = [
-        "collection_role_id",
-        "batch_id",
-        "ai",
-        "role",
-        "title",
-        "description",
-        "tags",
-        "prompt",
-        "negative_prompt",
-        "model",
-        "size",
-        "size_resized",
-        "resizer",
-        "steps",
-        "cfg_scale",
-        "denoising_strength",
-        "restore_faces",
-        "refiner_model",
+        'collection_role_id',
+        'batch_id',
+        'ai',
+        'role',
+        'title',
+        'description',
+        'tags',
+        'prompt',
+        'negative_prompt',
+        'model',
+        'size',
+        'size_resized',
+        'resizer',
+        'steps',
+        'cfg_scale',
+        'denoising_strength',
+        'restore_faces',
+        'refiner_model',
+        'url_youtube',
+    ];
+
+    /**
+     * Attribute type casts.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'collection_role_id' => 'integer',
+        'restore_faces' => 'boolean',
     ];
 
     /**
      * Relación con todas las imágenes asociadas a la colección.
-     *
-     * @return HasMany
      */
     public function images(): HasMany
     {
@@ -45,13 +82,19 @@ class Collection extends Model
     }
 
     /**
-     * Relación con él role asociado a la colección.
-     *
-     * @return BelongsTo
+     * Relación con el rol temático asociado a la colección.
+     */
+    public function collectionRole(): BelongsTo
+    {
+        return $this->belongsTo(CollectionRole::class, 'collection_role_id', 'id');
+    }
+
+    /**
+     * Alias heredado de la relación collectionRole().
      */
     public function roleTmp(): BelongsTo
     {
-        return $this->belongsTo(CollectionRole::class, 'collection_role_id', 'id');
+        return $this->collectionRole();
     }
 
     /**
