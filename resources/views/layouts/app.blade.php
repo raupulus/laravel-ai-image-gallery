@@ -17,7 +17,7 @@ E-mail: public@raupulus.dev
     @yield('head_js')
 
     @if(config('services.google.analytics'))
-        <script>
+        <script nonce="{{ $cspNonce ?? '' }}">
             (function () {
                 const gaId = @json(config('services.google.analytics'));
 
@@ -80,6 +80,20 @@ E-mail: public@raupulus.dev
                         }
                     });
                 }
+
+                document.addEventListener('click', function (event) {
+                    const target = event.target instanceof Element ? event.target.closest('[data-cookie-consent]') : null;
+                    if (!target) {
+                        return;
+                    }
+
+                    const action = target.getAttribute('data-cookie-consent');
+                    if (action === 'reset') {
+                        window.resetCookieConsent();
+                    } else if (action === 'accepted' || action === 'rejected') {
+                        window.setCookieConsent(action);
+                    }
+                });
             })();
         </script>
     @endif
@@ -110,10 +124,10 @@ E-mail: public@raupulus.dev
                 and <a href="{{ route('page.show', 'rgpd') }}" class="link-light text-decoration-underline">Privacy &amp; GDPR</a>.
             </p>
             <div class="d-flex flex-shrink-0 gap-2">
-                <button type="button" class="btn btn-outline-light btn-sm" onclick="window.setCookieConsent('rejected')">
+                <button type="button" class="btn btn-outline-light btn-sm" data-cookie-consent="rejected">
                     Reject
                 </button>
-                <button type="button" class="btn btn-primary btn-sm" onclick="window.setCookieConsent('accepted')">
+                <button type="button" class="btn btn-primary btn-sm" data-cookie-consent="accepted">
                     Accept
                 </button>
             </div>

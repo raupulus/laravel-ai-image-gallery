@@ -46,7 +46,7 @@
 
     <button type="button"
             class="btn btn-primary mt-2"
-            onclick="if (typeof window.resetCookieConsent === 'function') { window.resetCookieConsent(); }">
+            data-cookie-consent="reset">
         Manage Cookie Preferences
     </button>
 </div>

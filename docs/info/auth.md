@@ -2,7 +2,8 @@
 
 ## Qué hace y qué NO hace
 - **Hace:**
-  - Gestiona inicio y cierre de sesión web mediante Laravel Breeze (`login`, `logout`).
+  - Gestiona inicio y cierre de sesión web con controladores propios derivados de Breeze (`login`, `logout`) y cabecera `Clear-Site-Data: "cookies", "cache"` al cerrar sesión.
+  - Emite en todas las respuestas cabeceras de defensa en profundidad mediante `SecurityHeaders` (`Content-Security-Policy-Report-Only` con nonce por petición, `Cross-Origin-Opener-Policy`, `Cross-Origin-Resource-Policy` en HTML, `Permissions-Policy`, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy` y `Strict-Transport-Security`).
   - Gestiona usuarios y roles (`User`, `Role`) y centraliza la autorización en `App\Policies\CollectionPolicy`.
   - Protege `User::$fillable` excluyendo `role_id` para evitar escalada de privilegios por asignación masiva.
   - Soporta tokens personales de API con Laravel Sanctum (`HasApiTokens` en `User`) emitidos por CLI mediante `php artisan api:token {email?} {--name=general}` con scope `collections:write` y expiración configurable (`SANCTUM_TOKEN_EXPIRATION`).
@@ -36,7 +37,7 @@
 | `ANY` | `/webhooks/twitter` | `webhooks.twitter` | Pública | Stub en `WebhookController@twitter` que devuelve `{"success": true}` |
 
 ## Dependencias
-- **Depende de:** `laravel/breeze`, `laravel/sanctum`, `RoleSeeder`, `CollectionPolicy`.
+- **Depende de:** `laravel/sanctum`, `RoleSeeder`, `CollectionPolicy`, `SecurityHeaders`.
 - **Es usado por:** `collections` (autorización `CollectionPolicy::delete` para borrado web) y `api-collections` (`auth:sanctum` + `CollectionPolicy` + ability `collections:write`).
 
 ## Configuración

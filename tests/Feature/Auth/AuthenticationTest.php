@@ -42,4 +42,15 @@ class AuthenticationTest extends TestCase
 
         $this->assertGuest();
     }
+
+    public function test_logout_sends_clear_site_data_header(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post('/logout');
+
+        $this->assertGuest();
+        $response->assertRedirect('/');
+        $response->assertHeader('Clear-Site-Data', '"cookies", "cache"');
+    }
 }
