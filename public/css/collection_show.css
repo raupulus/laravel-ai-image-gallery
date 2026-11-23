@@ -50,12 +50,16 @@
 
 .btn-info-selector {
     cursor: pointer;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .metadata-info-content {
     padding: 1.5rem;
-    max-height: 130px;
-    overflow-y: scroll;
+    max-height: 220px;
+    overflow-y: auto;
 }
 
 .metadata-info-selector {
@@ -69,11 +73,11 @@
     }
 
     .metadata-info-selector {
-        grid-template-columns: auto auto auto;
+        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
     }
 
     .metadata-info-content {
-        max-height: 210px;
+        max-height: 260px;
     }
 }
 
@@ -88,31 +92,38 @@
 
 .container-action-tools {
     padding: 0.2rem 1rem;
-    display: inline;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .action-tool {
-    font-size: 0.9rem;
-    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 44px;
+    padding: 0.5rem 0.9rem;
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
 }
 
 .action-tool svg {
-    translate: 0 -2px;
+    translate: 0 -1px;
 }
 
 /* Tool para cada imagen */
 .tool-image-collection {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
     margin-bottom: 4px;
-    padding: 0.4rem;
+    padding: 0.5rem;
     cursor: pointer;
-    text-align: right;
-    border-radius: 10%;
+    border: 0;
+    border-radius: 0.375rem;
     background-color: #f3f3f3;
-}
-
-.tool-image-collection svg {
-
 }
 

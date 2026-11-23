@@ -6,39 +6,48 @@
 .page-content-container {
     padding: 1.5rem;
     height: auto;
-    color: #f8f8f8;
-    background-color: #20374c;
-}
-
-.page-footer-container {
+    color: var(--gallery-text, #f8f8f8);
+    background-color: var(--gallery-surface, #20374c);
+    border-radius: 0.5rem;
 }
 
 .page-content-link-container {
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: 0.75rem;
+}
+
+.page-content-link-container ul {
+    padding-left: 0;
+    margin-bottom: 0;
 }
 
 .page-content-link-container ul li {
-    margin: 0.5rem;
-    padding: 0.3rem;
-    font-size: 1.1rem;
-    font-weight: bold;
-    text-align: center;
+    margin: 0.5rem 0;
     list-style: none;
-    background-color: #df6919;
-    color: #f8f8f8;
+    background-color: var(--gallery-accent-strong, #b84308);
+    color: #ffffff;
+    border-radius: 0.375rem;
 }
 
 .page-content-link-container ul li a {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
     width: 100%;
+    font-size: 1.05rem;
+    font-weight: 600;
     text-decoration: none;
-    color: #f8f8f8;
+    color: #ffffff;
 }
 
 .page-content-link-container ul li a:hover {
-    color: #20374c;
+    color: #ffffff;
+    background-color: #933406;
+    border-radius: 0.375rem;
 }
 
 
@@ -46,15 +55,21 @@
 .box-social-cards {
     display: grid;
     width: 100%;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .social-card {
-    margin: 1rem auto;
-    min-width: 350px;
-    max-width: 60%;
+    margin: 0;
+    padding: 0.75rem;
+    width: 100%;
+    min-height: 44px;
     display: grid;
     grid-template-columns: 50px 1fr;
+    align-items: center;
+    background-color: var(--gallery-surface-alt, #182c3e);
+    border-radius: 0.5rem;
 }
 
 .social-card-img {
@@ -73,12 +88,15 @@
     font-size: 1.2rem;
     font-weight: bold;
     align-self: center;
-    color: #df6919;
-    text-shadow: 1px 1px 1px #030303 ;
+    color: var(--gallery-accent, #ff9b66);
 }
 
 .social-card-content a {
-    font-size: 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.25rem 0.5rem;
+    font-size: 1.15rem;
     font-weight: bold;
     text-decoration: none;
 }
