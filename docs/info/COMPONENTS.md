@@ -1,10 +1,10 @@
 # Componentes y vistas (`COMPONENTS.md`)
 
 ## Layouts (`resources/views/layouts/`)
-- `app.blade.php` — layout principal público. Incluye `layouts.head`, `layouts.navbar`, `@yield('content')` dentro de `#app`, `layouts.footer`, `layouts.footer_meta`, y stacks `@yield('head_css')`, `@yield('head_js')`, `@yield('before_meta')`, `@yield('css')`, `@yield('js')`.
+- `app.blade.php` — layout principal público. Incluye enlace Skip to main content, `layouts.head` (con `@yield('head_css')`, `@yield('css')`, `@yield('head_js')`), `layouts.navbar`, `@yield('content')` dentro de `<main id="main-content">`, `layouts.footer`, `layouts.footer_meta`, `@yield('before_meta')` y `@yield('js')`.
 - `guest.blade.php` — layout de Laravel Breeze para vistas de autenticación (`App\View\Components\GuestLayout`).
 - `head.blade.php` — metadatos SEO/OG/Twitter limpios (sin duplicados W3C), `@yield('structured_data')` JSON-LD, script de tema y carga de CSS.
-- `navbar.blade.php` — navegación principal (`Home`, `About`, `Social`), botón `Random` (`collections.random`) y formulario `Logout` si hay usuario autenticado.
+- `navbar.blade.php` — navegación principal (`Home`, `About`, `Social` con estado `.active` / `aria-current="page"` dinámico y atributos ARIA en toggler), botón `Random` (`collections.random`) y formulario `Logout` si hay usuario autenticado.
 - `footer.blade.php` — enlaces de autor (`raupulus.dev`, GitHub) y redes sociales del proyecto.
 - `footer_meta.blade.php` — scripts y metadatos de cierre del layout principal.
 

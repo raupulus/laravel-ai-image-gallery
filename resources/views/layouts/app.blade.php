@@ -13,6 +13,7 @@ E-mail: public@raupulus.dev
 <head>
     @include('layouts.head')
     @yield('head_css')
+    @yield('css')
     @yield('head_js')
 
     @if(config('services.google.analytics'))
@@ -85,11 +86,15 @@ E-mail: public@raupulus.dev
 </head>
 
 <body class="text-info" style="height: 100%;min-height: 100vh;">
+<a class="visually-hidden-focusable position-absolute top-0 start-0 m-2 btn btn-primary"
+   href="#main-content"
+   style="z-index: 1090;">Skip to main content</a>
+
 @include('layouts.navbar')
 
-<div id="app">
+<main id="main-content" tabindex="-1">
     @yield('content')
-</div>
+</main>
 
 @include('layouts.footer')
 @if(config('services.google.analytics'))
@@ -117,7 +122,6 @@ E-mail: public@raupulus.dev
 @endif
 @yield('before_meta')
 @include('layouts.footer_meta')
-@yield('css')
 @yield('js')
 </body>
 </html>

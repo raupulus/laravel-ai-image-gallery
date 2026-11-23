@@ -114,14 +114,14 @@
 @foreach($socials as $social)
         <div class="row border-bottom pb-4 mb-5 mt-5">
             <div class="col-12">
-                <h3>
+                <h2>
                     {{$social['title']}}
-                </h3>
+                </h2>
             </div>
 
-            <div>
+            <div class="col-12">
                 <p>
-                    {!! $social['description'] !!}
+                    {!! nl2br(e($social['description'])) !!}
                 </p>
             </div>
 

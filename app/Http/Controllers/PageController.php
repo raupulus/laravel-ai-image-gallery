@@ -83,28 +83,27 @@ class PageController extends Controller
         $socials = [
             [
                 'title' => 'Prompt Generator from AI',
-                'description' => 'Tool to generate "prompts" that are basically text strings indicating/describing an image. Subsequently, several APIs can be used to use that generated "prompt".<br />To generate the prompt, the GPT API is used.',
+                'description' => "Tool to generate \"prompts\" that are basically text strings indicating or describing an image. Subsequently, several APIs can be used to use that generated \"prompt\".\nTo generate the prompt, the GPT API is used.",
                 'gitlab' => 'https://gitlab.com/raupulus/python-ai-image-from-api-generator',
-                'github' => 'https://github.com/raupulus/python-ai-image-from-api-generator'
+                'github' => 'https://github.com/raupulus/python-ai-image-from-api-generator',
             ],
             [
                 'title' => 'Website Laravel AI Image Gallery',
                 'description' => 'Website to display a gallery of images generated with artificial intelligence.',
                 'gitlab' => 'https://gitlab.com/raupulus/laravel-ai-image-gallery',
-                'github' => 'https://github.com/raupulus/laravel-ai-image-gallery'
+                'github' => 'https://github.com/raupulus/laravel-ai-image-gallery',
             ],
             [
                 'title' => 'Youtube Video Publisher',
-                'description' => 'This project aims to be a tool to help upload videos to websites and social networks, being able to also send a request to your own API in which these videos are associated with content.<br /The origin of the data will be via a json with the same name as the video, in order to have all the necessary metadata both when uploading the video and when communicating in our API that we have associated it and what its data is.',
+                'description' => "This project aims to be a tool to help upload videos to websites and social networks, being able to also send a request to your own API in which these videos are associated with content.\nThe origin of the data will be via a json with the same name as the video, in order to have all the necessary metadata both when uploading the video and when communicating in our API what its data is.",
                 'gitlab' => 'https://gitlab.com/raupulus/python-video-publisher',
-                'github' => 'https://github.com/raupulus/python-video-publisher'
+                'github' => 'https://github.com/raupulus/python-video-publisher',
             ],
             [
                 'title' => 'Ffmpeg Slideshow Creator from directory',
-                'description' => 'Script to create image videos with ffmpeg including transitions and music.<br />This tool is focused on Linux and macos.
-​',
+                'description' => "Script to create image videos with ffmpeg including transitions and music.\nThis tool is focused on Linux and macOS.",
                 'gitlab' => 'https://gitlab.com/raupulus/ffmpeg-slideshow-from-image-directory',
-                'github' => 'https://github.com/raupulus/ffmpeg-slideshow-from-image-directory'
+                'github' => 'https://github.com/raupulus/ffmpeg-slideshow-from-image-directory',
             ],
         ];
 
