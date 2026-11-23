@@ -8,7 +8,7 @@ Author Web: https://raupulus.dev
 E-mail: public@raupulus.dev
 -->
 
-<html data-bs-theme="auto" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html data-bs-theme="light" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     @include('layouts.head')

@@ -1,3 +1,21 @@
+:root {
+    color-scheme: dark;
+    --gallery-bg: #0f2537;
+    --gallery-surface: #20374c;
+    --gallery-surface-alt: #182c3e;
+    --gallery-border: #3d566d;
+    --gallery-text: #f8f9fa;
+    --gallery-muted: #c2d4e3;
+    --gallery-accent: #ff9b66;
+    --gallery-accent-strong: #b84308;
+    --gallery-danger-bg: #b91c1c;
+}
+
+:focus-visible {
+    outline: 2px solid var(--gallery-accent);
+    outline-offset: 2px;
+}
+
 .main-title {
     font-family: Aclonica, sans-serif !important;
 }
@@ -19,8 +37,32 @@
 .r-list-checked li {
     padding: 0.5rem 0.3rem 0.5rem 1.5rem;
     list-style: none;
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     font-weight: bold;
-    background-color: #0f2537;
+    background-color: var(--gallery-bg);
+    color: var(--gallery-text);
     margin: 4px 0;
+}
+
+/* Login */
+.box-login-section {
+    margin: auto;
+    width: min(92%, 1200px);
+    color: var(--gallery-text);
+}
+
+.box-login-left {
+    background-color: var(--gallery-surface);
+}
+
+.box-login-left .form-control {
+    background-color: var(--gallery-bg);
+    color: var(--gallery-text);
+    border-color: var(--gallery-border);
+}
+
+.box-login-left .form-control:focus {
+    background-color: #132c42;
+    color: #ffffff;
+    border-color: var(--gallery-accent);
 }

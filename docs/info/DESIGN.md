@@ -14,12 +14,10 @@ Estilos específicos por vista (inyectados mediante `@section('head_css')` o `@s
 - `public/css/collection_show.css` (detalle de colección)
 - `public/css/pages/*` (páginas estáticas)
 
-## Tema claro / oscuro
-- El elemento `<html>` en `resources/views/layouts/app.blade.php` declara `data-bs-theme="auto"`.
-- Un script inline en `resources/views/layouts/head.blade.php` gestiona la preferencia de tema:
-  - Prioridad: `data-bss-forced-theme` > `localStorage.getItem('theme')` > `data-bs-theme` > `prefers-color-scheme: dark`.
-  - Actualiza `data-bs-theme` en `<html>` y escucha cambios de `prefers-color-scheme` y clics en botones `[data-bs-theme-value]`.
-- La barra de navegación (`resources/views/layouts/navbar.blade.php`) y el pie (`resources/views/layouts/footer.blade.php`) usan fondo oscuro fijo (`bg-dark`, `data-bs-theme="dark"` en navbar).
+## Tema y contraste
+- El tema base **Bootswatch Superhero** (`public/theme/bootstrap/css/bootstrap.min.css`) define su paleta oscura nativa bajo `:root, [data-bs-theme=light]`, por lo que `resources/views/layouts/app.blade.php` fija `<html data-bs-theme="light">` para mantener coherencia visual y evitar la regresión de contraste por sobrescritura con `[data-bs-theme=dark]` genérico de Bootstrap.
+- `public/css/styles.css` define tokens CSS globales (`--gallery-bg`, `--gallery-surface`, `--gallery-text`, `--gallery-muted`, `--gallery-accent`, `--gallery-accent-strong`) con ratios WCAG AA (≥ 4.5:1), estilos `:focus-visible` y el diseño del formulario de `/login`.
+- La barra de navegación (`resources/views/layouts/navbar.blade.php`) y el pie (`resources/views/layouts/footer.blade.php`) mantienen fondo oscuro (`bg-dark`).
 
 ## Paginación
 - `App\Providers\AppServiceProvider::boot()` configura `Paginator::defaultView('pagination::bootstrap-5')`.
