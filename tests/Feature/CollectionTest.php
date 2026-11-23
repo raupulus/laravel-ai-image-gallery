@@ -208,7 +208,95 @@ class CollectionTest extends TestCase
         $response->assertHeader('X-Frame-Options', 'SAMEORIGIN');
         $response->assertHeader('X-Content-Type-Options', 'nosniff');
         $response->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-        $response->assertHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+        $response->assertHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), focus-without-user-activation=()');
+        $response->assertHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+        $response->assertHeader('Cross-Origin-Resource-Policy', 'same-origin');
+
+        $cspHeader = (string) $response->headers->get('Content-Security-Policy-Report-Only');
+        $this->assertStringContainsString("default-src 'self'", $cspHeader);
+        $this->assertStringContainsString('https://www.youtube-nocookie.com', $cspHeader);
+        $this->assertMatchesRegularExpression("/'nonce-([A-Za-z0-9+\/=]+)'/", $cspHeader);
+
+        if (preg_match("/'nonce-([A-Za-z0-9+\/=]+)'/", $cspHeader, $matches)) {
+            $response->assertSee('nonce="'.$matches[1].'"', false);
+        }
+    }
+
+    public function test_home_prioritizes_first_cards_and_keeps_ajax_cards_lazy(): void
+    {
+        for ($i = 1; $i <= 6; $i++) {
+            $collection = Collection::create([
+                'batch_id' => 'batch-prio-'.$i,
+                'title' => 'Priority Collection '.$i,
+                'prompt' => 'Test prompt '.$i,
+            ]);
+
+            Image::create([
+                'collection_id' => $collection->id,
+                'thumbnail' => "collections/{$i}/thumb.webp",
+                'image' => "collections/{$i}/main.webp",
+                'order' => 1,
+            ]);
+        }
+
+        $response = $this->get('/');
+        $response->assertStatus(200);
+        $html = $response->getContent();
+
+        $this->assertSame(2, substr_count((string) $html, 'fetchpriority="high"'));
+        $this->assertSame(2, substr_count((string) $html, 'loading="lazy"'));
+
+        $ajaxResponse = $this->getJson('/collections/ajax/get/cards/1');
+        $ajaxResponse->assertStatus(200);
+        $ajaxHtml = (string) $ajaxResponse->json('html');
+        $this->assertSame(0, substr_count($ajaxHtml, 'fetchpriority="high"'));
+        $this->assertSame(6, substr_count($ajaxHtml, 'loading="lazy"'));
+    }
+
+    public function test_collection_show_images_include_explicit_dimensions(): void
+    {
+        $collection = Collection::create([
+            'batch_id' => 'batch-dims',
+            'title' => 'Dimensioned Collection',
+            'prompt' => 'Landscape scene',
+            'size' => '1920x1080',
+        ]);
+
+        Image::create([
+            'collection_id' => $collection->id,
+            'thumbnail' => 'collections/dims/thumb1.webp',
+            'image' => 'collections/dims/main1.webp',
+            'order' => 1,
+        ]);
+
+        $response = $this->get('/collections/show/'.$collection->id);
+        $response->assertStatus(200);
+        $response->assertSee('width="400"', false);
+        $response->assertSee('height="225"', false);
+    }
+
+    public function test_random_cache_is_invalidated_on_collection_delete(): void
+    {
+        $admin = User::factory()->create(['role_id' => $this->adminRole->id]);
+        $collection = Collection::create([
+            'batch_id' => 'batch-random-cache',
+            'title' => 'Cached Random Collection',
+            'prompt' => 'Test cache invalidation',
+        ]);
+
+        Image::create([
+            'collection_id' => $collection->id,
+            'thumbnail' => 'collections/rc/thumb.webp',
+            'image' => 'collections/rc/main.webp',
+            'order' => 1,
+        ]);
+
+        $this->get('/collections/random')->assertRedirect('/collections/show/'.$collection->id);
+
+        $this->actingAs($admin)->post('/collections/delete/'.$collection->id)
+            ->assertRedirect(route('home'));
+
+        $this->get('/collections/random')->assertRedirect(route('home'));
     }
 
     public function test_home_handles_array_search_parameter_and_escapes_sql_wildcards(): void

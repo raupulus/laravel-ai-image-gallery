@@ -14,9 +14,9 @@
 ## Modelo de datos
 - **`collections`** (`App\Models\Collection`):
   - Campos principales: `id`, `collection_role_id` (FK nullable a `collection_roles.id`, `ON DELETE SET NULL`, indexado), `role` (string legacy nullable), `batch_id` (string `unique`), `ai`, `title` (511), `description` (1024), `tags` (255, CSV), `prompt` (text), `negative_prompt` (text), `model`, `size`, `size_resized`, `steps` (50), `cfg_scale` (50), `denoising_strength` (50), `restore_faces` (bool cast), `resizer`, `refiner_model`, `url_youtube`, `created_at` (indexado), timestamps.
-  - Relaciones: `images()` (`hasMany(Image)`), `collectionRole()` (`belongsTo(CollectionRole)`, con alias `roleTmp()`).
-  - Accessors: `isHorizontal`, `isVertical`, `titleResume` (límite 50 chars), `tagsArray`, `primaryImage` (usa relación cargada si existe para evitar N+1), `url`, `youtubeEmbedUrl`.
-  - Consulta compartida: `Collection::getQueryCollection(?string $search)` filtra con `whereHas('images')` y `title` no vacío, precarga `images` ordenadas por `(order, id)` y `withCount('images')` (sin `LEFT JOIN` + `GROUP BY` ni N+1), y aplica búsqueda `ILIKE` (PostgreSQL) en `title` y `tags` con comodines escapados (`%`, `_`).
+  - Relaciones: `images()` (`hasMany(Image)`), `primaryImageRelation()` (`hasOne(Image)->ofMany(['order' => 'min', 'id' => 'min'])`), `collectionRole()` (`belongsTo(CollectionRole)`, con alias `roleTmp()`).
+  - Accessors: `isHorizontal`, `isVertical`, `titleResume` (límite 50 chars), `tagsArray`, `primaryImage` (usa `primaryImageRelation` o `images` precargadas para evitar N+1), `thumbnailDimensions` (`width`/`height` escalados a ancho 400 para evitar CLS), `url`, `youtubeEmbedUrl`.
+  - Consulta compartida: `Collection::getQueryCollection(?string $search)` filtra con `whereHas('images')` y `title` no vacío, precarga únicamente `primaryImageRelation` y `withCount('images')` (sin hidratar todas las imágenes en `/` ni AJAX), y aplica búsqueda `ILIKE` (PostgreSQL, acelerada con índices GIN `pg_trgm`) en `title` y `tags` con comodines escapados (`%`, `_`).
   - Prevención N+1: `Model::preventLazyLoading(! app()->isProduction())` activo en `AppServiceProvider::boot()`.
 - **`images`** (`App\Models\Image`):
   - Campos: `id`, `collection_id` (FK a `collections.id`, `ON DELETE CASCADE`, índice compuesto `(collection_id, order)`), `order` (int cast), `seed` (int cast), `image` (ruta relativa en `storage/app/public`), `thumbnail` (ruta relativa en `storage/app/public`), timestamps.
@@ -28,13 +28,13 @@
 
 ## Flujos principales
 1. **Home y búsqueda (`IndexController@index`):**
-   - Recibe `search` por query string, consulta `Collection::getQueryCollection($search)->orderByDesc('created_at')->paginate(24)` y renderiza `resources/views/home.blade.php`.
+   - Recibe `search` por query string, consulta `Collection::getQueryCollection($search)->orderByDesc('created_at')->orderByDesc('id')->paginate(24)` y renderiza `resources/views/home.blade.php` (marcando las 4 primeras tarjetas como eager y las 2 primeras con `fetchpriority="high"`).
 2. **Scroll infinito AJAX (`CollectionController@ajaxGetHomeCards`):**
    - Un `IntersectionObserver` sobre `#box-collections-end` solicita `/collections/ajax/get/cards/{2 + currentPage}/{search?}` únicamente cuando `$collections->hasMorePages()` es verdadero y evitando peticiones solapadas (`isLoading`).
-   - El controlador pagina de 8 en 8, renderiza `components._collection_block` por cada colección y devuelve JSON (`success`, `html`, `total`, `page`, `hasMorePages`, `lastItem`).
+   - El controlador pagina de 8 en 8 con desempate `orderByDesc('id')`, renderiza `components._collection_block` por cada colección y devuelve JSON (`success`, `html`, `total`, `page`, `hasMorePages`, `lastItem`).
 3. **Detalle y aleatoria (`CollectionController@show` / `random`):**
-   - `show` precarga `$collection->load(['images', 'collectionRole'])` ordenadas por `(order, id)`, prioriza la imagen principal con `fetchpriority="high"` y aplica `loading="lazy"` + Fancybox `defer` en las miniaturas de `resources/views/collections/show.blade.php`.
-   - `random` busca una colección aleatoria con imágenes (`whereHas('images')`) y redirige a `collections.show` (o a `home` si no hay ninguna).
+   - `show` precarga `$collection->load(['images', 'collectionRole'])` ordenadas por `(order, id)`, prioriza la imagen principal con `fetchpriority="high"` y dimensiones explícitas `width`/`height`, y aplica `loading="lazy"` + Fancybox `defer` en las miniaturas de `resources/views/collections/show.blade.php`.
+   - `random` cachea los IDs válidos con imágenes en `collections.valid_ids` (TTL 10 min, invalidado al añadir imagen vía API o borrar colección/imagen) y elige uno con `Arr::random()` evitando `ORDER BY RANDOM()`, redirigiendo a `collections.show` (o a `home` si no hay ninguna).
 4. **Borrado admin (`CollectionController@delete` / `deleteImage`):**
    - Requiere sesión autenticada (`auth`) y permiso `CollectionPolicy::delete` (`$user->isAdmin`; si no, devuelve `404`).
    - `delete` borra las imágenes y la colección dentro de `DB::transaction()` y, tras confirmar la transacción, elimina los archivos físicos y el directorio `collections/{id}` mediante `ImageStorageService`.

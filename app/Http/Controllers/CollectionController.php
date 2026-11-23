@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -35,21 +37,23 @@ class CollectionController extends Controller
     }
 
     /**
-     * Busca una colección aleatoria y lleva hacia ella.
+     * Busca una colección aleatoria y lleva hacia ella evitando ORDER BY RANDOM() en BD.
      */
     public function random(): RedirectResponse
     {
-        $collection = Collection::query()
+        /** @var array<int, int|string> $ids */
+        $ids = Cache::remember('collections.valid_ids', 600, static fn (): array => Collection::query()
             ->whereHas('images')
-            ->inRandomOrder()
-            ->select('id')
-            ->first();
+            ->pluck('id')
+            ->all());
 
-        if (! $collection) {
+        if ($ids === []) {
             return redirect()->route('home');
         }
 
-        return redirect()->route('collections.show', $collection->id);
+        $randomId = Arr::random($ids);
+
+        return redirect()->route('collections.show', $randomId);
     }
 
     /**
@@ -78,6 +82,7 @@ class CollectionController extends Controller
 
         $imageStorage->deletePaths($paths);
         $imageStorage->deleteCollectionDirectory($collectionId);
+        Cache::forget('collections.valid_ids');
 
         return redirect()->route('home');
     }
@@ -104,6 +109,7 @@ class CollectionController extends Controller
         });
 
         $imageStorage->deletePaths($paths);
+        Cache::forget('collections.valid_ids');
 
         if ($request->isJson()) {
             return response()->json([
@@ -128,6 +134,7 @@ class CollectionController extends Controller
         $collections = Collection::getQueryCollection($safeSearch);
 
         $collections = $collections->orderByDesc('created_at')
+            ->orderByDesc('id')
             ->paginate(8, ['*'], 'page', $safePage);
 
         $html = '';

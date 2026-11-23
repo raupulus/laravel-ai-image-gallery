@@ -24,7 +24,7 @@ class IndexController extends Controller
         $collections = Collection::getQueryCollection($search);
 
         return view('home', [
-            'collections' => $collections->orderByDesc('created_at')->paginate(24),
+            'collections' => $collections->orderByDesc('created_at')->orderByDesc('id')->paginate(24),
             'search' => $search,
         ]);
     }

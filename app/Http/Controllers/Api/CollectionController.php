@@ -65,6 +65,7 @@ class CollectionController extends Controller
 
         try {
             $image = Image::create(array_merge($validated, $paths));
+            Cache::forget('collections.valid_ids');
         } catch (Throwable $e) {
             $imageStorage->deletePaths([$paths['image'], $paths['thumbnail']]);
 

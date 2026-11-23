@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 
 /**
@@ -84,6 +85,18 @@ class Collection extends Model
     }
 
     /**
+     * Relación con la imagen principal de la colección (menor order e id).
+     */
+    public function primaryImageRelation(): HasOne
+    {
+        return $this->hasOne(Image::class, 'collection_id', 'id')
+            ->ofMany([
+                'order' => 'min',
+                'id' => 'min',
+            ]);
+    }
+
+    /**
      * Relación con el rol temático asociado a la colección.
      */
     public function collectionRole(): BelongsTo
@@ -145,6 +158,13 @@ class Collection extends Model
      */
     public function getPrimaryImageAttribute(): ?Image
     {
+        if ($this->relationLoaded('primaryImageRelation')) {
+            /** @var Image|null $primary */
+            $primary = $this->getRelation('primaryImageRelation');
+
+            return $primary;
+        }
+
         if ($this->relationLoaded('images')) {
             return $this->images->first();
         }
@@ -153,6 +173,36 @@ class Collection extends Model
         $image = $this->images()->orderBy('order')->orderBy('id')->first();
 
         return $image;
+    }
+
+    /**
+     * Calcula las dimensiones esperadas de las miniaturas (escaladas a ancho 400).
+     *
+     * @return array{width: int, height: int}
+     */
+    public function getThumbnailDimensionsAttribute(): array
+    {
+        $size = $this->size;
+
+        if (is_string($size) && str_contains($size, 'x')) {
+            $parts = explode('x', $size, 2);
+            $width = (int) $parts[0];
+            $height = (int) $parts[1];
+
+            if ($width > 0 && $height > 0) {
+                $thumbWidth = min(400, $width);
+                $thumbHeight = max(1, (int) round(($height / $width) * $thumbWidth));
+
+                return [
+                    'width' => $thumbWidth,
+                    'height' => $thumbHeight,
+                ];
+            }
+        }
+
+        return $this->isHorizontal
+            ? ['width' => 400, 'height' => 225]
+            : ['width' => 400, 'height' => 711];
     }
 
     /**
@@ -185,9 +235,7 @@ class Collection extends Model
             ->whereHas('images')
             ->whereNotNull('title')
             ->where('title', '!=', '')
-            ->with([
-                'images' => fn ($query) => $query->orderBy('order')->orderBy('id'),
-            ])
+            ->with('primaryImageRelation')
             ->withCount('images');
 
         if ($search !== null && $search !== '') {
