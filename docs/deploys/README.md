@@ -2,8 +2,8 @@
 
 ## Requisitos del servidor
 - **PHP:** `>= 8.4` con extensión `pdo_pgsql`, `XMLWriter` y driver GD o Imagick con soporte **WebP**.
-- **Base de datos:** PostgreSQL.
-- **Gestores de paquetes:** Composer `>= 2.2` y `pnpm` `>= 10.x` / Node.js.
+- **Base de datos:** PostgreSQL (con extensión `pg_trgm` para índices trigrama en búsquedas `ILIKE`).
+- **Gestores de paquetes:** Composer `>= 2.2`.
 
 ## 1. Preparación inicial de base de datos y entorno
 1. Crear la base de datos PostgreSQL (manual o mediante `scripts/exist_db_or_create.sh`):
@@ -22,8 +22,6 @@
 ## 2. Despliegue manual estándar
 ```bash
 composer install --no-dev --optimize-autoloader
-pnpm install --frozen-lockfile
-pnpm build
 php artisan migrate --force
 php artisan db:seed --force
 php artisan config:cache
@@ -36,15 +34,38 @@ php artisan sitemap:generate
 El repositorio incluye `scripts/webhooks/api-deploy.sh` (`set -euo pipefail` y `trap cleanup EXIT` para garantizar `php artisan up` ante fallos), que ejecuta en orden:
 1. `php artisan down`
 2. `git checkout -- .` y `git pull`
-3. `pnpm install --frozen-lockfile` y `pnpm run build`
-4. `composer install --no-interaction --no-dev --optimize-autoloader --prefer-dist`
-5. `php artisan migrate --force`
-6. `php artisan config:cache`, `php artisan route:cache` y `php artisan view:cache`
-7. `php artisan up` (mediante `trap ... EXIT`)
+3. `composer install --no-interaction --no-dev --optimize-autoloader --prefer-dist`
+4. `php artisan migrate --force`
+5. `php artisan config:cache`, `php artisan route:cache` y `php artisan view:cache`
+6. `php artisan up` (mediante `trap ... EXIT`)
 
 Los logs se escriben en `storage/logs/script-laravel-ai-image-gallery-deploy.log`.
 
-## 4. Cron de producción (Laravel Scheduler)
+## 4. Configuración recomendada en Nginx y Cloudflare (P0)
+- **Cloudflare (SSL/TLS → Edge Certificates → HSTS):** habilitar HSTS con `Max-Age` `>= 31536000` (empezar con `300` en pruebas; actualmente en producción llega `max-age=0`).
+- **Nginx (caché de estáticos y no duplicar cabeceras con Laravel `SecurityHeaders`):**
+  ```nginx
+  # Estáticos servidos directamente por Nginx (no pasan por SecurityHeaders.php)
+  location ~* \.(?:webp|png|jpe?g|ico|woff2)$ {
+      expires 1y;
+      add_header Cache-Control "public, max-age=31536000, immutable" always;
+      add_header X-Content-Type-Options "nosniff" always;
+      try_files $uri =404;
+  }
+
+  location ~* \.(?:css|js)$ {
+      expires 30d;
+      add_header Cache-Control "public, max-age=2592000" always;
+      add_header X-Content-Type-Options "nosniff" always;
+      try_files $uri =404;
+  }
+
+  # En el bloque server o location / evitar añadir X-Frame-Options,
+  # X-Content-Type-Options o Referrer-Policy de forma global para no
+  # duplicar las cabeceras que ya emite Laravel SecurityHeaders en HTML.
+  ```
+
+## 5. Cron de producción (Laravel Scheduler)
 Para ejecutar `sitemap:generate` diariamente a las `03:42` (`app/Console/Kernel.php`), añadir al crontab del usuario web:
 ```cron
 * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1

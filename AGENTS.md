@@ -5,7 +5,7 @@ Guía operativa para agentes y desarrolladores que trabajen en este repositorio.
 ## Stack y entorno
 - **Backend:** PHP `>= 8.4`, Laravel `^13.0`, Laravel Sanctum `^4.0`, Intervention Image Laravel `^4.1` (WebP).
 - **Base de datos:** PostgreSQL (`pdo_pgsql`).
-- **Frontend:** Blade, Bootstrap 5 (`public/theme/`), Fancybox, CSS propio (`public/css/`), Vite `^8.3.5` (`pnpm`).
+- **Frontend:** Blade, Bootstrap 5 (`public/theme/`), Fancybox, CSS propio (`public/css/`).
 - **Tests y formato:** PHPUnit `^13.0` (`php artisan test`), Laravel Pint (`./vendor/bin/pint`), PHPStan / Larastan (`composer phpstan`, nivel 5 en `phpstan.neon`).
 
 ## Estructura real del repositorio
@@ -39,8 +39,6 @@ Guía operativa para agentes y desarrolladores que trabajen en este repositorio.
 │   ├── js/
 │   └── theme/                   # Bootstrap 5, Fancybox, fuentes y scripts del tema
 ├── resources/
-│   ├── css/
-│   ├── js/
 │   └── views/                   # auth/, collections/, components/, errors/, layouts/, pages/, vendor/
 ├── routes/                      # web.php, api.php (prefijo /api/v1), auth.php, channels.php, console.php
 ├── scripts/                     # exist_db_or_create.sh, functions.sh, generate_env.sh, webhooks/api-deploy.sh
@@ -56,7 +54,7 @@ Guía operativa para agentes y desarrolladores que trabajen en este repositorio.
 | API | Prefijo `/api/v1` | `RouteServiceProvider` monta `routes/api.php` bajo `/api/v1`, no `/api`. |
 | BD | `ILIKE` de PostgreSQL | `Collection::getQueryCollection()` usa `ILIKE`; requiere PostgreSQL. |
 | BD | Esquemas legacy 2023 sin `role_id` | La migración `2026_11_23_000000_ensure_legacy_role_columns_exist` añade `users.role_id` y `collections.collection_role_id` si faltan antes de indexar; los usuarios existentes quedan con `role_id = NULL` hasta asignar el rol `admin`. |
-| Auth | Rutas Breeze minimizadas | En `routes/auth.php` solo existen `login` y `logout`; el resto de scaffolding Breeze no utilizado fue eliminado. |
+| Auth | Rutas Breeze minimizadas | En `routes/auth.php` solo existen `login` y `logout`; el paquete `laravel/breeze` y el resto de scaffolding no utilizado fueron eliminados. |
 | Permisos | `404` en lugar de `403` | `CollectionController::delete` y `deleteImage` devuelven `404` si el usuario no es `isAdmin`. |
 | Home AJAX | Desfase de página | `home.blade.php` carga 24 elementos iniciales y el scroll infinito pide la página `2 + currentPage` de 8 en 8. |
 | Sitemap | `APP_URL` en CLI/cron | `sitemap:generate` usa `APP_URL` para todas las URLs; si no está bien configurado, generará `http://localhost`. |
@@ -85,7 +83,7 @@ Protocolo permanente de documentación técnica del repositorio.
 - [`docs/info/sitemap.md`](docs/info/sitemap.md) — comando `sitemap:generate` y scheduler diario `03:42`.
 - [`docs/info/DESIGN.md`](docs/info/DESIGN.md) — estilos, Bootstrap 5, tema claro/oscuro y SEO.
 - [`docs/info/COMPONENTS.md`](docs/info/COMPONENTS.md) — layouts, vistas parciales y componentes Blade.
-- [`docs/info/commands.md`](docs/info/commands.md) — comandos Artisan, Composer, pnpm, tests y `scripts/`.
+- [`docs/info/commands.md`](docs/info/commands.md) — comandos Artisan, Composer, tests y `scripts/`.
 - [`docs/info/decisiones-tecnicas.md`](docs/info/decisiones-tecnicas.md) — decisiones deliberadas de arquitectura.
 - [`docs/info/_MODULE_TEMPLATE.md`](docs/info/_MODULE_TEMPLATE.md) — plantilla para módulos nuevos.
 
