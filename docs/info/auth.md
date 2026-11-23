@@ -47,6 +47,7 @@
 
 ## Trampas conocidas
 - `User::getIsAdminAttribute()` exige un registro `Role` con `slug === 'admin'` (ya no acepta `role_id === 1` sin verificar el `slug`).
+- En bases de datos antiguas creadas antes de noviembre de 2023 (`2014_10_12_000000_create_users_table` antes de añadir `role_id` in-place), la migración idempotente `2026_11_23_000000_ensure_legacy_role_columns_exist` añade `users.role_id` (y FK) antes de crear `users_role_id_idx` en `2026_11_23_000001`; tras migrar un entorno legacy conviene ejecutar `RoleSeeder` y asignar el rol `admin` al usuario administrador.
 
 ## Tests que lo cubren
 - `tests/Feature/Auth/AuthenticationTest.php` (login/logout).

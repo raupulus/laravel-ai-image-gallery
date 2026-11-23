@@ -55,6 +55,7 @@ Guía operativa para agentes y desarrolladores que trabajen en este repositorio.
 | --- | --- | --- |
 | API | Prefijo `/api/v1` | `RouteServiceProvider` monta `routes/api.php` bajo `/api/v1`, no `/api`. |
 | BD | `ILIKE` de PostgreSQL | `Collection::getQueryCollection()` usa `ILIKE`; requiere PostgreSQL. |
+| BD | Esquemas legacy 2023 sin `role_id` | La migración `2026_11_23_000000_ensure_legacy_role_columns_exist` añade `users.role_id` y `collections.collection_role_id` si faltan antes de indexar; los usuarios existentes quedan con `role_id = NULL` hasta asignar el rol `admin`. |
 | Auth | Rutas Breeze minimizadas | En `routes/auth.php` solo existen `login` y `logout`; el resto de scaffolding Breeze no utilizado fue eliminado. |
 | Permisos | `404` en lugar de `403` | `CollectionController::delete` y `deleteImage` devuelven `404` si el usuario no es `isAdmin`. |
 | Home AJAX | Desfase de página | `home.blade.php` carga 24 elementos iniciales y el scroll infinito pide la página `2 + currentPage` de 8 en 8. |
